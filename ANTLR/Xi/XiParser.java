@@ -113,10 +113,10 @@ public class XiParser extends Parser {
 		public TerminalNode COLON(int i) {
 			return getToken(XiParser.COLON, i);
 		}
-		public List<TerminalNode> INTEGER() { return getTokens(XiParser.INTEGER); }
 		public TerminalNode LENGTH(int i) {
 			return getToken(XiParser.LENGTH, i);
 		}
+		public List<TerminalNode> INTEGER() { return getTokens(XiParser.INTEGER); }
 		public TerminalNode ID(int i) {
 			return getToken(XiParser.ID, i);
 		}
@@ -141,10 +141,10 @@ public class XiParser extends Parser {
 		public TerminalNode INT(int i) {
 			return getToken(XiParser.INT, i);
 		}
+		public List<TerminalNode> ELSE() { return getTokens(XiParser.ELSE); }
 		public TerminalNode RETURN(int i) {
 			return getToken(XiParser.RETURN, i);
 		}
-		public List<TerminalNode> ELSE() { return getTokens(XiParser.ELSE); }
 		public TerminalNode LBRACKET(int i) {
 			return getToken(XiParser.LBRACKET, i);
 		}
