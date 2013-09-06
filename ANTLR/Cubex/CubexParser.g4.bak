@@ -1,0 +1,4 @@
+parser grammar CubexParser;
+options { tokenVocab = CubexLexer; }
+
+file : (STRING | COMMENT | TYPE | NAME | BOOL | INT | WS | OTHER)*;
