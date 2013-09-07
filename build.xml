@@ -1,0 +1,61 @@
+<project name="compiler" basedir="."> 
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+<!-- Check if ANTLR4 can be found in the classpath -->
+<target name="antlr_classpath">
+    <whichresource property="antlr.in.classpath" class="org.antlr.v4.Tool" />
+    <fail message="ANTLR4 not found via CLASSPATH ${java.class.path}">
+        <condition>
+            <not>
+                <isset property="antlr.in.classpath"/>
+            </not>
+            </condition>
+    </fail>
+        <echo>ANTLR4 found via CLASSPATH</echo>
+</target>
+
+<!-- Antlr3 is called here -->
+<!-- java org.antlr.Tool -verbose -make -o . CMinus.g -->
+    <target name="antlr">
+        <java classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+            <arg value="-o"/>
+            <arg path="src/lexer"/>
+            <arg path="src/lexer/CubexLexer.g4"/>
+        </java>
+    </target>
+     
+    <target name="compile" depends="antlr" description="compile">
+        <mkdir dir="build"/>
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src"
+            destdir="build/classes"
+            deprecation="Yes"
+            listfiles="Yes"
+            includeantruntime="false">
+            <classpath>
+                <pathelement path="${java.class.path}"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="jar">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/Cubex.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="CubexLexerProg"/>
+            </manifest>
+            <fileset dir="build/classes" includes="**/*.class" />
+            <zipgroupfileset dir="lib" includes="**/*.jar" />
+        </jar>
+    </target>
+
+    <target name="run">
+        <java jar="build/jar/Cubex.jar" fork="true">
+            <arg line="ANTLR/Cubex/Tests/simple_test1.in"/>
+        </java>
+    </target>
+
+</project> 
