@@ -54,7 +54,7 @@
 
     <target name="run">
         <java jar="build/jar/Cubex.jar" fork="true">
-            <arg line="ANTLR/Cubex/Tests/simple_test1.in"/>
+            <arg line="test/lexer/assignment_tests/simple_test1.in"/>
         </java>
     </target>
 
