@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // Generated from /run/media/bryce/Data/Code/Eclipse/Compilers/src/lexer/CubexLexer.g4 by ANTLR 4.0
+=======
+// Generated from /Users/deedy/Dropbox/Fall 2013/CS4120/Compilers/src/lexer/CubexLexer.g4 by ANTLR 4.0
+>>>>>>> e0d76afb458b28bf6d7f6f54f391b271a934ad04
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -181,7 +185,7 @@ public class CubexLexer extends Lexer {
 		"\u0112\t\f\2\2\u0112V\3\2\2\2\u0113\u0117\t\r\2\2\u0114\u0116\13\2\2\2"+
 		"\u0115\u0114\3\2\2\2\u0116\u0119\3\2\2\2\u0117\u0118\3\2\2\2\u0117\u0115"+
 		"\3\2\2\2\u0118\u011a\3\2\2\2\u0119\u0117\3\2\2\2\u011a\u011b\t\16\2\2"+
-		"\u011b\u011c\3\2\2\2\u011c\u011d\b,\4\2\u011dX\3\2\2\2\u011e\u0123\7)"+
+		"\u011b\u011c\3\2\2\2\u011c\u011d\b,\4\2\u011dX\3\2\2\2\u011e\u0123\7b"+
 		"\2\2\u011f\u0122\5Y-\2\u0120\u0122\n\17\2\2\u0121\u011f\3\2\2\2\u0121"+
 		"\u0120\3\2\2\2\u0122\u0125\3\2\2\2\u0123\u0121\3\2\2\2\u0123\u0124\3\2"+
 		"\2\2\u0124\u0126\3\2\2\2\u0125\u0123\3\2\2\2\u0126\u0127\7)\2\2\u0127"+
