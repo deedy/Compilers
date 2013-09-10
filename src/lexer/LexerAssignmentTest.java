@@ -34,8 +34,8 @@ public class LexerAssignmentTest {
 					System.out.printf("Test %s passed\n", f.getPath());
 				} else {
 					System.out.printf("Test %s failed\n", f.getPath());
-					System.out.printf("Expected output:%s\n", expected);
-					System.out.printf("Lexed output:%s\n", lexed);
+					System.out.printf("Expected:\t%s\n", expected);
+					System.out.printf("Recieved:\t%s\n", lexed);
 				}
 			}
 		}
