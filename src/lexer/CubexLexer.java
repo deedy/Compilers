@@ -1,4 +1,4 @@
-// Generated from /home/dominick/workspace/Compilers/src/lexer/CubexLexer.g4 by ANTLR 4.0
+// Generated from /run/media/bryce/Data/Code/Eclipse/Compilers/src/lexer/CubexLexer.g4 by ANTLR 4.0
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
