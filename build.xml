@@ -19,7 +19,7 @@
 
 <!-- Antlr3 is called here -->
 <!-- java org.antlr.Tool -verbose -make -o . CMinus.g -->
-    <target name="antlr">
+    <target name="antlr" depends="antlr_classpath">
         <java classname="org.antlr.v4.Tool" fork="true" failonerror="true">
             <arg value="-o"/>
             <arg path="src/lexer"/>
