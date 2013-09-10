@@ -2,8 +2,24 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.dfa.*;
+import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.*;
 import java.lang.StringBuilder;
+import java.util.BitSet;
+
+
+class ErrorListener implements ANTLRErrorListener {
+    public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet ambigAlts, ATNConfigSet configs) {
+    }
+    public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, ATNConfigSet configs) {
+    }
+    public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, ATNConfigSet configs) {
+    }
+    public void syntaxError(Recognizer<?,?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+        int a = 1/0;
+    }
+}
 
 public class CubexLexerProg {
     public static void main(String[] args) throws Exception {
@@ -14,34 +30,34 @@ public class CubexLexerProg {
 
     public static String assignment1(CubexLexer lex) {
         lex.removeErrorListeners();
+        lex.addErrorListener(new ErrorListener());
         StringBuilder output = new StringBuilder();
-        // consume next token until EOF
-        for (Token token = lex.nextToken();
-             token.getType() != Token.EOF;
-             token = lex.nextToken()){
-            
-            int type = token.getType();
-            // if (type == 0) {
-            //     output.delete(0, output.length());
-            //     output.append("error");
-            //     break;
-            // }
-            String rule = lex.ruleNames[token.getType()-1];
-            if (rule.equals("NAME")) {
-                output.append("name ");
-            } else if (rule.equals("TYPE")) {
-                output.append("Name ");
-            } else if (rule.equals("STRING")) {
-                output.append("\"\" ");
-            } else if (rule.equals("INT")) {
-                output.append("0 ");
-            } else if (rule.equals("BOOL")) {
-                output.append("true ");
-            } else {
-                output.append(token.getText()+" ");
+        try {
+            // consume next token until EOF
+            for (Token token = lex.nextToken();
+                 token.getType() != Token.EOF;
+                 token = lex.nextToken()){
+                
+                int type = token.getType();
+                String rule = lex.ruleNames[token.getType()-1];
+                if (rule.equals("NAME")) {
+                    output.append("name ");
+                } else if (rule.equals("TYPE")) {
+                    output.append("Name ");
+                } else if (rule.equals("STRING")) {
+                    output.append("\"\" ");
+                } else if (rule.equals("INT")) {
+                    output.append("0 ");
+                } else if (rule.equals("BOOL")) {
+                    output.append("true ");
+                } else {
+                    output.append(token.getText()+" ");
+                }
             }
+            output.deleteCharAt(output.length()-1);
+            return output.toString();
+        } catch (ArithmeticException e) {
+            return "error";
         }
-        output.deleteCharAt(output.length()-1);
-        return output.toString();
     }
 }

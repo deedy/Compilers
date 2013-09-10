@@ -36,6 +36,8 @@ SEMICOLON : ';';
 LBRACE : '{';
 RBRACE : '}';
 DOT : '.';
+LSQUARE : '[';
+RSQUARE : ']';
 
 TYPE : [A-Z][a-zA-Z0-9_]*; 
 NAME : [a-z][a-zA-Z0-9_]*;

@@ -1,0 +1,3 @@
+interface Integer<Integer> extends Integer<Integer> {
+    
+}

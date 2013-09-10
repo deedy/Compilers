@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.*;
 import java.io.File;
+import java.util.Scanner;
 
 public class LexerAssignmentTest {
     public static void main(String[] args) throws Exception {
@@ -15,14 +16,27 @@ public class LexerAssignmentTest {
 			if(!f.isFile()){
 				continue;
 			}
-			String[] split = f.getPath().split("\\.(?=[^\\.]+$)");;
-			System.out.println(f.getPath());
+			String[] split = f.getPath().split("\\.(?=[^\\.]+$)");
+			// create the program
+			CubexLexerProg prog = new CubexLexerProg();
 			if(split[1].equals("in")){
-				// run the lexer
+				// create a lexer
+				CubexLexer lex = new CubexLexer(new ANTLRFileStream(f.getPath()));
 
-				// compare to out
+				// lex the string 
+				String lexed = prog.assignment1(lex);
+
+				// compare to the outfile
 				File outfile = new File(split[0] + ".out");
-				System.out.printf("Comparing %s to %s\n", f.getPath(), outfile.getPath());
+				String expected = new Scanner(outfile).useDelimiter("\\Z").next();
+				if(expected.equals(lexed)){
+					// test passed
+					System.out.printf("Test %s passed\n", f.getPath());
+				} else {
+					System.out.printf("Test %s failed\n", f.getPath());
+					System.out.printf("Expected:\t%s\n", expected);
+					System.out.printf("Recieved:\t%s\n", lexed);
+				}
 			}
 		}
     }
