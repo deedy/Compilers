@@ -41,6 +41,20 @@
         </javac>
     </target>
 
+    <target name="compile_no_antlr" description="compile">
+        <mkdir dir="build"/>
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src"
+            destdir="build/classes"
+            deprecation="Yes"
+            listfiles="Yes"
+            includeantruntime="false">
+            <classpath>
+                <pathelement path="${java.class.path}"/>
+            </classpath>
+        </javac>
+    </target>
+
     <target name="jar">
         <mkdir dir="build/jar"/>
         <jar destfile="build/jar/Cubex.jar" basedir="build/classes">

@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.*;
 import java.io.File;
 import java.util.Scanner;
+import java.util.NoSuchElementException;
 
 public class LexerAssignmentTest {
     public static void main(String[] args) throws Exception {
@@ -28,14 +29,20 @@ public class LexerAssignmentTest {
 
 				// compare to the outfile
 				File outfile = new File(split[0] + ".out");
-				String expected = new Scanner(outfile).useDelimiter("\\Z").next();
-				if(expected.equals(lexed)){
-					// test passed
-					System.out.printf("Test %s passed\n", f.getPath());
-				} else {
-					System.out.printf("Test %s failed\n", f.getPath());
-					System.out.printf("Expected:\t%s\n", expected);
-					System.out.printf("Recieved:\t%s\n", lexed);
+				try{
+					String expected = new Scanner(outfile).useDelimiter("\\Z").next();
+					if(expected.equals(lexed)){
+						// test passed
+						System.out.printf("Test %s passed\n", f.getPath());
+					} else {
+						System.out.printf("Test %s failed\n", f.getPath());
+						String infile = new Scanner(f).useDelimiter("\\Z").next();
+						System.out.printf("Input stream: %s\n", infile);
+						System.out.printf("Expected:\t%s\n", expected);
+						System.out.printf("Recieved:\t%s\n", lexed);
+					}
+				} catch(NoSuchElementException e){
+					System.out.printf("Exception reading file %s\n", outfile.toString());
 				}
 			}
 		}
