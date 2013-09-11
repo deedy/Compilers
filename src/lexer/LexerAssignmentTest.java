@@ -3,23 +3,27 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.*;
+import java.io.File;
 
 public class LexerAssignmentTest {
     public static void main(String[] args) throws Exception {
-    	// lex the file
-        CubexLexer lex = new CubexLexer(new ANTLRFileStream(args[0]));
-        // make a token stream (may be unnecessary for now)
-        CommonTokenStream tokens = new CommonTokenStream(lex);
-		// consume next token until EOF
-		for (Token token = lex.nextToken();
-		     token.getType() != Token.EOF;
-		     token = lex.nextToken()){
-			
-            int type = token.getType();
-            if(type > 0){
-                System.out.print(lex.ruleNames[token.getType()]);
-            } 
-            System.out.printf(" %s\n", token.getText());
-        }
+    	// the assignment test folder is the first argument
+    	File folder = new File(args[0]);
+		File[] listOfFiles = folder.listFiles();
+		// iterate over files that end in .in
+		for(File f : listOfFiles){
+			if(!f.isFile()){
+				continue;
+			}
+			String[] split = f.getPath().split("\\.(?=[^\\.]+$)");;
+			System.out.println(f.getPath());
+			if(split[1].equals("in")){
+				// run the lexer
+
+				// compare to out
+				File outfile = new File(split[0] + ".out");
+				System.out.printf("Comparing %s to %s\n", f.getPath(), outfile.getPath());
+			}
+		}
     }
 }
