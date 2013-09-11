@@ -1,0 +1,37 @@
+class Test{
+	
+	Int a;
+	Int b;
+
+	Type t;
+
+	Test t; `this work?? `nested comment' unnested'
+
+	fun name(Arg arg):returnType{
+
+	  return 1;
+	} 
+
+	` documentation for sort
+	doesn't actually sort anything L0L '
+	fun sort(List l):List{
+		Int len = length(l);
+		return (len/2);
+
+	}
+
+	fun length(List l):Int{
+		Int t = 0;
+		while(l.next != Nothing){
+		  t = t+1;
+		  l = l.next;
+		}
+		return t;
+
+	}
+
+
+
+
+
+}
