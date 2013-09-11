@@ -62,8 +62,9 @@ public class CubexLexerProg {
             if (el.hasError) {
                 return "error";
             }
-
-            output.deleteCharAt(output.length()-1);
+            if (output.length() > 0 && output.charAt(output.length()-1) == ' ') {
+                output.deleteCharAt(output.length()-1);
+            }
             return output.toString();
         } catch (ArithmeticException e) {
             return "error";
