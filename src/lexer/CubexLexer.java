@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-// Generated from /run/media/bryce/Data/Code/Eclipse/Compilers/src/lexer/CubexLexer.g4 by ANTLR 4.0
-=======
 // Generated from /Users/deedy/Dropbox/Fall 2013/CS4120/Compilers/src/lexer/CubexLexer.g4 by ANTLR 4.0
->>>>>>> e0d76afb458b28bf6d7f6f54f391b271a934ad04
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

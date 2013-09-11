@@ -17,6 +17,7 @@ class ErrorListener implements ANTLRErrorListener {
     public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, ATNConfigSet configs) {
     }
     public void syntaxError(Recognizer<?,?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+        System.out.println("Error occured at line " + line + " at position " + charPositionInLine + " due to symbol " + e);
         int a = 1/0;
     }
 }
