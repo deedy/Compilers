@@ -57,11 +57,12 @@
 
     <target name="jar">
         <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/Cubex.jar" basedir="build/classes">
+        <jar destfile="build/jar/Cubex.jar">
             <manifest>
                 <attribute name="Main-Class" value="CubexLexerProg"/>
             </manifest>
             <fileset dir="build/classes" includes="**/*.class" />
+            <fileset dir="src" includes="**/*.java **/*.g4" />
             <zipgroupfileset dir="lib" includes="**/*.jar" />
         </jar>
     </target>
