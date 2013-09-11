@@ -49,7 +49,7 @@ BOOL : 'true' | 'false';
 COMMENT : (SINGLELINECOMMENT | MULTILINECOMMENT) -> skip;
 STRING : '"' ( ~'"' )* '"';
 
-SINGLELINECOMMENT : [#].*?[\n\r] -> skip;
+SINGLELINECOMMENT : '#' ~[\r\n]* -> skip;
 MULTILINECOMMENT : '`' (MULTILINECOMMENT|  ~[`\'] )* '\'';
 
 
