@@ -1,0 +1,1 @@
+interface Name < Name > { fun name ( ) : Name < Name > ; } class Name ( ) extends Name < Name > { fun name ( ) : Name < Name > { return [ ] ; } } class Name < Name > ( Name name , Name < Name > name ) extends Name < Name > { name : = [ name ] ++ name . name ( ) ; fun name ( ) : Name < Name > { return name ; } }

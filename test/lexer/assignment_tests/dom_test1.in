@@ -1,0 +1,12 @@
+interface List<E> {
+fun elements() : Iterable<E>;
+}
+class Nil() extends List<Nothing> {
+fun elements() : Iterable<Nothing>
+{ return []; }
+}
+class Cons<E>(E head, List<E> tail)
+extends List<Nothing> {
+elems := [head] ++ tail.elements();
+fun elements() : Iterable<E> {return elems;}
+}
