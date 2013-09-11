@@ -10,6 +10,9 @@ import java.util.BitSet;
 
 
 class ErrorListener implements ANTLRErrorListener {
+
+    public boolean hasError = false;
+
     public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet ambigAlts, ATNConfigSet configs) {
     }
     public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, ATNConfigSet configs) {
@@ -17,8 +20,7 @@ class ErrorListener implements ANTLRErrorListener {
     public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, ATNConfigSet configs) {
     }
     public void syntaxError(Recognizer<?,?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-        System.out.println("Error occured at line " + line + " at position " + charPositionInLine + " due to symbol " + e);
-        int a = 1/0;
+        hasError = true;
     }
 }
 
@@ -31,7 +33,8 @@ public class CubexLexerProg {
 
     public static String assignment1(CubexLexer lex) {
         lex.removeErrorListeners();
-        lex.addErrorListener(new ErrorListener());
+        ErrorListener el = new ErrorListener();
+        lex.addErrorListener(el);
         StringBuilder output = new StringBuilder();
         try {
             // consume next token until EOF
@@ -55,6 +58,11 @@ public class CubexLexerProg {
                     output.append(token.getText()+" ");
                 }
             }
+
+            if (el.hasError) {
+                return "error";
+            }
+
             output.deleteCharAt(output.length()-1);
             return output.toString();
         } catch (ArithmeticException e) {
