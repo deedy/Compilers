@@ -47,7 +47,7 @@ COMMENT : (SINGLELINECOMMENT | MULTILINECOMMENT) -> skip;
 STRING :["][^"]*["];
 
 SINGLELINECOMMENT : [#].*?[\n\r] -> skip;
-MULTILINECOMMENT : '\'' (MULTILINECOMMENT| ~'\'' )* '\'';
+MULTILINECOMMENT : '`' (MULTILINECOMMENT| ~'\'' )* '\'';
 
 
 
