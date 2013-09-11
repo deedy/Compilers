@@ -46,7 +46,7 @@ INT : ([1-9][0-9]*|[0]);
 BOOL : 'true' | 'false'; 
 // Need to add support for ''
 COMMENT : (SINGLELINECOMMENT | MULTILINECOMMENT) -> skip;
-STRING :["][^"]*["];
+STRING : '"' ( ~'"' )* '"';
 
 SINGLELINECOMMENT : [#].*?[\n\r] -> skip;
 MULTILINECOMMENT : '`' (MULTILINECOMMENT| ~'\'' )* '\'';
