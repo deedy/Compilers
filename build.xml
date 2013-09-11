@@ -67,9 +67,9 @@
         </jar>
     </target>
 
-    <target name="run">
-        <java jar="build/jar/Cubex.jar" fork="true">
-            <arg line="test/lexer/assignment_tests/simple_test1.in"/>
+    <target name="test">
+        <java classname="LexerAssignmentTest" fork="true" dir="build/classes">
+            <arg line="../../test/lexer/assignment_tests/"/>
         </java>
     </target>
 
