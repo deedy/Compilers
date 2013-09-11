@@ -30,3 +30,9 @@ To create and use the required jar for submission (Assignment 1):
 ant jar
 java -jar build/jar/Cubex.jar test/lexer/assignment_tests/simple_test2.in
 ```
+
+To quickly compile and run all tests in assignment tests:
+
+```
+ant compile test
+```
