@@ -1,0 +1,3 @@
+["I am a string", `I am a comment', 5]
+# I'm another comment
+fun print_stuff(stuff : String) : String = print(stuff);
