@@ -15,7 +15,6 @@ To run (example):
 ```
 cd build/classes
 java CubexLexerProg ../../test/lexer/assignment_tests/simple_test1.in
-
 ```
 
 To test a folder of tests:
@@ -31,5 +30,4 @@ To create the required jar for submission (Assignment 1):
 cd build/classes
 jar cvfm CubexLexerProg.jar ../../MANIFEST.MF *class ../../src/lexer/*g4 ../../src/lexer/*java
 java -jar CubexLexerProg.jar ../../test/lexer/assignment_tests/simple_test.in
-
 ```
