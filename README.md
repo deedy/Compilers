@@ -23,7 +23,7 @@ To test a folder of tests:
 java LexerAssignmentTest ../../test/lexer/assignment_tests
 ```
 
-To create the required jar for submission (Assignment 1):
+To create the required jar for submission (Assignment 1) [Until a better solution goes in to build.xml]:
 
 
 ```
