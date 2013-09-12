@@ -34,5 +34,5 @@ java -jar build/jar/Cubex.jar test/lexer/assignment_tests/simple_test2.in
 To quickly compile and run all tests in assignment tests:
 
 ```
-./compileAndRunTests.sh
+ant compile test
 ```
