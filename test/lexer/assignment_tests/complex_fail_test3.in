@@ -1,0 +1,8 @@
+fun not(b : Boolean) : Boolean
+{
+  if (b)
+  {
+    return false;
+  }
+  return true;
+}

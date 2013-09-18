@@ -1,0 +1,1 @@
+fun name ( name : Name ) : Name { if ( name ) { return true ; } return true ; }

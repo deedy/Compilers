@@ -1,0 +1,1 @@
+fun name ( name : Name < Name > ) : Name { name := 0 ; for ( name : name ) { name := name + name ; } return name ; } name := name ( 0 .. 0 ) ; name := name ( 0 << 0 ) ; name := name ( 0 <. 0 ) ; name := name ( 0 .< 0 ) ; if ( name >= name & name < name & name > name & name <= name ) { return "" ; }

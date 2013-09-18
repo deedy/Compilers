@@ -1,0 +1,15 @@
+# Mapper
+
+interface Mapper<T,S>
+{
+  fun map(it : Iterable<T>) : List<S>
+  {
+    out := [];
+    for(t in it)
+    {
+      out := [elemmap(t)] ++ out;
+    }
+    return out;
+  }
+  fun elemmap(elem : T) : S;
+}

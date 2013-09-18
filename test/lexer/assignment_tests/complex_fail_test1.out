@@ -1,0 +1,1 @@
+interface Name < Name , Name > { fun name ( name : Name < Name > ) : Name < Name > { name := [ ] ; for ( name in name ) { name := [ name ( name ) ] ++ name ; } return name ; } fun name ( name : Name ) : Name ; }
