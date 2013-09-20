@@ -5,4 +5,10 @@
 *.ear
 
 # Tokens
-*.token
+*.tokens
+
+# antlr generated files
+**/CubexLexer.java
+**/CubexParser.java
+**/CubexParserBaseListener.java
+**/CubexParserListener.java
