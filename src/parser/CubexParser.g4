@@ -36,7 +36,7 @@ statement : LBRACE statement* RBRACE
 	| FOR LPAREN vname IN expr RPAREN statement
 	| RETURN expr SEMICOLON;
 
-fundef : vname typescheme;
+fundef : FUN vname typescheme;
 
 interfacedef : 
 	INTERFACE cname LANGLE kcont RANGLE 
