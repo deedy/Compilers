@@ -47,3 +47,8 @@ classdef :
 	EXTENDS type LBRACE statement* SUPER exprs SEMICOLON
 	(fundef statement)* RBRACE;
 
+prog : statement
+	| statement+ prog
+	| (fundef statement)+ prog
+	| interfacedef prog
+	| classdef prog;
