@@ -46,7 +46,9 @@ public class CubexLexerProg {
             if (rule.equals("NAME")) {
                 output.append("name ");
             } else if (rule.equals("CLASSNAME")
-             || rule.equals("TYPEPARAM")) {
+            || rule.equals("TYPEPARAM")
+            || rule.equals("THING")
+            || rule.equals("NOTHING")) {
                 output.append("Name ");
             } else if (rule.equals("STRING")) {
                 output.append("\"\" ");

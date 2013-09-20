@@ -14,3 +14,7 @@ kcont : pname? (COMMA pname)*;
 
 tcont : (vname COLON CLASSNAME)? (COMMA vname COLON CLASSNAME)*;
 
+type : vname 
+	| cname LANGLE type? (COMMA type)* RANGLE
+	| type AND type
+	| THING | NOTHING;
