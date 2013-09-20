@@ -42,7 +42,8 @@ LSQUARE : '[';
 RSQUARE : ']';
 
 BOOL : 'true' | 'false'; 
-TYPE : [A-Z][a-zA-Z0-9_]*; 
+TYPEPARAM : [A-Z];
+CLASSNAME : [A-Z][a-zA-Z0-9_]+; 
 NAME : [a-z][a-zA-Z0-9_]*;
 WS : [ \t\n\r]+ -> skip;
 INT : ([1-9][0-9]*|[0]);

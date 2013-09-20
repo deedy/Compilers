@@ -45,7 +45,8 @@ public class CubexLexerProg {
             String rule = lex.ruleNames[token.getType()-1];
             if (rule.equals("NAME")) {
                 output.append("name ");
-            } else if (rule.equals("TYPE")) {
+            } else if (rule.equals("CLASSNAME")
+             || rule.equals("TYPEPARAM")) {
                 output.append("Name ");
             } else if (rule.equals("STRING")) {
                 output.append("\"\" ");
