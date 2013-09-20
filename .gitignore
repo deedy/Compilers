@@ -12,3 +12,6 @@
 **/CubexParser.java
 **/CubexParserBaseListener.java
 **/CubexParserListener.java
+
+# built things
+build/*
