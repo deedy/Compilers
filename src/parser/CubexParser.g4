@@ -10,3 +10,7 @@ cname returns [CubexCName cn]
 pname returns [CubexPName cn]
 	: TYPEPARAM { $cn =  new CubexPName($TYPEPARAM.text); };
 
+kcont : pname? (COMMA pname)*;
+
+tcont : (vname COLON CLASSNAME)? (COMMA vname COLON CLASSNAME)*;
+
