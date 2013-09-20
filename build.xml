@@ -25,6 +25,13 @@
             <arg path="src/lexer"/>
             <arg path="src/lexer/CubexLexer.g4"/>
         </java>
+        <java classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+            <arg value="-lib"/>
+            <arg path="src/lexer"/>
+            <arg value="-o"/>
+            <arg path="src/parser"/>
+            <arg path="src/parser/CubexParser.g4"/>
+        </java>
     </target>
      
     <target name="compile" depends="antlr" description="compile">
@@ -67,9 +74,15 @@
         </jar>
     </target>
 
-    <target name="test">
+    <target name="test_lexer">
         <java classname="LexerAssignmentTest" fork="true" dir="build/classes">
             <arg line="../../test/lexer/assignment_tests/"/>
+        </java>
+    </target>
+
+    <target name="test_parser">
+        <java classname="ParserAssignmentTest" fork="true" dir="build/classes">
+            <arg line="../../test/parser/assignment_tests/"/>
         </java>
     </target>
 
