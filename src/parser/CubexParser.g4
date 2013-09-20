@@ -18,3 +18,15 @@ type : vname
 	| cname LANGLE type? (COMMA type)* RANGLE
 	| type AND type
 	| THING | NOTHING;
+
+typescheme : LANGLE kcont RANGLE LPAREN tcont RPAREN COLON type;
+
+// TODO
+expr : PLUSPLUS;
+
+statement : LBRACE statement* RBRACE
+	| vname ASSIGN expr ';'
+	| IF LPAREN expr RPAREN statement ELSE statement
+	| WHILE LPAREN expr RPAREN statement
+	| FOR LPAREN vname IN expr RPAREN statement
+	| RETURN expr ';'; 
