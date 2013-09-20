@@ -66,7 +66,7 @@
         <mkdir dir="build/jar"/>
         <jar destfile="build/jar/Cubex.jar">
             <manifest>
-                <attribute name="Main-Class" value="CubexLexerProg"/>
+                <attribute name="Main-Class" value="CubexParserProg"/>
             </manifest>
             <fileset dir="build/classes" includes="**/*.class" />
             <fileset dir="src" includes="**/*.java **/*.g4" />
