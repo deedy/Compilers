@@ -8,10 +8,10 @@
 *.tokens
 
 # antlr generated files
-**/CubexLexer.java
-**/CubexParser.java
-**/CubexParserBaseListener.java
-**/CubexParserListener.java
+src/lexer/CubexLexer.java
+src/parser/CubexParser.java
+src/parser/CubexParserBaseListener.java
+src/parser/CubexParserListener.java
 
 # built things
 build/*
