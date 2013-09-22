@@ -46,6 +46,14 @@ class CubexMethodCall extends CubexExpression {
         exprList = el;
     }
 
+    // constructor for desugaring unary prefixes
+    public CubexMethodCall(CubexExpression e, String s) {
+        expr = e;
+        name = new CubexVName(s);
+        typeList = new ArrayList<CubexType>();
+        exprList = new ArrayList<CubexExpression>();
+    }
+    
     // constructor for desugaring binary operators
     public CubexMethodCall(CubexExpression e, String s, CubexExpression f) {
         expr = e;

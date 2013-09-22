@@ -56,10 +56,16 @@ expr returns [CubexExpression cu]
     | BOOL { $cu = new CubexBoolean($BOOL.text); }
     | INT { $cu = new CubexInt($INT.int); }
     | STRING { $cu = new CubexString($STRING.text); }
+    // unary prefixes
+    | MINUS e=expr { $cu = new CubexMethodCall($e.cu, "negative");}
+    | NEGATE e=expr { $cu = new CubexMethodCall($e.cu, "negate");}
     // binary operators
-    | e1=expr PLUS e2=expr {
-    	$cu = new CubexMethodCall($e1.cu, "plus", $e2.cu);
-    };
+    | e1=expr TIMES e2=expr { $cu = new CubexMethodCall($e1.cu, "times", $e2.cu); }
+    | e1=expr DIVIDE e2=expr { $cu = new CubexMethodCall($e1.cu, "divide", $e2.cu); }
+    | e1=expr MODULO e2=expr { $cu = new CubexMethodCall($e1.cu, "modulo", $e2.cu); }
+    | e1=expr PLUS e2=expr { $cu = new CubexMethodCall($e1.cu, "plus", $e2.cu); }
+    | e1=expr MINUS e2=expr { $cu = new CubexMethodCall($e1.cu, "minus", $e2.cu); };
+
 
 exprs returns [List<CubexExpression> cu] 
     : { $cu = new ArrayList<CubexExpression>(); }
