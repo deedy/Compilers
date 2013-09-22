@@ -27,7 +27,7 @@ public class ParserAssignmentTest {
 				CommonTokenStream tokens = new CommonTokenStream(lex);
 				CubexParser par = new CubexParser(tokens);
 				// lex the string 
-				String parsed = prog.assignment2(par);
+				String parsed = prog.assignment2(lex, par);
 
 				// compare to the outfile
 				File outfile = new File(split[0] + ".out");
