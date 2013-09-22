@@ -22,6 +22,7 @@ public class CubexParserProg {
         StringBuilder output = new StringBuilder();
         parser.setBuildParseTree(true);
         ParserRuleContext tree = parser.prog();
+        tree.inspect(parser);
         // List<ParseTree> l = parser.prog().children;
         // if(l.size() > 0){
         //     output.append(l.get(0));
@@ -32,7 +33,23 @@ public class CubexParserProg {
         //     }
         // }
         // return output.toString();
+        traverse(tree);
         return tree.toStringTree(parser);
+    }
+
+    public static void traverse(ParserRuleContext tree) {
+        System.out.printn
+        for (ParseTree pt : tree.children) {
+            System.out.println("TREE");
+            traverseTree(0,pt);
+        }
+    }
+
+    public static void traverseTree(int  j, ParseTree t) {
+        System.out.println(j+"\t"+t.getText()+"\t");
+        for (int i = 0;i < t.getChildCount(); i++) {
+            traverseTree(j+1, t.getChild(i));
+        }
     }
 
     public static boolean hasLexerError(CubexLexer lex) {
