@@ -1,5 +1,9 @@
 public abstract class CubexName {
 	String name;
+
+	public String toString(){
+		return name;
+	}
 }
 
 // variable / function / method name

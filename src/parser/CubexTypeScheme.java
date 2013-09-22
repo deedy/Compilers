@@ -12,4 +12,11 @@ public class CubexTypeScheme {
         tCont = tc;
         type = t;
 	}
+
+    public String toString() {
+    	return String.format("< %s > ( %s ) : %s", 
+    						kCont.toString(), 
+    						tCont.toString(),
+    						type.toString());
+    }
 }

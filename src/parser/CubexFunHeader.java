@@ -5,4 +5,8 @@ public class CubexFunHeader {
         name = n;
         scheme = s;
     }
+
+    public String toString() {
+ 		return String.format("fun %s %s", name, scheme.toString());   	
+    }
 }
