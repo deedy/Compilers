@@ -11,15 +11,6 @@ public class CubexKindContext {
 	}
 
     public String toString() {
-    	StringBuilder build = new StringBuilder();
-    	if(params.size() > 0){
-    		build.append(params.get(0).toString());
-    		for(int i = 1; i < params.size(); i++) {
-    			String s = params.get(i).toString();
-    			String t = String.format(" , %s", s);
-    			build.append(t);
-    		}
-    	}
-    	return build.toString();
+        return ListPrinter.listToString(params, " , ");
     }
 }

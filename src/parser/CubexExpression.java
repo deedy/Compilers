@@ -1,4 +1,4 @@
-import java.util.Collection;
+import java.util.List;
 import java.util.ArrayList;
 
 public class CubexExpression {
@@ -7,12 +7,19 @@ public class CubexExpression {
 
 class CubexFunctionCall extends CubexExpression {
     private CubexName name;
-    private Collection<CubexType> typeList;
-    private Collection<CubexExpression> exprList;
-    public CubexFunctionCall(CubexName n, Collection<CubexType>  tl, Collection<CubexExpression> el) {
+    private List<CubexType> typeList;
+    private List<CubexExpression> exprList;
+    public CubexFunctionCall(CubexName n, List<CubexType> tl, List<CubexExpression> el) {
         name = n;
         typeList = tl;
         exprList = el;
+    }
+
+    public String toString() {
+        String n = name.toString();
+        String tl = ListPrinter.listToString(typeList, " , ");
+        String el = ListPrinter.listToString(exprList, " , ");
+        return String.format("%s < %s > ( %s )", n, tl, el);
     }
 }
 
@@ -21,14 +28,18 @@ class CubexVar extends CubexExpression {
     public CubexVar(CubexVName n) {
         name = n;
     }
+
+    public String toString() {
+        return name.toString();
+    }
 }
 
 class CubexMethodCall extends CubexExpression {
     private CubexExpression expr;
     private CubexName name;
-    private Collection<CubexType> typeList;
-    private Collection<CubexExpression> exprList;
-    public CubexMethodCall(CubexExpression e, CubexName n, Collection<CubexType>  tl, Collection<CubexExpression> el) {
+    private List<CubexType> typeList;
+    private List<CubexExpression> exprList;
+    public CubexMethodCall(CubexExpression e, CubexName n, List<CubexType>  tl, List<CubexExpression> el) {
         expr = e;
         name = n;
         typeList = tl;
@@ -43,6 +54,14 @@ class CubexMethodCall extends CubexExpression {
         exprList = new ArrayList<CubexExpression>();
         exprList.add(f);
     }
+
+    public String toString() {
+        String e = expr.toString();
+        String n = name.toString();
+        String tl = ListPrinter.listToString(typeList, " , ");
+        String el = ListPrinter.listToString(exprList, " , ");
+        return String.format("%s . %s < %s > ( %s )", e, n, tl, el);
+    }
 }
 
 class CubexAppend extends CubexExpression {
@@ -52,12 +71,23 @@ class CubexAppend extends CubexExpression {
         left = l;
         right = r;
     }
+
+    public String toString() {
+        String l = left.toString();
+        String r = right.toString();
+        return String.format("%s ++ %s", l, r);
+    }
 }
 
 class CubexArray extends CubexExpression {
-    private Collection<? extends CubexExpression> mElements;
-    public CubexArray(Collection<CubexExpression> elems) {
+    private List<? extends CubexExpression> mElements;
+    public CubexArray(List<CubexExpression> elems) {
         mElements = elems;
+    }
+
+    public String toString() {
+        String elems = ListPrinter.listToString(mElements, " , ");
+        return String.format("[ %s ]", elems);
     }
 }
 
@@ -66,6 +96,10 @@ class CubexBoolean extends CubexExpression {
     public CubexBoolean(String b) {
         bool = b;
     }
+
+    public String toString() {
+        return bool;
+    }
 }
 
 class CubexInt extends CubexExpression {
@@ -73,11 +107,19 @@ class CubexInt extends CubexExpression {
     public CubexInt(int i) {
         num = i;
     }
+
+    public String toString() {
+        return String.format("%d", num);
+    }
 }
 
 class CubexString extends CubexExpression {
     private String str;
     public CubexString(String s) {
         str = s;
+    }
+
+    public String toString() {
+        return str;
     }
 }

@@ -13,17 +13,29 @@ public class CubexType {
 class Nothing extends CubexType {
 	public Nothing(){
 	}
+
+	public String toString() {
+		return "Nothing";
+	}
 }
 
 class Thing extends CubexType {
 	public Thing(){
 	}
+
+	public String toString() {
+		return "Thing";	
+	}	
 }
 class CubexPType extends CubexType{
 	CubexPName name;
 	// accept a type name
 	public CubexPType(CubexPName n){
 		name = n;
+	}
+
+	public String toString() {
+		return name.toString();	
 	}
 }
 
@@ -35,6 +47,11 @@ class CubexCType extends CubexType{
 		name = n;
 		params = l;
 	}
+
+	public String toString() {
+		String l = ListPrinter.listToString(params, " , ");
+		return String.format("%s < %s >", name.toString(), l);	
+	}
 }
 
 class CubexIType extends CubexType{
@@ -43,6 +60,10 @@ class CubexIType extends CubexType{
 	public CubexIType(CubexType a, CubexType b){
 		this.a = a;
 		this.b = b;
+	}
+
+	public String toString() {
+		return String.format("%s & %s", a.toString(), b.toString());
 	}
 
 }
