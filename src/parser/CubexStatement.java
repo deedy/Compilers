@@ -1,12 +1,18 @@
-import java.util.Collection;
+import java.util.List;
 
 public abstract class CubexStatement {
 }
 
 class CubexBlock extends CubexStatement {
-    private Collection<CubexStatement> stmts;
-    public CubexBlock(Collection<CubexStatement> s) {
+    private List<CubexStatement> stmts;
+    public CubexBlock(List<CubexStatement> s) {
         stmts = s;
+    }
+
+
+    public String toString() {
+        String s = ListPrinter.listToString(stmts, " ");
+        return String.format("{ %s }", s);
     }
 }
 
@@ -16,6 +22,12 @@ class CubexAssign extends CubexStatement {
     public CubexAssign(CubexName n, CubexExpression e) {
         name = n;
         expr = e;
+    }
+
+    public String toString() {
+        String n = name.toString();
+        String e = expr.toString();
+        return String.format("%s := %s ;", n, e);
     }
 }
 
@@ -27,6 +39,13 @@ class CubexConditional extends CubexStatement {
         expr = e;
         stmt1 = s1;
         stmt2 = s2;
+    }
+
+    public String toString() {
+        String e = expr.toString();
+        String s1 = stmt1.toString();
+        String s2 = stmt2.toString();
+        return String.format("if ( %s ) %s else %s", e, s1, s2);
     }
 }
 
