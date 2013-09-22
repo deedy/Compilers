@@ -29,6 +29,21 @@ exprs : LPAREN expr? (COMMA expr)* RPAREN;
 // TODO
 expr : PLUSPLUS;
 
+expr returns [CubexExpression cu]
+    : NAME { $cu = new CubexVariable($NAME.text); }
+    | l=expr ++ r=expr
+    | LSQUARE list=exprs RSQUARE { $cu = new CubexArray($list.cu)}
+    | TRUE { $cu = new CubexBoolean(true); }
+    | FALSE { $cu = new CubexBoolean(false); }
+    | INTEGER { $cu = new CubexInteger($INTEGER.int); }
+    | STRING { $cu = new CubexString($STRING.text); }
+
+exprs returns [List<CubexExpression> cu] 
+    : { $xi = new ArrayList<CubexExpression>(); }
+                                        (e=expr { $cu.add($e.cu); }
+                                         (COMMA e=expr { $cu.add($e.cu); })*
+                                        )?;
+
 statement : LBRACE statement* RBRACE
 	| vname ASSIGN expr SEMICOLON
 	| IF LPAREN expr RPAREN statement ELSE statement
