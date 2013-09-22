@@ -23,16 +23,18 @@ public class CubexParserProg {
         parser.setBuildParseTree(true);
         // ParserRuleContext tree = parser.progs();
         // tree.inspect(parser);
-        List<ParseTree> l = parser.progs().children;
-        if(l.size() > 0){
-            output.append(l.get(0));
-            for(int i = 1; i < l.size(); i++){
-                ParseTree s = l.get(i);
-                output.append(" ");
-                output.append(s.toString());
-            }
-        }
-        return output.toString();
+        // List<ParseTree> l = parser.progs().children;
+        // if(l.size() > 0){
+        //     output.append(l.get(0));
+        //     for(int i = 1; i < l.size(); i++){
+        //         ParseTree s = l.get(i);
+        //         output.append(" ");
+        //         output.append(s.toString());
+        //     }
+        // }
+        // return output.toString();
+        CubexProgs progs = parser.prog().cu;
+        return progs.toString();
 
 
         // traverse(tree);

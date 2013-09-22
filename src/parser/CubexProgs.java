@@ -5,6 +5,9 @@ public class CubexProgs{
 	public CubexProgs(List<CubexProg> l){
 		progs = l;
 	}
+	public String toString(){
+		return "You found me!";
+	}
 }
 
 class CubexProg {

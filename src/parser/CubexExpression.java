@@ -1,4 +1,5 @@
 import java.util.Collection;
+import java.util.ArrayList;
 
 public class CubexExpression {
 
@@ -32,6 +33,15 @@ class CubexMethodCall extends CubexExpression {
         name = n;
         typeList = tl;
         exprList = el;
+    }
+
+    // constructor for desugaring binary operators
+    public CubexMethodCall(CubexExpression e, String s, CubexExpression f) {
+        expr = e;
+        name = new CubexVName(s);
+        typeList = new ArrayList<CubexType>();
+        exprList = new ArrayList<CubexExpression>();
+        exprList.add(f);
     }
 }
 

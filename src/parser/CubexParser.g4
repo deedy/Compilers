@@ -55,7 +55,11 @@ expr returns [CubexExpression cu]
     | LSQUARE list=exprs RSQUARE { $cu = new CubexArray($list.cu); }
     | BOOL { $cu = new CubexBoolean($BOOL.text); }
     | INT { $cu = new CubexInt($INT.int); }
-    | STRING { $cu = new CubexString($STRING.text); };
+    | STRING { $cu = new CubexString($STRING.text); }
+    // binary operators
+    | e1=expr PLUS e2=expr {
+    	$cu = new CubexMethodCall($e1.cu, "plus", $e2.cu);
+    };
 
 exprs returns [List<CubexExpression> cu] 
     : { $cu = new ArrayList<CubexExpression>(); }
