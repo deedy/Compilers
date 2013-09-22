@@ -32,6 +32,7 @@ public class CubexParserProg {
         //     }
         // }
         // return output.toString();
+
         return tree.toStringTree(parser);
     }
 
