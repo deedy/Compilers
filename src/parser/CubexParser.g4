@@ -16,9 +16,16 @@ vcname returns [CubexName cu]
 	: cname
 	| vname;
 
-kcont : pname? (COMMA pname)*;
-
-tcont : (vname COLON CLASSNAME)? (COMMA vname COLON CLASSNAME)*;
+kcont returns [List<CubexPName> cu] 
+    : { $cu = new ArrayList<CubexPName>(); }
+                                        (p=pname { $cu.add($p.cu); }
+                                         (COMMA p=pname { $cu.add($p.cu); })*
+                                        )?; 
+tcont returns [CubexTypeContext cu]
+    : { $cu = new CubexTypeContext(); }
+                                        (v=vname COLON t=type { $cu.add($v.cu, $t.cu); }
+                                         (COMMA v=vname COLON t=type { $cu.add($v.cu, $t.cu); })*
+                                        )?; 
 
 type returns [CubexType cu]
 	: p=pname { $cu = new CubexType($p.cu); }
@@ -34,7 +41,9 @@ types returns [List<CubexType> cu]
                                          (COMMA t=type { $cu.add($t.cu); })*
                                         )?; 
 
-typescheme : LANGLE kcont RANGLE LPAREN tcont RPAREN COLON type;
+typescheme returns [CubexTypeScheme cu]
+	: LANGLE k=kcont RANGLE LPAREN tc=tcont RPAREN COLON t=type
+		{ $cu = new CubexTypeScheme($k.cu, $tc.cu, $t.cu); };
 
 expr returns [CubexExpression cu]
     : n=vname { $cu = new CubexVar($n.cu); }
@@ -74,16 +83,36 @@ statements returns [List<CubexStatement> cu]
                                          (s=statement { $cu.add($s.cu); })*
                                         )?;
 
-fundef : FUN vname typescheme;
+funheader returns [CubexFunHeader cu]
+	: FUN v=vname t=typescheme
+		{ $cu = new CubexFunHeader($v.cu, $t.cu); };
 
-interfacedef : 
-	INTERFACE cname LANGLE kcont RANGLE 
-	EXTENDS type LBRACE (fundef SEMICOLON)* RBRACE;
+funheaders returns [List<CubexFunHeader> cu] 
+    : { $cu = new ArrayList<CubexFunHeader>(); }
+                                        (c=funheader { $cu.add($c.cu); }
+                                         (SEMICOLON c=funheader { $cu.add($c.cu); })*
+                                        )?;
 
-classdef : 
-	CLASS cname LANGLE kcont RANGLE LPAREN tcont RPAREN
-	EXTENDS type LBRACE statement* SUPER exprs SEMICOLON
-	(fundef statement)* RBRACE;
+fundef returns [CubexFunction cu]
+	: FUN v=vname t=typescheme s=statement
+		{ $cu = new CubexFunction($v.cu, $t.cu, $s.cu); };
+
+funsdef returns [List<CubexFunction> cu] 
+    : { $cu = new ArrayList<CubexFunction>(); }
+                                        (c=fundef { $cu.add($c.cu); }
+                                         (SEMICOLON c=fundef { $cu.add($c.cu); })*
+                                        )?;
+
+interfacedef returns [CubexInterface cu]
+	: INTERFACE c=cname LANGLE k=kcont RANGLE 
+	EXTENDS t=type LBRACE f=funheaders RBRACE
+		{ $cu = new CubexInterface($c.cu, $k.cu, $t.cu, $f.cu); };
+
+classdef returns [CubexClass cu]: 
+	CLASS c=cname LANGLE k=kcont RANGLE LPAREN t=tcont RPAREN
+	EXTENDS ty=type LBRACE s=statements SUPER e=exprs SEMICOLON
+	funsdef RBRACE
+		{ $cu = new CubexClass($c.cu, $k.cu, $t.cu, $ty.cu, $s.cu, $e.cu); };
 
 prog : statement
 	| statement+ prog
