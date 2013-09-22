@@ -12,7 +12,7 @@ class CubexBlock extends CubexStatement {
 
     public String toString() {
         String s = ListPrinter.listToString(stmts, " ");
-        return String.format("{ %s }", s);
+        return String.format("{ %s}", ListPrinter.nullify(s));
     }
 }
 
@@ -45,7 +45,7 @@ class CubexConditional extends CubexStatement {
         String e = expr.toString();
         String s1 = stmt1.toString();
         String s2 = stmt2.toString();
-        return String.format("if ( %s ) %s else %s", e, s1, s2);
+        return String.format("if ( %s) %s else %s", e, s1, s2);
     }
 }
 

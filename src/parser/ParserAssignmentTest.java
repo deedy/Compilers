@@ -12,14 +12,15 @@ public class ParserAssignmentTest {
     	File folder = new File(args[0]);
 		File[] listOfFiles = folder.listFiles();
 		Arrays.sort(listOfFiles);
+		// create the program
+		CubexParserProg prog = new CubexParserProg();
+
 		// iterate over files that end in .in
 		for(File f : listOfFiles){
 			if(!f.isFile()){
 				continue;
 			}
 			String[] split = f.getPath().split("\\.(?=[^\\.]+$)");
-			// create the program
-			CubexParserProg prog = new CubexParserProg();
 			if(split[1].equals("in")){
 				// create a lexer
 				CubexLexer lex = new CubexLexer(new ANTLRFileStream(f.getPath()));

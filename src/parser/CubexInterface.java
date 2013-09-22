@@ -17,6 +17,9 @@ public class CubexInterface {
         String k = ListPrinter.listToString(kCont, " , ");
         String t = type.toString();
         String f = ListPrinter.listToString(funList, " ; ");
-        return String.format("interface %s < %s > extends %s { %s }", n, k, t, f);
+        return String.format("interface %s < %s> extends %s { %s}", 
+                            n, ListPrinter.nullify(k),
+                            ListPrinter.nullify(t),
+                            ListPrinter.nullify(f));
     }
 }

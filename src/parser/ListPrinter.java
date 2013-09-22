@@ -17,4 +17,24 @@ public class ListPrinter {
     	}
     	return build.toString();
 	}
+
+	public static String enclose(String open, String s, String close) {
+		if(!s.equals("")){
+			s = s + " ";
+		}
+		return String.format("%s %s%s", open, s, close);
+	}
+
+	public static String listEnclose(List<?> l, String open, String close, String sep)
+	{
+		String s = listToString(l, sep);
+		return enclose(open, s, close);
+	}
+
+	public static String nullify(String s) {
+		if(!s.equals("")){
+			s += " ";
+		}
+		return s;
+	}
 }

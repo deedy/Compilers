@@ -14,9 +14,12 @@ public class CubexTypeScheme {
 	}
 
     public String toString() {
-    	return String.format("< %s > ( %s ) : %s", 
-    						ListPrinter.listToString(kCont, " , "), 
-    						tCont.toString(),
-    						type.toString());
+        String k = ListPrinter.listToString(kCont, " , ");
+        String tc = tCont.toString();
+        String t = type.toString();
+    	return String.format("< %s> ( %s) : %s", 
+    						ListPrinter.nullify(k), 
+    						ListPrinter.nullify(tc),
+    						t);
     }
 }

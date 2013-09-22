@@ -19,7 +19,7 @@ class CubexFunctionCall extends CubexExpression {
         String n = name.toString();
         String tl = ListPrinter.listToString(typeList, " , ");
         String el = ListPrinter.listToString(exprList, " , ");
-        return String.format("%s < %s > ( %s )", n, tl, el);
+        return String.format("%s < %s> ( %s)", n, ListPrinter.nullify(tl), ListPrinter.nullify(el));
     }
 }
 
@@ -60,7 +60,10 @@ class CubexMethodCall extends CubexExpression {
         String n = name.toString();
         String tl = ListPrinter.listToString(typeList, " , ");
         String el = ListPrinter.listToString(exprList, " , ");
-        return String.format("%s . %s < %s > ( %s )", e, n, tl, el);
+        return String.format("%s . %s < %s> ( %s)", 
+                            e, n,
+                            ListPrinter.nullify(tl),
+                            ListPrinter.nullify(el));
     }
 }
 
@@ -87,7 +90,7 @@ class CubexArray extends CubexExpression {
 
     public String toString() {
         String elems = ListPrinter.listToString(mElements, " , ");
-        return String.format("[ %s ]", elems);
+        return String.format("[ %s]", ListPrinter.nullify(elems));
     }
 }
 

@@ -29,7 +29,13 @@ public class CubexClass {
         String s = ListPrinter.listToString(stmt, " ");
         String e = ListPrinter.listToString(expr, " , ");
         String f = ListPrinter.listToString(funcs, " ");
-        return String.format("class %s < %s > ( %s ) extends %s { %s super ( %s ) ; %s }",
-                            n, k, t, ty, s, e, f);
+        return String.format("class %s < %s> ( %s) extends %s { %ssuper ( %s) ; %s}",
+                            n, 
+                            ListPrinter.nullify(k), 
+                            ListPrinter.nullify(t),
+                            ty, 
+                            ListPrinter.nullify(s),
+                            ListPrinter.nullify(e),
+                            ListPrinter.nullify(f));
     }
 }
