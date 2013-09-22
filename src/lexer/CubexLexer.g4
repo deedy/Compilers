@@ -51,7 +51,7 @@ WS : [ \t\n\r]+ -> skip;
 INT : ([1-9][0-9]*|[0]);
 // Need to add support for ''
 COMMENT : (SINGLELINECOMMENT | MULTILINECOMMENT) -> skip;
-STRING : '"' ( ~[\"\n] )* '"';
+STRING : '"' ( ~[\"\n\r] )* '"';
 
 SINGLELINECOMMENT : '#' ~[\r\n]* -> skip;
 MULTILINECOMMENT : '`' (MULTILINECOMMENT|  ~[`\'] )* '\'';
