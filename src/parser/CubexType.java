@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 
 // t ::= v_p | v_c <t,...,t> | t & t | thing | nothing
-public abstract class CubexType {
+public class CubexType {
 	// accept a type name
 	public CubexType(CubexPName n){
 	}
@@ -15,4 +15,6 @@ public abstract class CubexType {
 	// accept intersection of two types
 	public CubexType(CubexType a, CubexType b){
 	}
+
+    public CubexType() {}
 }
