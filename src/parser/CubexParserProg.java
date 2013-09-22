@@ -33,8 +33,14 @@ public class CubexParserProg {
         //     }
         // }
         // return output.toString();
-        CubexProgs progs = parser.prog().cu;
-        return progs.toString();
+        try {
+            CubexProgs progs = parser.prog().cu;
+            return progs.toString();
+        } catch(Exception e){
+            System.out.println("Error:");
+            System.out.println(e);
+            return "parser error";
+        }
 
 
         // traverse(tree);

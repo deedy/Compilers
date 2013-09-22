@@ -32,22 +32,24 @@ public class ParserAssignmentTest {
 				// compare to the outfile
 				File outfile = new File(split[0] + ".out");
 				try{
+					System.out.printf("\nRunning test %s\n", f.getPath());
 					String expected = readFileAsString(outfile.getPath());
 					if(expected.equals(parsed)){
 						// test passed
 						System.out.printf("Test %s passed\n", f.getPath());
 					} else {
 						// test failed
-						System.out.printf("\nTest %s failed\n", f.getPath());
+						System.out.printf("Test %s failed\n", f.getPath());
 						// read the infile
 						String infile = readFileAsString(f.getPath());
 						System.out.printf("Input stream:\n%s\n", infile);
 						System.out.printf("Expected:\t%s\n", expected);
-						System.out.printf("Recieved:\t%s\n\n", parsed);
+						System.out.printf("Recieved:\t%s\n", parsed);
 					}
 				} catch(IOException e){
 					System.out.printf("Exception reading file %s\n", outfile.toString());
 				}
+				System.out.println("");
 			}
 		}
     }

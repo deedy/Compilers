@@ -4,7 +4,10 @@ import java.util.List;
 public class ListPrinter {
 	public static String listToString(List<?> l, String sep) {
 		StringBuilder build = new StringBuilder();
-    	if(l.size() > 0){
+		if(l.size() == 1){
+			build.append(l.get(0).toString());
+		}
+    	if(l.size() > 1){
     		build.append(l.get(0).toString());
     		for(int i = 1; i < l.size(); i++) {
     			String s = l.get(i).toString();

@@ -56,6 +56,12 @@ class CubexWhileLoop extends CubexStatement {
         expr = e;
         stmt = s;
     }
+
+    public String toString() {
+        String e = expr.toString();
+        String s = stmt.toString();
+        return String.format("while ( %s ) %s", e, s);
+    }
 }
 
 class CubexForLoop extends CubexStatement {
@@ -67,11 +73,23 @@ class CubexForLoop extends CubexStatement {
         expr = e;
         stmt = s;
     }
+
+    public String toString() {
+        String n = name.toString();
+        String e = expr.toString();
+        String s = stmt.toString();
+        return String.format("for ( %s in %s ) %s", n, e, s);   
+    }
 }
 
 class CubexReturn extends CubexStatement {
     private CubexExpression expr;
     public CubexReturn(CubexExpression e) {
         expr = e;
+    }
+
+    public String toString() {
+        String e = expr.toString();
+        return String.format("return %s ;", e);   
     }
 }

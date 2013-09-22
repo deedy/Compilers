@@ -6,7 +6,7 @@ public class CubexProgs{
 		progs = l;
 	}
 	public String toString(){
-		return "You found me!";
+		return ListPrinter.listToString(progs, " ");
 	}
 }
 
@@ -18,12 +18,20 @@ class CubexStatementProg extends CubexProg {
 	public CubexStatementProg(CubexStatement stat){
 		stmt = stat;
 	}
+
+	public String toString() {
+		return stmt.toString();
+	}
 }
 
 class CubexStatementsProg extends CubexProg {
 	public List<CubexStatement> stmts;
 	public CubexStatementsProg(List<CubexStatement> stats){
 		stmts = stats;
+	}
+
+	public String toString() {
+		return ListPrinter.listToString(stmts, " ");
 	}
 }
 
@@ -32,6 +40,10 @@ class CubexFuncsProg extends CubexProg {
 	public CubexFuncsProg(List<CubexFunction> funs){
 		funcs = funs;
 	}
+
+	public String toString() {
+		return ListPrinter.listToString(funcs, " ");
+	}
 }
 
 class CubexInterfaceProg extends CubexProg {
@@ -39,11 +51,19 @@ class CubexInterfaceProg extends CubexProg {
 	public CubexInterfaceProg(CubexInterface inter){
 		intf = inter;
 	}
+
+	public String toString() {
+		return intf.toString();
+	}
 }
 
 class CubexClassProg extends CubexProg {
 	public CubexClass cls;
 	public CubexClassProg(CubexClass clss){
 		cls = clss;
+	}
+
+	public String toString() {
+		return cls.toString();
 	}
 }

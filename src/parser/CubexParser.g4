@@ -115,8 +115,8 @@ interfacedef returns [CubexInterface cu]
 classdef returns [CubexClass cu]: 
 	CLASS c=cname LANGLE k=kcont RANGLE LPAREN t=tcont RPAREN
 	EXTENDS ty=type LBRACE s=statements SUPER e=exprs SEMICOLON
-	funsdef RBRACE
-		{ $cu = new CubexClass($c.cu, $k.cu, $t.cu, $ty.cu, $s.cu, $e.cu); };
+	f=funsdef RBRACE
+		{ $cu = new CubexClass($c.cu, $k.cu, $t.cu, $ty.cu, $s.cu, $e.cu, $f.cu); };
 
 progs returns [List<CubexProg> cu]
 	: { $cu=new ArrayList<CubexProg>(); }
