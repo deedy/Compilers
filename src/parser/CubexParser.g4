@@ -28,12 +28,12 @@ tcont returns [CubexTypeContext cu]
                                         )?; 
 
 type returns [CubexType cu]
-	: p=pname { $cu = new CubexType($p.cu); }
+	: p=pname { $cu = new CubexPType($p.cu); }
 	| c=cname LANGLE t=types RANGLE
-		{ $cu = new CubexType($c.cu, $t.cu); }
-	| t1=type AND t2=type { $cu = new CubexType($t1.cu, $t2.cu); }
-	| THING { $cu = new CubexType(); }
-	| NOTHING { $cu = new CubexType(); };
+		{ $cu = new CubexCType($c.cu, $t.cu); }
+	| t1=type AND t2=type { $cu = new CubexIType($t1.cu, $t2.cu); }
+	| THING { $cu = CubexType.getThing(); }
+	| NOTHING { $cu = CubexType.getNothing(); };
 
 types returns [List<CubexType> cu] 
     : { $cu = new ArrayList<CubexType>(); }
