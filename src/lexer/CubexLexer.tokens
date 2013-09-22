@@ -20,6 +20,7 @@ EQUAL=35
 RETURN=10
 NOTHING=13
 PLUS=19
+ERRORCHAR=52
 SUPER=4
 TYPEPARAM=43
 RANGLE=23
@@ -53,8 +54,8 @@ STRING=49
 '|'=29
 'class'=2
 '>='=25
-'/'=17
 '=='=26
+'/'=17
 ':='=30
 '>'=23
 'fun'=5

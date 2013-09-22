@@ -32,9 +32,6 @@ public class CubexLexerProg {
     }
 
     public static String assignment1(CubexLexer lex) {
-        lex.removeErrorListeners();
-        ErrorListener el = new ErrorListener();
-        lex.addErrorListener(el);
         StringBuilder output = new StringBuilder();
         // consume next token until EOF
         for (Token token = lex.nextToken();
@@ -56,14 +53,13 @@ public class CubexLexerProg {
                 output.append("0 ");
             } else if (rule.equals("BOOL")) {
                 output.append("true ");
+            } else if (rule.equals("ERRORCHAR")) {
+                return "error";
             } else {
                 output.append(token.getText()+" ");
             }
         }
 
-        if (el.hasError) {
-            return "error";
-        }
         if (output.length() > 0 && output.charAt(output.length()-1) == ' ') {
             output.deleteCharAt(output.length()-1);
         }
