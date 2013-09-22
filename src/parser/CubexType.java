@@ -50,7 +50,7 @@ class CubexCType extends CubexType{
 
 	public String toString() {
 		String l = ListPrinter.listToString(params, " , ");
-		return String.format("%s < %s>", ListPrinter.nullify(name.toString()), l);	
+		return String.format("%s < %s>", name.toString(), ListPrinter.nullify(l));	
 	}
 }
 

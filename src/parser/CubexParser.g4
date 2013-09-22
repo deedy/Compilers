@@ -31,6 +31,13 @@ type returns [CubexType cu]
 	: p=pname { $cu = new CubexPType($p.cu); }
 	| c=cname LANGLE t=types RANGLE
 		{ $cu = new CubexCType($c.cu, $t.cu); }
+
+	// type with no params
+	| c=cname {
+		List<CubexType> t = new ArrayList<CubexType>();
+	 	$cu = new CubexCType($c.cu, t); 
+	}
+			
 	| t1=type AND t2=type { $cu = new CubexIType($t1.cu, $t2.cu); }
 	| THING { $cu = CubexType.getThing(); }
 	| NOTHING { $cu = CubexType.getNothing(); };
@@ -43,7 +50,12 @@ types returns [List<CubexType> cu]
 
 typescheme returns [CubexTypeScheme cu]
 	: LANGLE k=kcont RANGLE LPAREN tc=tcont RPAREN COLON t=type
-		{ $cu = new CubexTypeScheme($k.cu, $tc.cu, $t.cu); };
+		{ $cu = new CubexTypeScheme($k.cu, $tc.cu, $t.cu); }
+	// empty type list
+	| LPAREN tc=tcont RPAREN COLON t=type { 
+		ArrayList<CubexPName> kc = new ArrayList<CubexPName>();
+		$cu = new CubexTypeScheme(kc, $tc.cu, $t.cu); 
+	};
 
 expr returns [CubexExpression cu]
     : n=vname { $cu = new CubexVar($n.cu); }
@@ -140,30 +152,50 @@ funheader returns [CubexFunHeader cu]
 
 funheaders returns [List<CubexFunHeader> cu] 
     : { $cu = new ArrayList<CubexFunHeader>(); }
-                                        (c=funheader { $cu.add($c.cu); }
-                                         (SEMICOLON c=funheader { $cu.add($c.cu); })*
+                                        (c=funheader SEMICOLON { $cu.add($c.cu); }
+                                         (c=funheader SEMICOLON { $cu.add($c.cu); })*
                                         )?;
 
 fundef returns [CubexFunction cu]
-	: FUN v=vname t=typescheme s=statement
+	// overide with immediate return statement
+	: FUN v=vname t=typescheme EQUAL e=expr
+	{$cu = new CubexFunction($v.cu, $t.cu, $e.cu); }
+	| FUN v=vname t=typescheme s=statement
 		{ $cu = new CubexFunction($v.cu, $t.cu, $s.cu); };
 
 funsdef returns [List<CubexFunction> cu] 
     : { $cu = new ArrayList<CubexFunction>(); }
                                         (c=fundef { $cu.add($c.cu); }
-                                         (SEMICOLON c=fundef { $cu.add($c.cu); })*
+                                         (c=fundef { $cu.add($c.cu); })*
                                         )?;
 
 interfacedef returns [CubexInterface cu]
-	: INTERFACE c=cname LANGLE k=kcont RANGLE 
-	EXTENDS t=type LBRACE f=funheaders RBRACE
-		{ $cu = new CubexInterface($c.cu, $k.cu, $t.cu, $f.cu); };
+		// no types
+	: { List<CubexPName> kl = new ArrayList<CubexPName>();
+		// no extends
+		CubexType ct = CubexType.getThing();}
+	INTERFACE c=cname 
+	(LANGLE k=kcont RANGLE { kl = $k.cu; })?
+	(EXTENDS t=type { ct = $t.cu; })?
+	LBRACE f=funheaders RBRACE
+	{ $cu = new CubexInterface($c.cu, kl, ct, $f.cu); };
 
-classdef returns [CubexClass cu]: 
-	CLASS c=cname LANGLE k=kcont RANGLE LPAREN t=tcont RPAREN
-	EXTENDS ty=type LBRACE s=statements SUPER e=exprs SEMICOLON
+classdef returns [CubexClass cu]
+		// no types
+	: { List<CubexPName> kl = new ArrayList<CubexPName>();
+		// no extends
+		CubexType ct = CubexType.getThing();
+		// no super 
+		List<CubexExpression> es = new ArrayList<CubexExpression>();}
+	CLASS c=cname 
+	(LANGLE k=kcont RANGLE { kl = $k.cu; })?
+	ty=tcont
+	(EXTENDS t=type { ct = $t.cu; })?
+	LBRACE s=statements 
+	(SUPER e=exprs SEMICOLON { es = $e.cu;})?
 	f=funsdef RBRACE
-		{ $cu = new CubexClass($c.cu, $k.cu, $t.cu, $ty.cu, $s.cu, $e.cu, $f.cu); };
+		{ $cu = new CubexClass($c.cu, kl, $ty.cu, ct, $s.cu, es, $f.cu); };
+
 
 progs returns [List<CubexProg> cu]
 	: { $cu=new ArrayList<CubexProg>(); }
@@ -186,11 +218,13 @@ progs returns [List<CubexProg> cu]
 	}                                  | 
 	c=classdef { 
 		$cu.add(new CubexClassProg($c.cu)); 
-	}                                   )* 
+	}                                   )+
 	// can only logically end with a statement
 	// s=statement { 
 	// 	$cu.add(new CubexStatementProg($s.cu)); 
 	// };
 	;
 prog returns [CubexProgs cu]
-	: p=progs {$cu = new CubexProgs($p.cu);};
+	: p=progs {$cu = new CubexProgs($p.cu);}
+	// catch all, throw error here
+	| . { int n = 1 / 0; };

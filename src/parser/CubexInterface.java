@@ -16,10 +16,10 @@ public class CubexInterface {
         String n = name.toString();
         String k = ListPrinter.listToString(kCont, " , ");
         String t = type.toString();
-        String f = ListPrinter.listToString(funList, " ; ");
+        String f = ListPrinter.listToString(funList, " ");
         return String.format("interface %s < %s> extends %s { %s}", 
                             n, ListPrinter.nullify(k),
-                            ListPrinter.nullify(t),
+                            t,
                             ListPrinter.nullify(f));
     }
 }

@@ -7,6 +7,6 @@ public class CubexFunHeader {
     }
 
     public String toString() {
- 		return String.format("fun %s %s", name, scheme.toString());   	
+ 		return String.format("fun %s %s ;", name, scheme.toString());   	
     }
 }

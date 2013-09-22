@@ -8,6 +8,12 @@ public class CubexFunction {
         body = b;
     }
 
+    // constructor for immediate return
+    public CubexFunction(CubexVName n, CubexTypeScheme s, CubexExpression e) {
+        name = n;
+        scheme = s;
+        body = new CubexReturn(e);
+    }
     public String toString() {
     	String n = name.toString();
     	String s = scheme.toString();

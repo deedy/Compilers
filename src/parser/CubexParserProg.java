@@ -37,8 +37,8 @@ public class CubexParserProg {
             CubexProgs progs = parser.prog().cu;
             return progs.toString();
         } catch(Exception e){
-            System.out.println("Error:");
-            System.out.println(e);
+            // System.out.println("Error:");
+            // System.out.println(e);
             return "parser error";
         }
 
