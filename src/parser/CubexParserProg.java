@@ -21,20 +21,22 @@ public class CubexParserProg {
         // System.out.println("assignment 2 not implemented");
         StringBuilder output = new StringBuilder();
         parser.setBuildParseTree(true);
-        ParserRuleContext tree = parser.prog();
-        tree.inspect(parser);
-        // List<ParseTree> l = parser.prog().children;
-        // if(l.size() > 0){
-        //     output.append(l.get(0));
-        //     for(int i = 1; i < l.size(); i++){
-        //         ParseTree s = l.get(i);
-        //         output.append(" ");
-        //         output.append(s.toString());
-        //     }
-        // }
-        // return output.toString();
-        traverse(tree);
-        return tree.toStringTree(parser);
+        // ParserRuleContext tree = parser.progs();
+        // tree.inspect(parser);
+        List<ParseTree> l = parser.progs().children;
+        if(l.size() > 0){
+            output.append(l.get(0));
+            for(int i = 1; i < l.size(); i++){
+                ParseTree s = l.get(i);
+                output.append(" ");
+                output.append(s.toString());
+            }
+        }
+        return output.toString();
+
+
+        // traverse(tree);
+        // return tree.toStringTree(parser);
     }
 
     public static void traverse(ParserRuleContext tree) {

@@ -40,7 +40,7 @@
         <javac srcdir="src"
             destdir="build/classes"
             deprecation="Yes"
-            listfiles="Yes"
+            listfiles="No"
             includeantruntime="false">
             <classpath>
                 <pathelement path="${java.class.path}"/>
@@ -54,7 +54,7 @@
         <javac srcdir="src"
             destdir="build/classes"
             deprecation="Yes"
-            listfiles="Yes"
+            listfiles="No"
             includeantruntime="false">
             <classpath>
                 <pathelement path="${java.class.path}"/>
