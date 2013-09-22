@@ -38,7 +38,6 @@ public class CubexParserProg {
     }
 
     public static void traverse(ParserRuleContext tree) {
-        System.out.printn
         for (ParseTree pt : tree.children) {
             System.out.println("TREE");
             traverseTree(0,pt);
