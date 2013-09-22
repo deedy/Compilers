@@ -2,6 +2,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import java.lang.StringBuilder;
 import java.util.BitSet;
+import java.util.List;
 
 
 public class CubexParserProg {
@@ -19,10 +20,19 @@ public class CubexParserProg {
         }
         // System.out.println("assignment 2 not implemented");
         StringBuilder output = new StringBuilder();
-        for(ParseTree s : parser.prog().children){
-            output.append(s.toString());
-        }
-        return output.toString();
+        parser.setBuildParseTree(true);
+        ParserRuleContext tree = parser.prog();
+        // List<ParseTree> l = parser.prog().children;
+        // if(l.size() > 0){
+        //     output.append(l.get(0));
+        //     for(int i = 1; i < l.size(); i++){
+        //         ParseTree s = l.get(i);
+        //         output.append(" ");
+        //         output.append(s.toString());
+        //     }
+        // }
+        // return output.toString();
+        return tree.toStringTree(parser);
     }
 
     public static boolean hasLexerError(CubexLexer lex) {
