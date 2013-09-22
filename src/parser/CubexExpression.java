@@ -46,21 +46,70 @@ class CubexMethodCall extends CubexExpression {
         exprList = el;
     }
 
-    // constructor for desugaring unary prefixes
+    // constructor for desugaring unary prefixes and suffixes
     public CubexMethodCall(CubexExpression e, String s) {
         expr = e;
-        name = new CubexVName(s);
+        boolean isRange = false;
+        String b = "";
+        if(s.equals("...")) {
+            b = "true";
+            isRange = true;
+        } else if (s.equals("<..")) {
+            b = "false";
+            isRange = true;
+        } 
         typeList = new ArrayList<CubexType>();
         exprList = new ArrayList<CubexExpression>();
+        if(isRange) {
+            name = new CubexVName("onward");
+            exprList.add(new CubexBoolean(b));
+        } else {
+            name = new CubexVName(s);
+        }
     }
-    
+
     // constructor for desugaring binary operators
     public CubexMethodCall(CubexExpression e, String s, CubexExpression f) {
         expr = e;
-        name = new CubexVName(s);
+        boolean isRange = false;
+        String b1 = "", b2 = "";
+        if(s.equals("..")) {
+            b1 = "true";
+            b2 = "true";
+            isRange = true;
+        } else if (s.equals("<.")) {
+            b1 = "false";
+            b2 = "true";
+            isRange = true;
+        } else if (s.equals(".<")) {
+            b1 = "true";
+            b2 = "false";
+            isRange = true;
+        } else if (s.equals("<<")) {
+            b1 = "false";
+            b2 = "false";
+            isRange = true;
+        } 
         typeList = new ArrayList<CubexType>();
         exprList = new ArrayList<CubexExpression>();
         exprList.add(f);
+        if(isRange){
+            exprList.add(new CubexBoolean(b1));
+            exprList.add(new CubexBoolean(b2));
+            name = new CubexVName("through");
+        } else {
+            name = new CubexVName(s);   
+        }
+    }
+
+    // constructor for ineqaulity operators
+    public CubexMethodCall(CubexExpression e, String n, CubexExpression f, String strict) {
+        expr = e;
+        name = new CubexVName(n);
+        typeList = new ArrayList<CubexType>();
+        exprList = new ArrayList<CubexExpression>();
+        exprList.add(f);
+        exprList.add(new CubexBoolean(strict));
     }
 
     public String toString() {

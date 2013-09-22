@@ -20,7 +20,7 @@ public class CubexParserProg {
         }
         // System.out.println("assignment 2 not implemented");
         StringBuilder output = new StringBuilder();
-        parser.setBuildParseTree(true);
+        // parser.setBuildParseTree(true);
         // ParserRuleContext tree = parser.progs();
         // tree.inspect(parser);
         // List<ParseTree> l = parser.progs().children;

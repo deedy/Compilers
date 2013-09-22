@@ -47,7 +47,6 @@ typescheme returns [CubexTypeScheme cu]
 
 expr returns [CubexExpression cu]
     : n=vname { $cu = new CubexVar($n.cu); }
-    | l=expr PLUSPLUS r=expr { $cu = new CubexAppend($l.cu, $r.cu); }
     | c=vcname LANGLE t=types RANGLE LPAREN es=exprs RPAREN 
     	{ $cu = new CubexFunctionCall($c.cu, $t.cu, $es.cu); }
     | e=expr DOT n=vname LANGLE t=types RANGLE LPAREN es=exprs RPAREN 
@@ -56,15 +55,30 @@ expr returns [CubexExpression cu]
     | BOOL { $cu = new CubexBoolean($BOOL.text); }
     | INT { $cu = new CubexInt($INT.int); }
     | STRING { $cu = new CubexString($STRING.text); }
+
     // unary prefixes
     | MINUS e=expr { $cu = new CubexMethodCall($e.cu, "negative");}
     | NEGATE e=expr { $cu = new CubexMethodCall($e.cu, "negate");}
+
     // binary operators
     | e1=expr TIMES e2=expr { $cu = new CubexMethodCall($e1.cu, "times", $e2.cu); }
     | e1=expr DIVIDE e2=expr { $cu = new CubexMethodCall($e1.cu, "divide", $e2.cu); }
     | e1=expr MODULO e2=expr { $cu = new CubexMethodCall($e1.cu, "modulo", $e2.cu); }
     | e1=expr PLUS e2=expr { $cu = new CubexMethodCall($e1.cu, "plus", $e2.cu); }
-    | e1=expr MINUS e2=expr { $cu = new CubexMethodCall($e1.cu, "minus", $e2.cu); };
+    | e1=expr MINUS e2=expr { $cu = new CubexMethodCall($e1.cu, "minus", $e2.cu); }
+
+    // range operators
+    | e1=expr RANGEOPBINARY e2=expr { $cu = new CubexMethodCall($e1.cu, $RANGEOPBINARY.text, $e2.cu); }
+    | e1=expr RANGEOPUNARY { $cu = new CubexMethodCall($e1.cu, $RANGEOPUNARY.text); }
+
+    // append operator (here for precedence)
+    | l=expr PLUSPLUS r=expr { $cu = new CubexAppend($l.cu, $r.cu); }
+
+    // inequality operators
+    | e1=expr LANGLE e2=expr { $cu = new CubexMethodCall($e1.cu, "lessThan", $e2.cu, "true"); }
+    | e1=expr RANGLE e2=expr { $cu = new CubexMethodCall($e2.cu, "lessThan", $e1.cu, "true"); }
+    | e1=expr LTE e2=expr { $cu = new CubexMethodCall($e1.cu, "lessThan", $e2.cu, "false"); }
+    | e1=expr GTE e2=expr { $cu = new CubexMethodCall($e2.cu, "lessThan", $e1.cu, "false"); };
 
 
 exprs returns [List<CubexExpression> cu] 
