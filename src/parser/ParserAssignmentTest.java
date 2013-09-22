@@ -38,12 +38,12 @@ public class ParserAssignmentTest {
 						System.out.printf("Test %s passed\n", f.getPath());
 					} else {
 						// test failed
-						System.out.printf("Test %s failed\n", f.getPath());
+						System.out.printf("\nTest %s failed\n", f.getPath());
 						// read the infile
 						String infile = readFileAsString(f.getPath());
-						System.out.printf("Input stream: %s\n", infile);
+						System.out.printf("Input stream:\n%s\n", infile);
 						System.out.printf("Expected:\t%s\n", expected);
-						System.out.printf("Recieved:\t%s\n", parsed);
+						System.out.printf("Recieved:\t%s\n\n", parsed);
 					}
 				} catch(IOException e){
 					System.out.printf("Exception reading file %s\n", outfile.toString());
