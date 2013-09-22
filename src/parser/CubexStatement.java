@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.ArrayList;
 
 public abstract class CubexStatement {
 }
@@ -41,11 +42,19 @@ class CubexConditional extends CubexStatement {
         stmt2 = s2;
     }
 
+    // // constructor with no else block
+    // public CubexConditional(CubexExpression e, CubexStatement s1) {
+    //     expr = e;
+    //     stmt1 = s1;
+    //     // else block is empty list
+    //     stmt2 = new CubexBlock(new ArrayList<CubexStatement>());
+    // }
+
     public String toString() {
         String e = expr.toString();
         String s1 = stmt1.toString();
         String s2 = stmt2.toString();
-        return String.format("if ( %s) %s else %s", e, s1, s2);
+        return String.format("if ( %s ) %s else %s", e, s1, s2);
     }
 }
 

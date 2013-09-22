@@ -72,6 +72,8 @@ class CubexMethodCall extends CubexExpression {
     public CubexMethodCall(CubexExpression e, String s, CubexExpression f) {
         expr = e;
         boolean isRange = false;
+        boolean isEq = false;
+        boolean isNeg = false;
         String b1 = "", b2 = "";
         if(s.equals("..")) {
             b1 = "true";
@@ -89,16 +91,32 @@ class CubexMethodCall extends CubexExpression {
             b1 = "false";
             b2 = "false";
             isRange = true;
-        } 
+        } else if(s.equals("==")){
+            isEq = true;
+        } else if(s.equals("!=")){
+            isEq = true;
+            isNeg = true;
+        }
         typeList = new ArrayList<CubexType>();
         exprList = new ArrayList<CubexExpression>();
-        exprList.add(f);
         if(isRange){
             exprList.add(new CubexBoolean(b1));
             exprList.add(new CubexBoolean(b2));
             name = new CubexVName("through");
+            exprList.add(f);
+        } else if (isEq) {
+            if (isNeg) {
+                // create a new method call to the equals
+                expr = new CubexMethodCall(e, "==", f);
+                // make this method call a negate
+                name = new CubexVName("negate");
+            } else {
+                name = new CubexVName("equals");
+                exprList.add(f);
+            }
         } else {
-            name = new CubexVName(s);   
+            name = new CubexVName(s);
+            exprList.add(f);   
         }
     }
 

@@ -56,6 +56,17 @@ expr returns [CubexExpression cu]
     | INT { $cu = new CubexInt($INT.int); }
     | STRING { $cu = new CubexString($STRING.text); }
 
+    // function call with no types
+    | c=vcname LPAREN es=exprs RPAREN { 
+    	ArrayList<CubexType> t = new ArrayList<CubexType>();
+    	$cu = new CubexFunctionCall($c.cu, t, $es.cu); 
+    	}
+
+    // method call with no types
+	| e=expr DOT n=vname LPAREN es=exprs RPAREN { 
+		ArrayList<CubexType> t = new ArrayList<CubexType>();
+		$cu = new CubexMethodCall($e.cu, $n.cu, t, $es.cu);
+		} 
     // unary prefixes
     | MINUS e=expr { $cu = new CubexMethodCall($e.cu, "negative");}
     | NEGATE e=expr { $cu = new CubexMethodCall($e.cu, "negate");}
@@ -78,8 +89,18 @@ expr returns [CubexExpression cu]
     | e1=expr LANGLE e2=expr { $cu = new CubexMethodCall($e1.cu, "lessThan", $e2.cu, "true"); }
     | e1=expr RANGLE e2=expr { $cu = new CubexMethodCall($e2.cu, "lessThan", $e1.cu, "true"); }
     | e1=expr LTE e2=expr { $cu = new CubexMethodCall($e1.cu, "lessThan", $e2.cu, "false"); }
-    | e1=expr GTE e2=expr { $cu = new CubexMethodCall($e2.cu, "lessThan", $e1.cu, "false"); };
+    | e1=expr GTE e2=expr { $cu = new CubexMethodCall($e2.cu, "lessThan", $e1.cu, "false"); }
 
+    // equality operators
+	| e1=expr EQ e2=expr { $cu = new CubexMethodCall($e1.cu, "==", $e2.cu); }
+	| e1=expr NE e2=expr { $cu = new CubexMethodCall($e1.cu, "!=", $e2.cu); }
+
+	// boolean operators
+	| e1=expr AND e2=expr { $cu = new CubexMethodCall($e1.cu, "and", $e2.cu); }
+	| e1=expr OR e2=expr { $cu = new CubexMethodCall($e1.cu, "or", $e2.cu); }
+
+	// parentheses (just forget about them, the tree does scoping)
+	| LPAREN e=expr RPAREN  { $cu = $e.cu; };
 
 exprs returns [List<CubexExpression> cu] 
     : { $cu = new ArrayList<CubexExpression>(); }
@@ -92,8 +113,14 @@ statement returns [CubexStatement cu]
 		{ $cu = new CubexBlock($s.cu); }
 	| n=vname ASSIGN e1=expr SEMICOLON
 		{ $cu = new CubexAssign($n.cu, $e1.cu); }
-	| IF LPAREN e2=expr RPAREN s1=statement ELSE s2=statement
-		{ $cu = new CubexConditional($e2.cu, $s1.cu, $s2.cu); }
+
+	// handle if without else
+	| {CubexStatement el = new CubexBlock(new ArrayList<CubexStatement>());} 
+	IF LPAREN e2=expr RPAREN s1=statement 
+	(ELSE s2=statement {el = $s2.cu;})?
+	{ $cu = new CubexConditional($e2.cu, $s1.cu, el); }
+
+
 	| WHILE LPAREN e3=expr RPAREN s3=statement
 		{ $cu = new CubexWhileLoop($e3.cu, $s3.cu); }
 	| FOR LPAREN n=vname IN e4=expr RPAREN s4=statement
@@ -140,7 +167,8 @@ classdef returns [CubexClass cu]:
 
 progs returns [List<CubexProg> cu]
 	: { $cu=new ArrayList<CubexProg>(); }
-	(s=statement { 
+	(
+		s=statement { 
 		$cu.add(new CubexStatementProg($s.cu)); 
 	}                                  |
 	// match more than one statement 
@@ -160,9 +188,9 @@ progs returns [List<CubexProg> cu]
 		$cu.add(new CubexClassProg($c.cu)); 
 	}                                   )* 
 	// can only logically end with a statement
-	s=statement { 
-		$cu.add(new CubexStatementProg($s.cu)); 
-	};
-
+	// s=statement { 
+	// 	$cu.add(new CubexStatementProg($s.cu)); 
+	// };
+	;
 prog returns [CubexProgs cu]
 	: p=progs {$cu = new CubexProgs($p.cu);};
