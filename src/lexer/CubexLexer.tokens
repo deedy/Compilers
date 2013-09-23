@@ -26,8 +26,8 @@ TYPEPARAM=44
 RANGLE=24
 RANGEOPUNARY=21
 EQ=27
-DOT=40
 COMMENT=49
+DOT=40
 DIVIDE=17
 NE=28
 MODULO=18
@@ -55,8 +55,8 @@ STRING=50
 '|'=30
 'class'=2
 '>='=26
-'/'=17
 '=='=27
+'/'=17
 ':='=31
 '>'=24
 'fun'=5
