@@ -100,10 +100,10 @@ class CubexMethodCall extends CubexExpression {
         typeList = new ArrayList<CubexType>();
         exprList = new ArrayList<CubexExpression>();
         if(isRange){
-            exprList.add(new CubexBoolean(b1));
-            exprList.add(new CubexBoolean(b2));
             name = new CubexVName("through");
             exprList.add(f);
+            exprList.add(new CubexBoolean(b1));
+            exprList.add(new CubexBoolean(b2));
         } else if (isEq) {
             if (isNeg) {
                 // create a new method call to the equals
