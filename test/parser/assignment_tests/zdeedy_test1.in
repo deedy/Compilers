@@ -1,1 +1,26 @@
-fun foo(y : Integer) : Integer = y * 2;
+fun sum ( range : Iterable<Integer> ) : Integer
+{
+  ret := 0;
+  for ( i in range )
+  {
+    ret := ret + i;
+  }
+  return ret;
+}
+
+##sum1 = 10
+sum1 := sum(1..4);
+
+##sum2 = 5
+sum2 := sum(1<<4);
+
+##sum3 = 9
+sum3 := sum(1<.4);
+
+##sum4 = 6
+sum4 := sum(1.<4);
+
+if(sum1 >= sum2 & sum2 < sum4 & sum3 > sum2 & sum4 <= sum3)
+{
+  return "Yay!";
+}

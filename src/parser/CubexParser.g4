@@ -17,15 +17,20 @@ vcname returns [CubexName cu]
 	| v=vname {$cu = $v.cu;};
 
 kcont returns [List<CubexPName> cu] 
-    : { $cu = new ArrayList<CubexPName>(); }
-                                        (p=pname { $cu.add($p.cu); }
-                                         (COMMA p=pname { $cu.add($p.cu); })*
-                                        )?; 
+    : {
+        $cu = new ArrayList<CubexPName>();
+      }
+    (p=pname { $cu.add($p.cu); }
+      (COMMA p=pname { $cu.add($p.cu); })*
+    )?;
+     
 tcont returns [CubexTypeContext cu]
-    : { $cu = new CubexTypeContext(); }
-                                        (v=vname COLON t=type { $cu.add($v.cu, $t.cu); }
-                                         (COMMA v=vname COLON t=type { $cu.add($v.cu, $t.cu); })*
-                                        )?; 
+    : {
+        $cu = new CubexTypeContext();
+      }
+    (v=vname COLON t=type { $cu.add($v.cu, $t.cu); }
+      (COMMA v=vname COLON t=type { $cu.add($v.cu, $t.cu); })*
+    )?; 
 
 type returns [CubexType cu]
 	: p=pname { $cu = new CubexPType($p.cu); }
@@ -43,10 +48,12 @@ type returns [CubexType cu]
 	| NOTHING { $cu = CubexType.getNothing(); };
 
 types returns [List<CubexType> cu] 
-    : { $cu = new ArrayList<CubexType>(); }
-                                        (t=type { $cu.add($t.cu); }
-                                         (COMMA t=type { $cu.add($t.cu); })*
-                                        )?; 
+    : {
+        $cu = new ArrayList<CubexType>();
+      }
+  (t=type { $cu.add($t.cu); }
+    (COMMA t=type { $cu.add($t.cu); })*
+  )?; 
 
 typescheme returns [CubexTypeScheme cu]
 	: LANGLE k=kcont RANGLE LPAREN tc=tcont RPAREN COLON t=type
@@ -115,10 +122,12 @@ expr returns [CubexExpression cu]
 	| LPAREN e=expr RPAREN  { $cu = $e.cu; };
 
 exprs returns [List<CubexExpression> cu] 
-    : { $cu = new ArrayList<CubexExpression>(); }
-                                        (e=expr { $cu.add($e.cu); }
-                                         (COMMA f=expr { $cu.add($f.cu); })*
-                                        )?;
+    : {
+        $cu = new ArrayList<CubexExpression>();
+      }
+    (e=expr { $cu.add($e.cu); }
+      (COMMA f=expr { $cu.add($f.cu); })*
+    )?;
 
 statement returns [CubexStatement cu]
 	: LBRACE s=statements RBRACE
@@ -148,7 +157,10 @@ statements returns [List<CubexStatement> cu]
 	    )?;
 
 bracestatement returns [List<CubexStatement> cu] 
-	: LBRACE t=statements RBRACE { $cu = $t.cu; };
+	: LBRACE t=statements RBRACE
+    {
+      $cu = $t.cu;
+    };
 
 funheader returns [CubexFunHeader cu]
 	: FUN v=vname t=typescheme
