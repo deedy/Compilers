@@ -1,0 +1,19 @@
+// DOES NOT CURRENTLY WORK
+class Fib (v : Int) extends InterviewQuestions {
+    super();
+
+    fun fib(n : Int) : Int {
+
+        first := 1;
+        second := 1;
+        while(n > 2) {
+            tmp := second;
+            second := first + second;
+            first := tmp;
+            n := n - 1;
+        }
+        return second;
+    }
+}
+
+return 5;
