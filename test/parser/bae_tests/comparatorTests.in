@@ -1,0 +1,30 @@
+
+fun testLesssThan(Boolean a, Boolean b) : Boolean
+{
+	return a<b;
+}
+
+fun testLessThanEq(Integer a, Integer b) : Boolean
+{
+	return a<=b;
+}
+
+fun testGreaterThanEq(Integer a, Integer b): Boolean
+{
+	return a>=b;
+}
+
+fun testGreaterThan(Integer a, Integer b) : Boolean
+{
+	return a>b;
+}
+
+fun testEq(Integer a, Integer b) : Boolean
+{
+	return a==b;
+}
+
+fun testNotEq(Integer a, Integer b) : Boolean
+{
+	return a!=b;
+}

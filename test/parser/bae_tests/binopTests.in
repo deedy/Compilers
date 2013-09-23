@@ -1,0 +1,24 @@
+fun testTimes(Integer a, Integer b) : Integer
+{
+	return a*b;
+}
+
+fun testSlash(Integer a, Integer b) : Integer
+{
+	return a/b;
+}
+
+fun testModulo(Integer a, Integer b): Integer
+{
+	return a%b;
+}
+
+fun testAdd(Integer a, Integer b) : Integer
+{
+	return a+b;
+}
+
+fun testSubtract(Integer a, Integer b) : Integer
+{
+	return a-b;
+}

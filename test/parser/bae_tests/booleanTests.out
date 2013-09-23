@@ -1,0 +1,1 @@
+function testAnd ( Boolean a , Boolean b) : Boolean { return a and b ; } function testOr ( Boolean a , Boolean b ) : Boolean { return a or b ; }

@@ -1,0 +1,9 @@
+fun testNegative(Integer a): Integer
+{
+	return -a;
+}
+
+fun testNegate(Boolean a) : Boolean
+{
+	return !a;
+}

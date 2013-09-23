@@ -1,0 +1,1 @@
+fun testNegative < > ( Integer a ) : Integer { return negative a ; } fun testNegative < > ( Boolean a ) : Boolean { return negate a ; } 

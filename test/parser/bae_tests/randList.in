@@ -1,0 +1,44 @@
+fun ret1() : Boolean
+{
+	return 1 == testSubtract(testAdd(5,3),7);
+}
+
+fun ret2() : Boolean
+{
+	Integer x := 1;
+	Integer y := testTimes(3,5);
+	x := x+y;
+	if(testSlash(x,testAdd(2,2)) == testTimes(2,2)){
+		return true;
+	}else{
+		#invalid, no return
+	}
+	
+}
+
+fun ret3() : MyType
+{
+	MyType t;
+	return t;
+}
+
+fun ret4() : Nothing
+{
+ #do nothing
+}
+
+fun ret5() : Nothing
+{
+	return Nothing;
+}
+
+fun ret6() : Boolean
+{
+return x; #??
+}
+
+
+fun hw(String s) : String
+{
+	return "hello world";
+}
