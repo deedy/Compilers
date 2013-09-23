@@ -142,9 +142,9 @@ statement returns [CubexStatement cu]
 
 statements returns [List<CubexStatement> cu] 
     : { $cu = new ArrayList<CubexStatement>(); }
-                                        (s=statement { $cu.add($s.cu); }
-                                         (s=statement { $cu.add($s.cu); })*
-                                        )?;
+    (c=statement {
+    	$cu.add($c.cu);
+    })+;
 
 funheader returns [CubexFunHeader cu]
 	: FUN v=vname t=typescheme
@@ -165,9 +165,10 @@ fundef returns [CubexFunction cu]
 
 funsdef returns [List<CubexFunction> cu] 
     : { $cu = new ArrayList<CubexFunction>(); }
-                                        (c=fundef { $cu.add($c.cu); }
-                                         (c=fundef { $cu.add($c.cu); })*
-                                        )?;
+    (c=fundef {
+    	$cu.add($c.cu);
+    })+;
+                                        
 
 interfacedef returns [CubexInterface cu]
 		// no types
@@ -199,18 +200,12 @@ classdef returns [CubexClass cu]
 
 progs returns [List<CubexProg> cu]
 	: { $cu=new ArrayList<CubexProg>(); }
-	(
-		s=statement { 
-		$cu.add(new CubexStatementProg($s.cu)); 
-	}                                  |
-	// match more than one statement 
-	s1=statement s2=statements { 
-		$s2.cu.add(0, $s1.cu);
-		$cu.add(new CubexStatementsProg($s2.cu)); 
+	(// one or more
+	s=statements { 
+		$cu.add(new CubexStatementsProg($s.cu)); 
 	}                                  |
 	// match more than one function
-	f1=fundef f2=funsdef {
-		$f2.cu.add(0, $f1.cu);
+	f2=funsdef {
 		$cu.add(new CubexFuncsProg($f2.cu)); 
 	}                                  |
 	i=interfacedef { 
@@ -219,10 +214,6 @@ progs returns [List<CubexProg> cu]
 	c=classdef { 
 		$cu.add(new CubexClassProg($c.cu)); 
 	}                                   )+
-	// can only logically end with a statement
-	// s=statement { 
-	// 	$cu.add(new CubexStatementProg($s.cu)); 
-	// };
 	;
 prog returns [CubexProgs cu]
 	: p=progs {$cu = new CubexProgs($p.cu);}
