@@ -35,6 +35,17 @@ class CubexStatementsProg extends CubexProg {
 	}
 }
 
+class CubexFunctionProg extends CubexProg {
+	public CubexFunction func;
+	public CubexFunctionProg(CubexFunction fun){
+		func = fun;
+	}
+
+	public String toString() {
+		return func.toString();
+	}
+}
+
 class CubexFuncsProg extends CubexProg {
 	public List<CubexFunction> funcs;
 	public CubexFuncsProg(List<CubexFunction> funs){
