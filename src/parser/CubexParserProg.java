@@ -18,49 +18,25 @@ public class CubexParserProg {
         if (hasLexerError(lex)) {
             return "lexer error";
         }
-        // System.out.println("assignment 2 not implemented");
         StringBuilder output = new StringBuilder();
         parser.setBuildParseTree(true);
-        // ParserRuleContext tree = parser.progs();
-        // tree.inspect(parser);
-        // parser.reset();
-        // List<ParseTree> l = parser.progs().children;
-        // if(l.size() > 0){
-        //     output.append(l.get(0));
-        //     for(int i = 1; i < l.size(); i++){
-        //         ParseTree s = l.get(i);
-        //         output.append(" ");
-        //         output.append(s.toString());
-        //     }
-        // }
-        // System.out.println(output.toString());
+        // viewTree(parser);
         try {
             CubexProgs progs = parser.prog().cu;
             return progs.toString();
         } catch(Exception e){
-            // System.out.println("Error:");
-            // System.out.println(e);
+            // a divide by zero error was thrown by the error char
+            // any other exception we did not make
             return "parser error";
         }
-
-
-        // traverse(tree);
-        // return tree.toStringTree(parser);
     }
 
-    public static void traverse(ParserRuleContext tree) {
-        for (ParseTree pt : tree.children) {
-            System.out.println("TREE");
-            traverseTree(0,pt);
-        }
+    public static void viewTree(CubexParser parser) {
+        ParserRuleContext tree = parser.progs();
+        tree.inspect(parser);
+        parser.reset();
     }
 
-    public static void traverseTree(int  j, ParseTree t) {
-        System.out.println(j+"\t"+t.getText()+"\t");
-        for (int i = 0;i < t.getChildCount(); i++) {
-            traverseTree(j+1, t.getChild(i));
-        }
-    }
 
     public static boolean hasLexerError(CubexLexer lex) {
          for (Token token = lex.nextToken();
