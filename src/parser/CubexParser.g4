@@ -227,4 +227,4 @@ progs returns [List<CubexProg> cu]
 prog returns [CubexProgs cu]
 	: p=progs {$cu = new CubexProgs($p.cu);}
 	// catch all, throw error here
-	| . { int n = 1 / 0; };
+	| .? { int n = 1 / 0; };
