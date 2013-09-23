@@ -13,8 +13,8 @@ pname returns [CubexPName cu]
 	: TYPEPARAM { $cu =  new CubexPName($TYPEPARAM.text); };
 
 vcname returns [CubexName cu]
-	: cname
-	| vname;
+	: c=cname {$cu = $c.cu;}
+	| v=vname {$cu = $v.cu;};
 
 kcont returns [List<CubexPName> cu] 
     : { $cu = new ArrayList<CubexPName>(); }
@@ -70,7 +70,7 @@ expr returns [CubexExpression cu]
 
     // function call with no types
     | c=vcname LPAREN es=exprs RPAREN { 
-    	ArrayList<CubexType> t = new ArrayList<CubexType>();
+    	List<CubexType> t = new ArrayList<CubexType>();
     	$cu = new CubexFunctionCall($c.cu, t, $es.cu); 
     	}
 
@@ -117,7 +117,7 @@ expr returns [CubexExpression cu]
 exprs returns [List<CubexExpression> cu] 
     : { $cu = new ArrayList<CubexExpression>(); }
                                         (e=expr { $cu.add($e.cu); }
-                                         (COMMA e=expr { $cu.add($e.cu); })*
+                                         (COMMA f=expr { $cu.add($f.cu); })*
                                         )?;
 
 statement returns [CubexStatement cu]
