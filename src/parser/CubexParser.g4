@@ -162,7 +162,7 @@ funheaders returns [List<CubexFunHeader> cu]
 
 fundef returns [CubexFunction cu]
 	// overide with immediate return statement
-	: FUN v=vname t=typescheme EQUAL e=expr
+	: FUN v=vname t=typescheme EQUAL e=expr SEMICOLON
 	{$cu = new CubexFunction($v.cu, $t.cu, $e.cu); }
 	| FUN v=vname t=typescheme s=statement
 		{ $cu = new CubexFunction($v.cu, $t.cu, $s.cu); };
