@@ -223,8 +223,10 @@ progs returns [List<CubexProg> cu]
 	s=statement { 
 		$cu.add(new CubexStatementProg($s.cu)); 
 	};
-	
+
 prog returns [CubexProgs cu]
 	: p=progs {$cu = new CubexProgs($p.cu);}
 	// catch all, throw error here
-	| .*? { int n = 1 / 0; };
+	| errorchar { int n = 1 / 0; };
+
+errorchar : .*?;

@@ -20,13 +20,16 @@ public class CubexParserProg {
         }
         StringBuilder output = new StringBuilder();
         parser.setBuildParseTree(true);
-        // viewTree(parser);
         try {
             CubexProgs progs = parser.prog().cu;
             return progs.toString();
         } catch(Exception e){
+            // e.printStackTrace();
             // a divide by zero error was thrown by the error char
             // any other exception we did not make
+            // reset the parser and view tree
+            // parser.reset();
+            // viewTree(parser);
             return "parser error";
         }
     }

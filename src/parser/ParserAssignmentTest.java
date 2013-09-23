@@ -46,6 +46,9 @@ public class ParserAssignmentTest {
 						System.out.printf("Input stream:\n%s\n", infile);
 						System.out.printf("Expected:\t%s\n", expected);
 						System.out.printf("Recieved:\t%s\n", parsed);
+						// view the tree
+						par.reset();
+            			CubexParserProg.viewTree(par);
 					}
 				} catch(IOException e){
 					System.out.printf("Exception reading file %s\n", outfile.toString());
