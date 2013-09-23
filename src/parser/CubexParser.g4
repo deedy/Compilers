@@ -199,32 +199,12 @@ classdef returns [CubexClass cu]
 
 progs returns [List<CubexProg> cu]
 	: { $cu=new ArrayList<CubexProg>(); }
-	(
-		s=statement { 
-		$cu.add(new CubexStatementProg($s.cu)); 
-	}                                  |
-	// match more than one statement 
-	s1=statement s2=statements { 
-		$s2.cu.add(0, $s1.cu);
-		$cu.add(new CubexStatementsProg($s2.cu)); 
-	}                                  |
-	// match more than one function
-	f1=fundef f2=funsdef {
-		$f2.cu.add(0, $f1.cu);
-		$cu.add(new CubexFuncsProg($f2.cu)); 
-	}                                  |
-	i=interfacedef { 
-		$cu.add(new CubexInterfaceProg($i.cu)); 
-	}                                  | 
-	c=classdef { 
-		$cu.add(new CubexClassProg($c.cu)); 
-	}                                   )*
-	// can only logically end with a statement
-	s=statement { 
-		$cu.add(new CubexStatementProg($s.cu)); 
-	};
+	( s=statement {  $cu.add(new CubexStatementProg($s.cu)); }  
+  | f1=fundef { $cu.add(new CubexFunctionProg($f1.cu)); }
+  | i=interfacedef { $cu.add(new CubexInterfaceProg($i.cu)); }
+  | c=classdef { $cu.add(new CubexClassProg($c.cu)); })*
+	s=statement { $cu.add(new CubexStatementProg($s.cu)); };
 	
 prog returns [CubexProgs cu]
-	: p=progs {$cu = new CubexProgs($p.cu);}
-	// catch all, throw error here
-	| .*? { int n = 1 / 0; };
+	: p=progs { $cu = new CubexProgs($p.cu); }
+  | .*? { int n = 1 / 0; };
