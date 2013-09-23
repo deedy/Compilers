@@ -1,0 +1,11 @@
+class Fib (v : Int) extends InterviewQuestions {
+    super();
+
+    fun fib(n : Int) : Int {
+        if ( !n ) {
+            return 1; 
+        }
+    }
+}
+
+return 5;
