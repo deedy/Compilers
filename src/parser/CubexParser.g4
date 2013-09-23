@@ -123,15 +123,16 @@ exprs returns [List<CubexExpression> cu]
 statement returns [CubexStatement cu]
 	: LBRACE s=statements RBRACE
 		{ $cu = new CubexBlock($s.cu); }
-	| n=vname ASSIGN e1=expr SEMICOLON
-		{ $cu = new CubexAssign($n.cu, $e1.cu); }
+	| n=nbstatement { $cu = $n.cu;};
 
+nbstatement returns [CubexStatement cu]
+	: n=vname ASSIGN e1=expr SEMICOLON
+		{ $cu = new CubexAssign($n.cu, $e1.cu); }
 	// handle if without else
 	| {CubexStatement el = new CubexBlock(new ArrayList<CubexStatement>());} 
 	IF LPAREN e2=expr RPAREN s1=statement 
 	(ELSE s2=statement {el = $s2.cu;})?
 	{ $cu = new CubexConditional($e2.cu, $s1.cu, el); }
-
 
 	| WHILE LPAREN e3=expr RPAREN s3=statement
 		{ $cu = new CubexWhileLoop($e3.cu, $s3.cu); }
@@ -142,9 +143,12 @@ statement returns [CubexStatement cu]
 
 statements returns [List<CubexStatement> cu] 
     : { $cu = new ArrayList<CubexStatement>(); }
-                                        (s=statement { $cu.add($s.cu); }
-                                         (s=statement { $cu.add($s.cu); })*
-                                        )?;
+	    ((s=nbstatement { $cu.add($s.cu); } | t=bracestatement { $cu.addAll($t.cu); } )
+	     ((s=nbstatement { $cu.add($s.cu); }) | t=bracestatement { $cu.addAll($t.cu); } )*
+	    )?;
+
+bracestatement returns [List<CubexStatement> cu] 
+	: LBRACE t=statements RBRACE { $cu = $t.cu; };
 
 funheader returns [CubexFunHeader cu]
 	: FUN v=vname t=typescheme
