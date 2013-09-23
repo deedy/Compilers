@@ -1,4 +1,3 @@
-# DOES NOT CURRENTLY WORK
 class Fib (v : Int) extends InterviewQuestions {
     super();
 
