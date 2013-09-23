@@ -37,7 +37,7 @@ type returns [CubexType cu]
 		List<CubexType> t = new ArrayList<CubexType>();
 	 	$cu = new CubexCType($c.cu, t); 
 	}
-			
+
 	| t1=type AND t2=type { $cu = new CubexIType($t1.cu, $t2.cu); }
 	| THING { $cu = CubexType.getThing(); }
 	| NOTHING { $cu = CubexType.getNothing(); };
@@ -218,12 +218,12 @@ progs returns [List<CubexProg> cu]
 	}                                  | 
 	c=classdef { 
 		$cu.add(new CubexClassProg($c.cu)); 
-	}                                   )+
+	}                                   )*
 	// can only logically end with a statement
-	// s=statement { 
-	// 	$cu.add(new CubexStatementProg($s.cu)); 
-	// };
-	;
+	s=statement { 
+		$cu.add(new CubexStatementProg($s.cu)); 
+	};
+	
 prog returns [CubexProgs cu]
 	: p=progs {$cu = new CubexProgs($p.cu);}
 	// catch all, throw error here
