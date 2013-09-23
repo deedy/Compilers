@@ -4,6 +4,7 @@ fun sum ( range : Iterable<Integer> ) : Integer
   for ( i in range )
   {
     ret := ret + i;
+    ret := ret - i;
   }
   return ret;
 }

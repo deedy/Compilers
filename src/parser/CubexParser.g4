@@ -130,7 +130,9 @@ exprs returns [List<CubexExpression> cu]
     )?;
 
 statement returns [CubexStatement cu]
-	: LBRACE s=statements RBRACE
+	: LBRACE t=statement RBRACE
+		{ $cu = $t.cu; }
+	| LBRACE s=statements RBRACE
 		{ $cu = new CubexBlock($s.cu); }
 	| n=nbstatement { $cu = $n.cu;};
 
