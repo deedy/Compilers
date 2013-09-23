@@ -61,7 +61,7 @@ class CubexMethodCall extends CubexExpression {
         typeList = new ArrayList<CubexType>();
         exprList = new ArrayList<CubexExpression>();
         if(isRange) {
-            name = new CubexVName("onward");
+            name = new CubexVName("onwards");
             exprList.add(new CubexBoolean(b));
         } else {
             name = new CubexVName(s);
