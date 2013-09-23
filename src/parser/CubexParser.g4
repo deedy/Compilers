@@ -189,7 +189,7 @@ classdef returns [CubexClass cu]
 		List<CubexExpression> es = new ArrayList<CubexExpression>();}
 	CLASS c=cname 
 	(LANGLE k=kcont RANGLE { kl = $k.cu; })?
-	ty=tcont
+	LPAREN ty=tcont RPAREN
 	(EXTENDS t=type { ct = $t.cu; })?
 	LBRACE s=statements 
 	(SUPER e=exprs SEMICOLON { es = $e.cu;})?
