@@ -151,42 +151,52 @@ funheader returns [CubexFunHeader cu]
 		{ $cu = new CubexFunHeader($v.cu, $t.cu); };
 
 funheaders returns [List<CubexFunHeader> cu] 
-    : { $cu = new ArrayList<CubexFunHeader>(); }
-                                        (c=funheader SEMICOLON { $cu.add($c.cu); }
-                                         (c=funheader SEMICOLON { $cu.add($c.cu); })*
-                                        )?;
+    : {
+        $cu = new ArrayList<CubexFunHeader>();
+      }
+    (c=funheader SEMICOLON { $cu.add($c.cu); })*;
 
 fundef returns [CubexFunction cu]
 	// overide with immediate return statement
-	: FUN v=vname t=typescheme EQUAL e=expr
-	{$cu = new CubexFunction($v.cu, $t.cu, $e.cu); }
+	: FUN v=vname t=typescheme EQUAL e=expr SEMICOLON
+	  {
+      $cu = new CubexFunction($v.cu, $t.cu, $e.cu);
+    }
 	| FUN v=vname t=typescheme s=statement
-		{ $cu = new CubexFunction($v.cu, $t.cu, $s.cu); };
+		{
+      $cu = new CubexFunction($v.cu, $t.cu, $s.cu);
+    };
 
 funsdef returns [List<CubexFunction> cu] 
-    : { $cu = new ArrayList<CubexFunction>(); }
-                                        (c=fundef { $cu.add($c.cu); }
-                                         (c=fundef { $cu.add($c.cu); })*
-                                        )?;
+    : {
+        $cu = new ArrayList<CubexFunction>();
+      }
+    (c=fundef { $cu.add($c.cu); })*;
 
-interfacedef returns [CubexInterface cu]
-		// no types
-	: { List<CubexPName> kl = new ArrayList<CubexPName>();
-		// no extends
-		CubexType ct = CubexType.getThing();}
+interfacedef returns [CubexInterface cu]		
+	: { 
+      // no types
+      List<CubexPName> kl = new ArrayList<CubexPName>();
+		  // no extends
+		  CubexType ct = CubexType.getThing();
+    }
 	INTERFACE c=cname 
 	(LANGLE k=kcont RANGLE { kl = $k.cu; })?
 	(EXTENDS t=type { ct = $t.cu; })?
 	LBRACE f=funheaders RBRACE
-	{ $cu = new CubexInterface($c.cu, kl, ct, $f.cu); };
+	{
+    $cu = new CubexInterface($c.cu, kl, ct, $f.cu);
+  };
 
 classdef returns [CubexClass cu]
-		// no types
-	: { List<CubexPName> kl = new ArrayList<CubexPName>();
-		// no extends
-		CubexType ct = CubexType.getThing();
-		// no super 
-		List<CubexExpression> es = new ArrayList<CubexExpression>();}
+	: {
+      // no types 
+      List<CubexPName> kl = new ArrayList<CubexPName>();
+  		// no extends
+  		CubexType ct = CubexType.getThing();
+  		// no super 
+  		List<CubexExpression> es = new ArrayList<CubexExpression>();
+    }
 	CLASS c=cname 
 	(LANGLE k=kcont RANGLE { kl = $k.cu; })?
 	LPAREN ty=tcont RPAREN
@@ -194,7 +204,9 @@ classdef returns [CubexClass cu]
 	LBRACE s=statements 
 	(SUPER LPAREN e=exprs RPAREN SEMICOLON { es = $e.cu;})?
 	f=funsdef RBRACE
-		{ $cu = new CubexClass($c.cu, kl, $ty.cu, ct, $s.cu, es, $f.cu); };
+	{
+    $cu = new CubexClass($c.cu, kl, $ty.cu, ct, $s.cu, es, $f.cu);
+  };
 
 
 progs returns [List<CubexProg> cu]
