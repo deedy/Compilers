@@ -1,0 +1,1 @@
+class Rev < > ( ) extends Thing { super ( ) ; fun rev < > ( str : String < > ) : String < > { if ( null . equals < > ( str ) . or < > ( str . length < > ( ) . lessThan < > ( 1 , false ) ) ) return str ; else { } return rev < > ( str . substring < > ( 1 ) ) . plus < > ( str . charAt < > ( 0 ) ) ; } } return 1 ;

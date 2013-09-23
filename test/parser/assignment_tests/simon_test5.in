@@ -7,7 +7,7 @@ class Fib (v : Int) extends InterviewQuestions {
         }
         first := 1;
         second := 1;
-        while(n > 2) {
+        for(el in [1,2,3]) {
             tmp := second;
             second := first + second;
             first := tmp;
