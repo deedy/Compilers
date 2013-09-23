@@ -1,9 +1,11 @@
-// DOES NOT CURRENTLY WORK
+# DOES NOT CURRENTLY WORK
 class Fib (v : Int) extends InterviewQuestions {
     super();
 
     fun fib(n : Int) : Int {
-
+        if ( n == 1 | n == 2 ) {
+         return 1; 
+        }
         first := 1;
         second := 1;
         while(n > 2) {

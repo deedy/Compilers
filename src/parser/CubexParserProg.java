@@ -21,8 +21,8 @@ public class CubexParserProg {
         // System.out.println("assignment 2 not implemented");
         StringBuilder output = new StringBuilder();
         parser.setBuildParseTree(true);
-        ParserRuleContext tree = parser.progs();
-        tree.inspect(parser);
+        // ParserRuleContext tree = parser.progs();
+        // tree.inspect(parser);
         // List<ParseTree> l = parser.progs().children;
         // if(l.size() > 0){
         //     output.append(l.get(0));
@@ -37,8 +37,8 @@ public class CubexParserProg {
             CubexProgs progs = parser.prog().cu;
             return progs.toString();
         } catch(Exception e){
-            System.out.println("Error:");
-            System.out.println(e);
+            // System.out.println("Error:");
+            // System.out.println(e);
             return "parser error";
         }
 

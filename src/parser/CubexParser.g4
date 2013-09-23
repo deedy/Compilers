@@ -192,7 +192,7 @@ classdef returns [CubexClass cu]
 	LPAREN ty=tcont RPAREN
 	(EXTENDS t=type { ct = $t.cu; })?
 	LBRACE s=statements 
-	(SUPER e=exprs SEMICOLON { es = $e.cu;})?
+	(SUPER LPAREN e=exprs RPAREN SEMICOLON { es = $e.cu;})?
 	f=funsdef RBRACE
 		{ $cu = new CubexClass($c.cu, kl, $ty.cu, ct, $s.cu, es, $f.cu); };
 
