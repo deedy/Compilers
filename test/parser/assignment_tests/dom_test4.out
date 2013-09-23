@@ -1,0 +1,1 @@
+class Iterable < E > ( ) extends Thing { super ( ) ; }

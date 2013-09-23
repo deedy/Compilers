@@ -6,8 +6,8 @@ import java.util.List;
 public class CubexType {
 	private static CubexType _Nothing = new Nothing();
 	public static CubexType getNothing() { return _Nothing;}
-	private static CubexType _Thing = new Nothing();
-	public static CubexType getThing() { return _Nothing;}
+	private static CubexType _Thing = new Thing();
+	public static CubexType getThing() { return _Thing;}
 }
 
 class Nothing extends CubexType {
