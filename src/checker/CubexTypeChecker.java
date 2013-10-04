@@ -64,5 +64,4 @@ public class CubexTypeChecker {
 		return false;
 	}
 
-S
 }

@@ -1,13 +1,16 @@
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 // t ::= v_p | v_c <t,...,t> | t & t | thing | nothing
-public class CubexType {
+public abstract class CubexType {
 	private static CubexType _Nothing = new Nothing();
 	public static CubexType getNothing() { return _Nothing;}
 	private static CubexType _Thing = new Thing();
 	public static CubexType getThing() { return _Thing;}
+
+	public abstract List<CubexCName> getClasses();
 }
 
 class Nothing extends CubexType {
@@ -25,10 +28,14 @@ class Nothing extends CubexType {
 	public boolean equals (Nothing n) {
 		return true;
 	}
+
+	public List<CubexCName> getClasses() {
+		return new ArrayList<CubexCName>();
+	}
 }
 
 class Thing extends CubexType {
-	public Thing(){
+	public Thing(){;
 	}
 
 	public String toString() {
@@ -41,6 +48,10 @@ class Thing extends CubexType {
 
 	public boolean equals (Thing n) {
 		return true;
+	}
+
+	public List<CubexCName> getClasses() {
+		return new ArrayList<CubexCName>();
 	}
 }
 class CubexPType extends CubexType{
@@ -60,6 +71,10 @@ class CubexPType extends CubexType{
 
 	public boolean equals (CubexPType t) {
 		return name.equals(t.name);
+	}
+
+	public List<CubexCName> getClasses() {
+		return new ArrayList<CubexCName>();
 	}
 }
 
@@ -86,6 +101,13 @@ class CubexCType extends CubexType{
 		if(!a) return false;
 		return(params.equals(t.params));
 	}
+
+	public List<CubexCName> getClasses() {
+		List<CubexCName> l = new ArrayList<CubexCName>();
+		l.add(name);
+		return l;
+	}
+
 }
 
 class CubexIType extends CubexType{
@@ -108,4 +130,10 @@ class CubexIType extends CubexType{
 		return (a.equals(t.a)) && (b.equals(t.b));
 	}
 
+	public List<CubexCName> getClasses() {
+		List<CubexCName> l = new ArrayList<CubexCName>();
+		l.addAll(a.getClasses());
+		l.addAll(b.getClasses());
+		return l;
+	}
 }

@@ -2,24 +2,24 @@ import org.pcollections.PMap;
 import org.pcollections.HashTreePMap;
 
 class CubexClassContext {
-	PMap<CubexName, CubexObject> map;
+	PMap<CubexCName, CubexObject> map;
 	public CubexClassContext(){
 		map = HashTreePMap.empty();
 	}
 
-	public CubexClassContext(PMap<CubexName, CubexObject> m) {
+	public CubexClassContext(PMap<CubexCName, CubexObject> m) {
 		map = m;
 	}
 
-	public CubexClassContext set(CubexName name, CubexObject fun) {
+	public CubexClassContext set(CubexCName name, CubexObject fun) {
 		return new CubexClassContext(map.plus(name, fun));
 	}
 
-	public CubexObject get(CubexName name) {
+	public CubexObject get(CubexCName name) {
 		return map.get(name);
 	}
 
-	public boolean contains(CubexName name) {
+	public boolean contains(CubexCName name) {
 		return map.containsKey(name);
 	}
 
