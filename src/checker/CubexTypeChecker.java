@@ -40,8 +40,11 @@ public class CubexTypeChecker {
 					if (!subType(cc, kc, t1.params.get(i), t2.params.get(i))) {
 						return false;
 					}
-					if (!subType(cc, kc, t2.params.get(i), t1.params.get(i))) {
-						return false;
+					// don't do this is types are iterable
+					if(!(t1.name.name.equals("Iterable") && t2.name.name.equals("Iterable"))) {
+						if (!subType(cc, kc, t2.params.get(i), t1.params.get(i))) {
+							return false;
+						}
 					}
 				}
 				return true;
@@ -49,4 +52,17 @@ public class CubexTypeChecker {
 		}
 		return false;
 	}
+
+	public static boolean extend (CubexClassContext cc, CubexCType t1, CubexType t2) {
+		// check that t1 in class context
+		CubexObject obj = cc.get(t1.name);
+		// see that obj extends t2
+		return subType(cc, new CubexKindContext(obj.kCont), obj.type, t2);
+	}
+
+	public static boolean hasScheme(CubexClassContext cc, CubexKindContext kc, CubexType t, CubexTypeScheme s) {
+		return false;
+	}
+
+S
 }

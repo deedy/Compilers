@@ -17,6 +17,14 @@ class Nothing extends CubexType {
 	public String toString() {
 		return "Nothing";
 	}
+
+	public boolean equals (CubexType t) {
+		return false;
+	}
+
+	public boolean equals (Nothing n) {
+		return true;
+	}
 }
 
 class Thing extends CubexType {
@@ -25,7 +33,15 @@ class Thing extends CubexType {
 
 	public String toString() {
 		return "Thing";	
-	}	
+	}
+
+	public boolean equals (CubexType t) {
+		return false;
+	}
+
+	public boolean equals (Thing n) {
+		return true;
+	}
 }
 class CubexPType extends CubexType{
 	CubexPName name;
@@ -36,6 +52,14 @@ class CubexPType extends CubexType{
 
 	public String toString() {
 		return name.toString();	
+	}
+
+	public boolean equals (CubexType t) {
+		return false;
+	}
+
+	public boolean equals (CubexPType t) {
+		return name.equals(t.name);
 	}
 }
 
@@ -52,6 +76,16 @@ class CubexCType extends CubexType{
 		String l = ListPrinter.listToString(params, " , ");
 		return String.format("%s < %s>", name.toString(), ListPrinter.nullify(l));	
 	}
+
+	public boolean equals (CubexType t) {
+		return false;
+	}
+
+	public boolean equals (CubexCType t) {
+		boolean a = name.equals(t.name);
+		if(!a) return false;
+		return(params.equals(t.params));
+	}
 }
 
 class CubexIType extends CubexType{
@@ -64,6 +98,14 @@ class CubexIType extends CubexType{
 
 	public String toString() {
 		return String.format("%s & %s", a.toString(), b.toString());
+	}
+
+	public boolean equals (CubexType t) {
+		return false;
+	}
+
+	public boolean equals (CubexIType t) {
+		return (a.equals(t.a)) && (b.equals(t.b));
 	}
 
 }

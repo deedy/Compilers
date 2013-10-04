@@ -13,6 +13,10 @@ public class CubexTypeScheme {
         type = t;
 	}
 
+    public boolean equals(CubexTypeScheme s) {
+        return (kCont.equals(s.kCont)) && (tCont.equals(s.tCont)) && (type.equals(s.type));
+    }
+
     public String toString() {
         String k = ListPrinter.listToString(kCont, " , ");
         String tc = tCont.toString();

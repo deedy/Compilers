@@ -4,6 +4,10 @@ public abstract class CubexName {
 	public String toString(){
 		return name;
 	}
+
+	public boolean equals(CubexName n) {
+		return name.equals(n.name);
+	}
 }
 
 // variable / function / method name

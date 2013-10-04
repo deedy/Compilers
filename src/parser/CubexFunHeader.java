@@ -11,6 +11,10 @@ public class CubexFunHeader {
     public String toString() {
  		return String.format("fun %s %s ;", name, scheme.toString());   	
     }
+
+    public boolean equals(CubexFunHeader f) {
+        return (name.equals(f.name)) && (scheme.equals(f.scheme));
+    }
 }
 
 class CubexFunction extends CubexFunHeader{
