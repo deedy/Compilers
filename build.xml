@@ -34,19 +34,6 @@
         </java>
     </target>
      
-    <target name="compile" depends="antlr" description="compile">
-        <mkdir dir="build"/>
-        <mkdir dir="build/classes"/>
-        <javac srcdir="src"
-            destdir="build/classes"
-            deprecation="Yes"
-            listfiles="No"
-            includeantruntime="false">
-            <classpath>
-                <pathelement path="${java.class.path}"/>
-            </classpath>
-        </javac>
-    </target>
 
     <target name="compile_no_antlr" description="compile">
         <mkdir dir="build"/>
@@ -57,7 +44,25 @@
             listfiles="No"
             includeantruntime="false">
             <classpath>
-                <pathelement path="${java.class.path}"/>
+               <fileset dir="lib">
+                  <include name="**/*.jar" />
+               </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="compile" depends="antlr" description="compile">
+        <mkdir dir="build"/>
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src"
+            destdir="build/classes"
+            deprecation="Yes"
+            listfiles="No"
+            includeantruntime="false">
+            <classpath>
+               <fileset dir="lib">
+                  <include name="**/*.jar" />
+               </fileset>
             </classpath>
         </javac>
     </target>
