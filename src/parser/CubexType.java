@@ -2,6 +2,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 // t ::= v_p | v_c <t,...,t> | t & t | thing | nothing
 public abstract class CubexType {
@@ -11,6 +12,7 @@ public abstract class CubexType {
 	public static CubexType getThing() { return _Thing;}
 
 	public abstract List<CubexCName> getClasses();
+	public abstract List<CubexType> superTypes(CubexClassContext cc);
 }
 
 class Nothing extends CubexType {
@@ -32,6 +34,11 @@ class Nothing extends CubexType {
 	public List<CubexCName> getClasses() {
 		return new ArrayList<CubexCName>();
 	}
+
+	public List<CubexType> superTypes(CubexClassContext cc) {
+		return new ArrayList<CubexType>(
+    		Arrays.asList(this));
+	}
 }
 
 class Thing extends CubexType {
@@ -52,6 +59,10 @@ class Thing extends CubexType {
 
 	public List<CubexCName> getClasses() {
 		return new ArrayList<CubexCName>();
+	}
+
+	public List<CubexType> superTypes(CubexClassContext cc) {
+		return new ArrayList<CubexType>();
 	}
 }
 class CubexPType extends CubexType{
@@ -75,6 +86,10 @@ class CubexPType extends CubexType{
 
 	public List<CubexCName> getClasses() {
 		return new ArrayList<CubexCName>();
+	}
+
+	public List<CubexType> superTypes(CubexClassContext cc) {
+		return new ArrayList<CubexType>();
 	}
 }
 
@@ -113,6 +128,12 @@ class CubexCType extends CubexType{
 		return l;
 	}
 
+	public List<CubexType> superTypes(CubexClassContext cc) {
+		CubexObject obj = cc.get(name);
+		return new ArrayList<CubexType>(
+    		Arrays.asList(this, obj.type));
+	}
+
 }
 
 class CubexIType extends CubexType{
@@ -141,4 +162,10 @@ class CubexIType extends CubexType{
 		l.addAll(b.getClasses());
 		return l;
 	}
+
+	public List<CubexType> superTypes(CubexClassContext cc) {
+		return new ArrayList<CubexType>(
+    		Arrays.asList(a, b));
+	}
+
 }

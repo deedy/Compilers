@@ -1,5 +1,7 @@
 import java.util.Stack;
 import java.util.List;
+import java.util.ArrayList;
+
 
 public class CubexTypeChecker {
 	// axioms for thing and nothing
@@ -33,6 +35,23 @@ public class CubexTypeChecker {
 	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexType t, CubexIType i) {
 		return subType(cc, kc, t, i.a) && subType(cc, kc, t, i.b);
 	}
+
+	public static List<CubexType> superTypes(CubexClassContext cc, CubexKindContext kc, CubexType t){
+		ArrayList<CubexType> ret = new ArrayList<CubexType>();
+		Stack<CubexType> stack = new Stack<CubexType>();
+		for(CubexType name : t.superTypes(cc)){
+			stack.push(name);
+		}
+		while(!stack.empty()){
+			CubexType ty = stack.pop();
+			ret.add(ty);
+			for(CubexType n : ty.superTypes(cc)){
+				stack.push(n);
+			}
+		}
+		return ret;
+	}
+
 
 	// cTypes, inheritance
 	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexCType t1, CubexCType t2) {
@@ -132,4 +151,11 @@ public class CubexTypeChecker {
 		return false;
 	}
 
+
+	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, CubexTypeContext tc) {
+		for(CubexType t : tc.types) {
+			if(!isValid(cc, kc, t)) return false;
+		}
+		return true;
+	}
 }
