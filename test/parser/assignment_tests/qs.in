@@ -1,0 +1,19 @@
+fun quicksort(l : List) : List
+{
+	m := l.first();
+	l.pop();
+	a := newList();
+	b := newList();
+	for(i in 1..(l.range())){
+		if(l.get(i) > m){
+			a.put(l.get(i));
+		}else{
+			(b.put(l.get(i)));
+		}
+	}
+	newList := a.append(m,b);
+
+	# will not terminate trololololo
+	quicksort(newList);
+}
+return 0;

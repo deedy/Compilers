@@ -1,14 +1,29 @@
 import java.util.List;
 import java.util.ArrayList;
 
-public class CubexExpression {
+public abstract class CubexExpression {
 
+    /**
+        Returns the type of this class expression or throws an error
+    */
+    public abstract CubexType getType(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st);
 }
 
+
+// every function of a type context
+
 class CubexFunctionCall extends CubexExpression {
-    private CubexName name;
-    private List<CubexType> typeList;
-    private List<CubexExpression> exprList;
+    CubexName name;
+    List<CubexType> typeList;
+    List<CubexExpression> exprList;
+
+    public CubexType getType(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
+        
+        return fc.get(this.name).scheme.type;
+    }
+
     public CubexFunctionCall(CubexName n, List<CubexType> tl, List<CubexExpression> el) {
         name = n;
         typeList = tl;
@@ -32,14 +47,25 @@ class CubexVar extends CubexExpression {
     public String toString() {
         return name.toString();
     }
+
+    public CubexType getType(CubexClassContext cc, 
+    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
+        return fc.get(this.name).scheme.type;
+    }
 }
 
 class CubexMethodCall extends CubexExpression {
-    private CubexExpression expr;
-    private CubexName name;
-    private List<CubexType> typeList;
-    private List<CubexExpression> exprList;
-    public CubexMethodCall(CubexExpression e, CubexName n, List<CubexType>  tl, List<CubexExpression> el) {
+    CubexExpression expr;
+    CubexVName name;
+    List<CubexType> typeList;
+    List<CubexExpression> exprList;
+
+    public CubexType getType(CubexClassContext cc, 
+    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){   
+        return fc.get(this.name).scheme.type;
+    }
+
+    public CubexMethodCall(CubexExpression e, CubexVName n, List<CubexType>  tl, List<CubexExpression> el) {
         expr = e;
         name = n;
         typeList = tl;
@@ -145,6 +171,12 @@ class CubexMethodCall extends CubexExpression {
 class CubexAppend extends CubexExpression {
     CubexExpression left;
     CubexExpression right;
+
+    public CubexType getType(CubexClassContext cc, 
+    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
+        return new CubexCType("XXX");
+    }
+
     public CubexAppend(CubexExpression l, CubexExpression r) {
         left = l;
         right = r;
@@ -157,9 +189,15 @@ class CubexAppend extends CubexExpression {
     }
 }
 
-class CubexArray extends CubexExpression {
-    private List<? extends CubexExpression> mElements;
-    public CubexArray(List<CubexExpression> elems) {
+class CubexIterable extends CubexExpression {
+    List<? extends CubexExpression> mElements;
+
+    public CubexType getType(CubexClassContext cc, 
+    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
+        return new CubexCType("Iterable");
+    }
+
+    public CubexIterable(List<CubexExpression> elems) {
         mElements = elems;
     }
 
@@ -170,7 +208,14 @@ class CubexArray extends CubexExpression {
 }
 
 class CubexBoolean extends CubexExpression {
-    private String bool;
+    String bool;
+
+    public CubexType getType(CubexClassContext cc, 
+    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
+        return new CubexCType("Boolean");
+    }
+
+
     public CubexBoolean(String b) {
         bool = b;
     }
@@ -181,7 +226,14 @@ class CubexBoolean extends CubexExpression {
 }
 
 class CubexInt extends CubexExpression {
-    private int num;
+    int num;
+
+    public CubexType getType(CubexClassContext cc, 
+    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
+        return new CubexCType("Integer");
+    }
+
+
     public CubexInt(int i) {
         num = i;
     }
@@ -192,7 +244,14 @@ class CubexInt extends CubexExpression {
 }
 
 class CubexString extends CubexExpression {
-    private String str;
+    String str;
+
+    public CubexType getType(CubexClassContext cc, 
+    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
+        return new CubexCType("String");
+    }
+
+
     public CubexString(String s) {
         str = s;
     }

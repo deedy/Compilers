@@ -2,25 +2,26 @@ import org.pcollections.PMap;
 import org.pcollections.HashTreePMap;
 
 class CubexFunctionContext {
-	PMap<CubexVName, CubexFunHeader> map;
+	PMap<CubexName, CubexFunHeader> map;
 	public CubexFunctionContext(){
 		map = HashTreePMap.empty();
 	}
 
-	public CubexFunctionContext(PMap<CubexVName, CubexFunHeader> m) {
+	public CubexFunctionContext(PMap<CubexName, CubexFunHeader> m) {
 		map = m;
 	}
 
 	// functional
-	public CubexFunctionContext set(CubexVName name, CubexFunHeader fun) {
+	// ^ takes in 2 arguments, can't be functional. -bae
+	public CubexFunctionContext set(CubexName name, CubexFunHeader fun) {
 		return new CubexFunctionContext(map.plus(name, fun));
 	}
 
-	public CubexFunHeader get(CubexVName name) {
+	public CubexFunHeader get(CubexName name) {
 		return map.get(name);
 	}
 
-	public boolean contains(CubexVName name) {
+	public boolean contains(CubexName name) {
 		return map.containsKey(name);
 	}
 

@@ -70,7 +70,7 @@ expr returns [CubexExpression cu]
     	{ $cu = new CubexFunctionCall($c.cu, $t.cu, $es.cu); }
     | e=expr DOT n=vname LANGLE t=types RANGLE LPAREN es=exprs RPAREN 
     	{ $cu = new CubexMethodCall($e.cu, $n.cu, $t.cu, $es.cu); } 
-    | LSQUARE list=exprs RSQUARE { $cu = new CubexArray($list.cu); }
+    | LSQUARE list=exprs RSQUARE { $cu = new CubexIterable($list.cu); }
     | BOOL { $cu = new CubexBoolean($BOOL.text); }
     | INT { $cu = new CubexInt($INT.int); }
     | STRING { $cu = new CubexString($STRING.text); }
