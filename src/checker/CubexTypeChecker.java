@@ -178,4 +178,8 @@ public class CubexTypeChecker {
 		}
 		return true;
 	}
+
+	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, CubexTypeScheme s) {
+		return false;
+	}
 }
