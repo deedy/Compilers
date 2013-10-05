@@ -87,6 +87,11 @@ class CubexCType extends CubexType{
 		params = l;
 	}
 
+	public CubexCType(String s) {
+		name = new CubexCName(s);
+		params = new ArrayList<CubexType>();
+	}
+
 	public String toString() {
 		String l = ListPrinter.listToString(params, " , ");
 		return String.format("%s < %s>", name.toString(), ListPrinter.nullify(l));	
