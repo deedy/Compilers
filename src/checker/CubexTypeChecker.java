@@ -1,12 +1,13 @@
 import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.Collection;
+import java.util.HashSet;
 
 public class CubexTypeChecker {
 	// axioms for thing and nothing
 	public static boolean subType(CubexClassContext cc, CubexKindContext kc, Thing t, CubexType ct) {
-		return (ct == t);
+		return (ct.equals(t));
 	}
 
 	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexType ct, Thing t) {
@@ -52,21 +53,37 @@ public class CubexTypeChecker {
 		return ret;
 	}
 
-
-	// cTypes, inheritance
-	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexCType t1, CubexCType t2) {
+	public static Collection<CubexCName> superClasses(CubexClassContext cc, CubexKindContext kc, CubexCType c){
+		Collection<CubexCName> ret = new HashSet<CubexCName>();
 		Stack<CubexCName> stack = new Stack<CubexCName>();
-		List<CubexType> params = t1.params;
-		for(CubexCName name : t1.getClasses()){
+		for(CubexCName name : c.getClasses()){
 			stack.push(name);
 		}
 		while(!stack.empty()){
 			// pop a classname
 			CubexCName name = stack.pop();
+			if(ret.contains(name)) continue;
 			// get its class
+			CubexObject obj = cc.get(name);	
+			ret.add(name);
+			for(CubexCName n : obj.type.getClasses()){
+				stack.push(n);
+			}
+		}
+		return ret;
+	}
+
+	public static List<CubexCName> superClasses(CubexClassContext cc, CubexKindContext kc, CubexType c) {
+		return new ArrayList<CubexCName>();
+	}
+
+	// is t1 a subtype of t2?
+	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexCType t1, CubexCType t2) {
+		List<CubexType> params = t1.params;
+		for(CubexCName name : superClasses(cc, kc, t1)){
 			CubexObject obj = cc.get(name);
-			// see if we have found the same name
 			if(name.equals(t2.name)) {
+				// must have same number of parameters
 				if(obj.kCont.size() == t2.params.size()) {
 					boolean out = true;
 					for(int i = 0; i < t2.params.size(); i++) {
@@ -85,10 +102,6 @@ public class CubexTypeChecker {
 					return out;
 				}
 			}
-			//push extensions onto stack
-			for(CubexCName n : obj.type.getClasses()){
-				stack.push(n);
-			}
 		}
 		return false;
 	}
@@ -101,12 +114,17 @@ public class CubexTypeChecker {
 	}
 
 	// method lookup
-
-	public static boolean hasMethod(CubexClassContext cc, CubexKindContext kc, CubexCName c, CubexFunHeader method) {
+	public static boolean hasMethod(CubexClassContext cc, CubexKindContext kc, CubexType c, CubexFunHeader method) {
 		return false;
 	}
 
+	public static boolean hasMethod(CubexClassContext cc, CubexKindContext kc, Nothing n, CubexFunHeader method) {
+		return true;
+	}
+
 	public static boolean hasMethod(CubexClassContext cc, CubexCName c, CubexFunHeader method) {
+		// lookup name in cc
+		// check for method
 		return false;
 	}
 
