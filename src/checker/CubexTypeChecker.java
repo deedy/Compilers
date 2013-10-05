@@ -37,8 +37,8 @@ public class CubexTypeChecker {
 		return subType(cc, kc, t, i.a) && subType(cc, kc, t, i.b);
 	}
 
-	public static List<CubexType> superTypes(CubexClassContext cc, CubexKindContext kc, CubexType t){
-		ArrayList<CubexType> ret = new ArrayList<CubexType>();
+	public static Collection<CubexType> superTypes(CubexClassContext cc, CubexKindContext kc, CubexType t){
+		HashSet<CubexType> ret = new HashSet<CubexType>();
 		Stack<CubexType> stack = new Stack<CubexType>();
 		for(CubexType name : t.superTypes(cc)){
 			stack.push(name);
@@ -134,7 +134,7 @@ public class CubexTypeChecker {
 	// type validity
 	// valid type
 	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, CubexType t) {
-		return constructable(cc,kc, t);
+		return constructable(cc,kc, t) != null;
 	}
 
 	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, Nothing t) {
@@ -145,30 +145,37 @@ public class CubexTypeChecker {
 		return kc.contains(t.name);
 	}
 
-	public static boolean constructable(CubexClassContext cc, CubexKindContext kc, CubexCType c) {
-		if(cc.containsClass(c) || cc.containsInterface(c)){
+	public static CubexType constructable(CubexClassContext cc, CubexKindContext kc, CubexCType c) {
+		if(cc.containsClass(c)){
 			for(CubexType t : c.params) {
-				if(!(isValid(cc, kc, t))) return false;
+				if(!(isValid(cc, kc, t))) return null;
 			}
-			return true;
+			return c;
 		}
-		return false;
+		if(cc.containsInterface(c)){
+			for(CubexType t : c.params) {
+				if(!(isValid(cc, kc, t))) return null;
+			}
+			return CubexType.getThing();
+		}
+		return null;
 	}
 
-	public static boolean constructable(CubexClassContext cc, CubexKindContext kc, Thing t2) {
-		return true;
+	public static CubexType constructable(CubexClassContext cc, CubexKindContext kc, Thing t2) {
+		return t2;
 	}
 
-	public static boolean constructable(CubexClassContext cc, CubexKindContext kc, CubexIType t) {
+	public static CubexType constructable(CubexClassContext cc, CubexKindContext kc, CubexIType t) {
 		CubexType a = t.a;
 		CubexType b = t.b;
-		// the following cannot be false:
-		// a is constructable but 
-		return false;
+		// make sure b contains only interfaces
+		CubexType  
+
+		return null;
 	}
 
-	public static boolean constructable(CubexClassContext cc, CubexKindContext kc, CubexType t) { 
-		return false;
+	public static CubexType constructable(CubexClassContext cc, CubexKindContext kc, CubexType t) { 
+		return null;
 	}
 
 
@@ -180,6 +187,8 @@ public class CubexTypeChecker {
 	}
 
 	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, CubexTypeScheme s) {
-		return false;
+		CubexKindContext hat = new CubexKindContext(s.kCont);
+		CubexKindContext kc2 = kc.merge(hat);
+		return isValid(cc, kc2, s.tCont) && isValid(cc, kc2, s.type);
 	}
 }

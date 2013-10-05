@@ -23,4 +23,8 @@ class CubexKindContext {
 	public boolean contains(CubexPName name) {
 		return set.contains(name);
 	}
+
+	public CubexKindContext merge(CubexKindContext kc) {
+		return new CubexKindContext(set.plusAll(kc.set));
+	}
 }
