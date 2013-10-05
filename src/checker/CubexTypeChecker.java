@@ -115,6 +115,10 @@ public class CubexTypeChecker {
 
 	// method lookup
 	public static boolean hasMethod(CubexClassContext cc, CubexKindContext kc, CubexType c, CubexFunHeader method) {
+		// enumerate all superclasses
+		for(CubexCName name : superClasses(cc, kc, c)){
+			if(hasMethod(cc, name, method)) return true;
+		}
 		return false;
 	}
 
@@ -123,9 +127,7 @@ public class CubexTypeChecker {
 	}
 
 	public static boolean hasMethod(CubexClassContext cc, CubexCName c, CubexFunHeader method) {
-		// lookup name in cc
-		// check for method
-		return false;
+		return (cc.contains(c)) && (cc.get(c).funList.contains(method));
 	}
 
 
