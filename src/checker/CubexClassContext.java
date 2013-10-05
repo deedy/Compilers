@@ -23,4 +23,26 @@ class CubexClassContext {
 		return map.containsKey(name);
 	}
 
+	public boolean contains(CubexCType c) {
+		if(map.containsKey(c.name)){
+			if(map.get(c.name).kCont.size() == c.params.size()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public CubexObject get(CubexCType c) {
+		return map.get(c.name);
+	}
+
+	public boolean containsClass(CubexCType c) {
+		return map.containsKey(c) && get(c) instanceof CubexClass;
+	}
+
+	public boolean containsInterface(CubexCType c) {
+		return map.containsKey(c) && get(c) instanceof CubexInterface;
+	}
+
+
 }

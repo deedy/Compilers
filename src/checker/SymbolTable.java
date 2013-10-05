@@ -2,25 +2,25 @@ import org.pcollections.PMap;
 import org.pcollections.HashTreePMap;
 
 class SymbolTable {
-	PMap<CubexName, CubexType> map;
+	PMap<CubexVName, CubexType> map;
 	public SymbolTable(){
 		map = HashTreePMap.empty();
 	}
 
-	public SymbolTable(PMap<CubexName, CubexType> m) {
+	public SymbolTable(PMap<CubexVName, CubexType> m) {
 		map = m;
 	}
 
 	// functional
-	public SymbolTable set(CubexName name, CubexType t) {
+	public SymbolTable set(CubexVName name, CubexType t) {
 		return new SymbolTable(map.plus(name, t));
 	}
 
-	public CubexType get(CubexName name) {
+	public CubexType get(CubexVName name) {
 		return map.get(name);
 	}
 
-	public boolean contains(CubexName name) {
+	public boolean contains(CubexVName name) {
 		return map.containsKey(name);
 	}
 

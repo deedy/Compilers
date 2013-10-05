@@ -8,6 +8,10 @@ public abstract class CubexName {
 	public boolean equals(CubexName n) {
 		return name.equals(n.name);
 	}
+
+	public int hashCode() {
+		return name.hashCode();
+	}
 }
 
 // variable / function / method name
