@@ -1,0 +1,96 @@
+<project name="compiler" basedir="."> 
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="antlr">
+        <java classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+            <arg value="-o"/>
+            <arg path="src/lexer"/>
+            <arg path="src/lexer/CubexLexer.g4"/>
+        </java>
+        <java classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+            <arg value="-lib"/>
+            <arg path="src/lexer"/>
+            <arg value="-o"/>
+            <arg path="src/parser"/>
+            <arg parser="path/src/CubexParser.g4"/>
+	    <classpath>
+               <fileset dir="lib">
+                  <include name="**/*.jar" />
+               </fileset>
+            </classpath>
+        </java>
+    </target>
+     
+
+    <target name="compile_no_antlr" description="compile">
+        <mkdir dir="build"/>
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src"
+            destdir="build/classes"
+            deprecation="Yes"
+            listfiles="No"
+            includeantruntime="false">
+            <classpath>
+               <fileset dir="lib">
+                  <include name="**/*.jar" />
+               </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="compile" depends="antlr" description="compile">
+        <mkdir dir="build"/>
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src"
+            destdir="build/classes"
+            deprecation="Yes"
+            listfiles="No"
+            includeantruntime="false">
+            <classpath>
+               <fileset dir="lib">
+                  <include name="**/*.jar" />
+               </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="jar_lexer">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/Cubex.jar">
+            <manifest>
+                <attribute name="Main-Class" value="CubexLexerProg"/>
+            </manifest>
+            <fileset dir="build/classes" includes="**/*.class" />
+            <fileset dir="src" includes="**/*.java **/*.g4" />
+            <zipgroupfileset dir="lib" includes="**/*.jar" />
+        </jar>
+    </target>
+
+    <target name="jar_parser">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/Cubex.jar">
+            <manifest>
+                <attribute name="Main-Class" value="CubexParserProg"/>
+            </manifest>
+            <fileset dir="build/classes" includes="**/*.class" />
+            <fileset dir="src" includes="**/*.java **/*.g4" />
+            <zipgroupfileset dir="lib" includes="**/*.jar" />
+        </jar>
+    </target>
+
+    <target name="test_lexer">
+        <java classname="LexerAssignmentTest" fork="true" dir="build/classes">
+            <arg line="../../test/lexer/assignment_tests/"/>
+        </java>
+    </target>
+
+    <target name="test_parser">
+        <java classname="ParserAssignmentTest" fork="true" dir="build/classes">
+            <arg line="../../test/parser/assignment_tests/"/>
+        </java>
+    </target>
+
+</project> 
