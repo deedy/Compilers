@@ -164,7 +164,10 @@ public class CubexTypeChecker {
 			// create a new type by swapping generics for types in the extended type
 			CubexType swapped = swapParams(generics, t1, ext);
 			// see if the new type is a successful subtype, else recurse up
-			return subType(cc,kc, swapped, t2) || subType(cc, kc, t1.immediateSuperTypes(cc).get(0), t2);
+			if(subType(cc,kc, swapped, t2)) return true;
+			for(CubexType t : t1.immediateSuperTypes(cc)){
+				if(subType(cc, kc, t, t2)) return true;
+			}
 		}
 		return false;
 	}
@@ -192,13 +195,46 @@ public class CubexTypeChecker {
 
 
 	// method lookup
+	public static CubexTypeScheme method(CubexClassContext cc, CubexKindContext kc, CubexCType t, CubexVName v) {
+		// get the scheme from the class
+		CubexTypeScheme s = method(cc, t, v);
+		if(s == null){
+			// no mthod in this class, try the supertypes
+			// we only need to return the first one we see
+			// because the spec says if we see more than one
+			// they must be equal
+			for(CubexType et : t.immediateSuperTypes(cc)){
+				CubexTypeScheme es = method(cc, kc, et, v);
+				if(es != null) return es;
+			}
+			// supertypes give no luck
+			return null;
+		}
+		// this class contains the method
+		return s;
+	}
+
+	// only makes sense for CTypes to have methods
 	public static CubexTypeScheme method(CubexClassContext cc, CubexKindContext kc, CubexType t, CubexVName v) {
-		//todo: dom
+		// nothing definable here
 		return null;
 	}
 
-	public static CubexTypeScheme method(CubexClassContext cc, CubexKindContext kc, Nothing n, CubexVName v) {
-		// nothing definable here
+	public static CubexTypeScheme method(CubexClassContext cc, CubexCType c, CubexVName v) {
+		if(cc.contains(c)){
+			CubexObject obj = cc.get(c);
+			CubexFunHeader f = null;
+			for(CubexFunHeader g : obj.funList){
+				if(g.name.equals(v)){
+					// need exactly one match
+					if(f != null) return null;
+					f = g;
+				}
+			}
+			// no match
+			if(f == null) return null;
+			return f.scheme; 
+		}
 		return null;
 	}
 
