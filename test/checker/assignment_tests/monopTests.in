@@ -1,9 +1,0 @@
-fun testNegative( a : Integer): Integer
-{
-	return -a;
-}
-
-fun testNegate( a : Boolean) : Boolean
-{
-	return !a;
-} return 0;

@@ -1,1 +1,0 @@
-class Nested < > ( ) extends Thing { return 1 ; return 2 ; return 2 ; return 2 ; return 2 ; return 2 ; return 3 ; super ( ) ; } return 4 ;

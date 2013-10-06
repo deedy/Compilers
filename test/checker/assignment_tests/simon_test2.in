@@ -1,6 +1,0 @@
-interface GoodStudent
-{
-    fun doHomework() : GoodGrade;
-    fun askQuestion() : Knowledge;
-}
-return "hello world";
