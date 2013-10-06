@@ -1,5 +1,8 @@
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import org.antlr.v4.runtime.*;
 
 public abstract class CubexExpression {
 
@@ -93,9 +96,33 @@ class CubexMethodCall extends CubexExpression {
             name = new CubexVName(s);
         }
     }
+    enum BinaryOp {
+        TIMES, PLUS, MINUS, MODULO, DIVIDE, EQ, NE, STRICTSTRICTBINOP;
+    }
+    private static final Map<String, String> desugarBinOp = new HashMap<String, String>(){
+        {
+            put("TIMES", "times");
+            put("PLUS", "plus");
+            put("DIVIDE", "divide");
+            put("MODULO", "modulo");
+            put("MINUS", "minus");
+            put("EQ", "==");
+            put("NE", "!=");
+            put("AND", "and");
+            put("OR", "or");
+            put("STRICTSTRICTBINOP", "..");
+            put("OPENSTRICTBINOP", "<.");
+            put("STRICTOPENBINOP", ".<");
+            put("OPENOPENBINOP", "<<");
+        }
+    };
+
+    public CubexMethodCall(CubexExpression e, Token t, CubexExpression f) {
+        this(e, desugarBinOp.get(CubexLexer.ruleNames[t.getType()-1]), f);
+    }
 
     // constructor for desugaring binary operators
-    public CubexMethodCall(CubexExpression e, String s, CubexExpression f) {
+    private CubexMethodCall(CubexExpression e, String s, CubexExpression f) {
         expr = e;
         boolean isRange = false;
         boolean isEq = false;

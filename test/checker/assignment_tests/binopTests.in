@@ -1,0 +1,25 @@
+fun testTimes(a : Integer, b : Integer) : Integer
+{
+	return a*b;
+}
+
+fun testDivide(a : Integer, b : Integer) : Integer
+{
+	return a/b;
+}
+
+fun testModulo(a : Integer, b : Integer): Integer
+{
+	return a%b;
+}
+
+fun testAdd(a : Integer, b : Integer) : Integer
+{
+	return a+b;
+}
+
+fun testMinus(a : Integer, b : Integer) : Integer
+{
+	return a-b;
+}
+return 0;

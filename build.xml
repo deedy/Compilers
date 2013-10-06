@@ -76,6 +76,18 @@
         </jar>
     </target>
 
+    <target name="jar_checker">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/Cubex.jar">
+            <manifest>
+                <attribute name="Main-Class" value="CubexCheckerProg"/>
+            </manifest>
+            <fileset dir="build/classes" includes="**/*.class" />
+            <fileset dir="src" includes="**/*.java **/*.g4" />
+            <zipgroupfileset dir="lib" includes="**/*.jar" />
+        </jar>
+    </target>
+
     <target name="test_lexer">
         <java classname="LexerAssignmentTest" fork="true" dir="build/classes">
             <arg line="../../test/lexer/assignment_tests/"/>
@@ -88,4 +100,9 @@
         </java>
     </target>
 
+    <target name="test_checker">
+        <java classname="CheckerAssignmentTest" fork="true" dir="build/classes">
+            <arg line="../../test/checker/assignment_tests/"/>
+        </java>
+    </target>
 </project> 

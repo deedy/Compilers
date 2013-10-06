@@ -3,7 +3,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 // t ::= v_p | v_c <t,...,t> | t & t | thing | nothing
 public abstract class CubexType {
@@ -13,12 +12,13 @@ public abstract class CubexType {
 	public static CubexType getThing() { return _Thing;}
 
 	public abstract List<CubexCName> getClasses();
-	public abstract List<CubexType> superTypes(CubexClassContext cc);
+	public abstract List<CubexType> immediateSuperTypes(CubexClassContext cc);
   public abstract String toString();
+  public boolean equals(CubexType ct) {
+    return this.toString().equals(ct.toString());
+  }
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).
-       append(this.toString()).
-       toHashCode();
+    return this.toString().hashCode();
   }
 }
 
@@ -30,21 +30,12 @@ class Nothing extends CubexType {
 		return "Nothing";
 	}
 
-	public boolean equals (CubexType t) {
-		return false;
-	}
-
-	public boolean equals (Nothing n) {
-		return true;
-	}
-
 	public List<CubexCName> getClasses() {
 		return new ArrayList<CubexCName>();
 	}
 
-	public List<CubexType> superTypes(CubexClassContext cc) {
-		return new ArrayList<CubexType>(
-    		Arrays.asList(this));
+	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
+		return new ArrayList<CubexType>();
 	}
 }
 
@@ -56,19 +47,11 @@ class Thing extends CubexType {
 		return "Thing";	
 	}
 
-	public boolean equals (CubexType t) {
-		return false;
-	}
-
-	public boolean equals (Thing n) {
-		return true;
-	}
-
 	public List<CubexCName> getClasses() {
 		return new ArrayList<CubexCName>();
 	}
 
-	public List<CubexType> superTypes(CubexClassContext cc) {
+	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		return new ArrayList<CubexType>();
 	}
 }
@@ -83,19 +66,11 @@ class CubexPType extends CubexType{
 		return name.toString();	
 	}
 
-	public boolean equals (CubexType t) {
-		return false;
-	}
-
-	public boolean equals (CubexPType t) {
-		return name.equals(t.name);
-	}
-
 	public List<CubexCName> getClasses() {
 		return new ArrayList<CubexCName>();
 	}
 
-	public List<CubexType> superTypes(CubexClassContext cc) {
+	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		return new ArrayList<CubexType>();
 	}
 }
@@ -119,26 +94,13 @@ class CubexCType extends CubexType{
 		return String.format("%s < %s>", name.toString(), ListPrinter.nullify(l));	
 	}
 
-	public boolean equals (CubexType t) {
-		return false;
-	}
-
-	public boolean equals (CubexCType t) {
-		boolean a = name.equals(t.name);
-		if(!a) return false;
-		return(params.equals(t.params));
-	}
-
 	public List<CubexCName> getClasses() {
-		List<CubexCName> l = new ArrayList<CubexCName>();
-		l.add(name);
-		return l;
+    return new ArrayList<CubexCName>(Arrays.asList(name));
 	}
 
-	public List<CubexType> superTypes(CubexClassContext cc) {
+	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		CubexObject obj = cc.get(name);
-		return new ArrayList<CubexType>(
-    		Arrays.asList(obj.type));
+		return new ArrayList<CubexType>(Arrays.asList(obj.type));
 	}
 
 }
@@ -155,14 +117,6 @@ class CubexIType extends CubexType{
 		return String.format("%s & %s", a.toString(), b.toString());
 	}
 
-	public boolean equals (CubexType t) {
-		return false;
-	}
-
-	public boolean equals (CubexIType t) {
-		return (a.equals(t.a)) && (b.equals(t.b));
-	}
-
 	public List<CubexCName> getClasses() {
 		List<CubexCName> l = new ArrayList<CubexCName>();
 		l.addAll(a.getClasses());
@@ -170,9 +124,8 @@ class CubexIType extends CubexType{
 		return l;
 	}
 
-	public List<CubexType> superTypes(CubexClassContext cc) {
-		return new ArrayList<CubexType>(
-    		Arrays.asList(a, b));
+	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
+		return new ArrayList<CubexType>(Arrays.asList(a, b));
 	}
 
 }

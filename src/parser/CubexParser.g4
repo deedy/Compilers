@@ -91,14 +91,10 @@ expr returns [CubexExpression cu]
     | NEGATE e=expr { $cu = new CubexMethodCall($e.cu, "negate");}
 
     // binary operators
-    | e1=expr TIMES e2=expr { $cu = new CubexMethodCall($e1.cu, "times", $e2.cu); }
-    | e1=expr DIVIDE e2=expr { $cu = new CubexMethodCall($e1.cu, "divide", $e2.cu); }
-    | e1=expr MODULO e2=expr { $cu = new CubexMethodCall($e1.cu, "modulo", $e2.cu); }
-    | e1=expr PLUS e2=expr { $cu = new CubexMethodCall($e1.cu, "plus", $e2.cu); }
-    | e1=expr MINUS e2=expr { $cu = new CubexMethodCall($e1.cu, "minus", $e2.cu); }
-
+    | e1=expr tok=(DIVIDE | TIMES | MODULO) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
+    | e1=expr tok=(PLUS | MINUS) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
     // range operators
-    | e1=expr RANGEOPBINARY e2=expr { $cu = new CubexMethodCall($e1.cu, $RANGEOPBINARY.text, $e2.cu); }
+    | e1=expr tok=(STRICTSTRICTBINOP | STRICTOPENBINOP | OPENSTRICTBINOP | OPENOPENBINOP) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
     | e1=expr RANGEOPUNARY { $cu = new CubexMethodCall($e1.cu, $RANGEOPUNARY.text); }
 
     // append operator (here for precedence)
@@ -111,12 +107,12 @@ expr returns [CubexExpression cu]
     | e1=expr GTE e2=expr { $cu = new CubexMethodCall($e2.cu, "lessThan", $e1.cu, "false"); }
 
     // equality operators
-	| e1=expr EQ e2=expr { $cu = new CubexMethodCall($e1.cu, "==", $e2.cu); }
-	| e1=expr NE e2=expr { $cu = new CubexMethodCall($e1.cu, "!=", $e2.cu); }
+	| e1=expr tok=EQ e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
+	| e1=expr tok=NE e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
 
 	// boolean operators
-	| e1=expr AND e2=expr { $cu = new CubexMethodCall($e1.cu, "and", $e2.cu); }
-	| e1=expr OR e2=expr { $cu = new CubexMethodCall($e1.cu, "or", $e2.cu); }
+	| e1=expr tok=AND e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
+	| e1=expr tok=OR e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
 
 	// parentheses (just forget about them, the tree does scoping)
 	| LPAREN e=expr RPAREN  { $cu = $e.cu; };

@@ -30,15 +30,25 @@ public class CubexTypeChecker {
 				hs.add(immpair.getRight());
 				allSuperTypes.add(hs);
 			}
-			for (CubexType ct : immpair.getRight().superTypes(cc)) {
+			for (CubexType ct : immpair.getRight().immediateSuperTypes(cc)) {
 				superTypeQueue.add(new ImmutablePair(level+1, ct));
 			}
 		}
 		return allSuperTypes;
 	}
 
+
 	public static CubexType join (CubexClassContext cc, CubexKindContext kc, CubexType t1, CubexType t2)
 			throws UnexpectedTypeHierarchyException {
+		if (t1 instanceof Nothing) {
+			return t2;
+		} else if (t2 instanceof Nothing) {
+			return t1;
+		} else if (t1 instanceof Thing) {
+			return t1;
+		} else if (t2 instanceof Thing) {
+			return t2;
+		}
 		ArrayList<HashSet<CubexType>> levelPathToRootOne = findLevelPathToRoot(cc, kc, t1);
 		ArrayList<HashSet<CubexType>> levelPathToRootTwo = findLevelPathToRoot(cc, kc, t2);
 
@@ -101,97 +111,95 @@ public class CubexTypeChecker {
 		return subType(cc, kc, t, i.a) && subType(cc, kc, t, i.b);
 	}
 
-	public static Collection<CubexType> superTypes(CubexClassContext cc, CubexKindContext kc, CubexType t){
-		HashSet<CubexType> ret = new HashSet<CubexType>();
+	public static List<CubexType> immediateSuperTypes(CubexClassContext cc, CubexKindContext kc, CubexType t){
+		ArrayList<CubexType> ret = new ArrayList<CubexType>();
 		Stack<CubexType> stack = new Stack<CubexType>();
-		for(CubexType name : t.superTypes(cc)){
+		for(CubexType name : t.immediateSuperTypes(cc)){
 			stack.push(name);
 		}
 		while(!stack.empty()){
 			CubexType ty = stack.pop();
 			ret.add(ty);
-			for(CubexType n : ty.superTypes(cc)){
+			for(CubexType n : ty.immediateSuperTypes(cc)){
 				stack.push(n);
 			}
 		}
 		return ret;
 	}
 
-	public static Collection<CubexCName> superClasses(CubexClassContext cc, CubexKindContext kc, CubexCType c){
-		Collection<CubexCName> ret = new HashSet<CubexCName>();
-		Stack<CubexCName> stack = new Stack<CubexCName>();
-		for(CubexCName name : c.getClasses()){
-			stack.push(name);
-		}
-		while(!stack.empty()){
-			// pop a classname
-			CubexCName name = stack.pop();
-			if(ret.contains(name)) continue;
-			// get its class
-			CubexObject obj = cc.get(name);	
-			ret.add(name);
-			for(CubexCName n : obj.type.getClasses()){
-				stack.push(n);
-			}
-		}
-		return ret;
-	}
-
-	public static List<CubexCName> superClasses(CubexClassContext cc, CubexKindContext kc, CubexType c) {
-		return new ArrayList<CubexCName>();
-	}
-
-	// is t1 a subtype of t2?
 	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexCType t1, CubexCType t2) {
-		List<CubexType> params = t1.params;
-		for(CubexCName name : superClasses(cc, kc, t1)){
-			CubexObject obj = cc.get(name);
-			if(name.equals(t2.name)) {
-				// must have same number of parameters
-				if(obj.kCont.size() == t2.params.size()) {
-					boolean out = true;
-					for(int i = 0; i < t2.params.size(); i++) {
-						if (!subType(cc, kc, params.get(i), t2.params.get(i))) {
-							out = false;
-							break;
-						}
-						// don't do this is types are iterable
-						if(!(obj.name.name.equals("Iterable") && t2.name.name.equals("Iterable"))) {
-							if (!subType(cc, kc, t2.params.get(i), params.get(i))) {
-								out = false;
-								break;
-							}
-						}
+		if(t1.name.equals(t2.name)){
+			// check that params are equivalent
+			List<CubexType> params1 = t1.params;
+			List<CubexType> params2 = t2.params;
+			if(params1.size() == params2.size()) {
+				// check that t_i <: t'_i
+				for(int i = 0; i < params1.size(); i++) {
+					if(!(subType(cc,kc,params1.get(i), params2.get(i)))) return false;
+				}
+				// check that t'_i <: t_i
+				if(!t1.name.name.equals("Iterable")){
+					for(int i = 0; i < params1.size(); i++) {
+						if(!(subType(cc,kc,params2.get(i), params1.get(i)))) return false;
 					}
-					return out;
+				}
+				// everything checks
+				return true;
+			}
+			// same name, different number of params
+			return false;
+		}
+		// names do not match, try supertype
+		return false;
+	}
+
+	// recursively check superclasses
+	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexCType t1, CubexType t2) {
+		if(cc.contains(t1)){
+			CubexObject obj = cc.get(t1);
+			// get the ordering of generics
+			List<CubexPName> generics = obj.kCont;
+			// get the extended type
+			CubexType ext = obj.type;
+			// create a new type by swapping generics for types in the extended type
+			CubexType swapped = swapParams(generics, t1, ext);
+			// see if the new type is a successful subtype, else recurse up
+			return subType(cc,kc, swapped, t2) || subType(cc, kc, t1.immediateSuperTypes(cc).get(0), t2);
+		}
+		return false;
+	}
+
+	// exchange generics in t2 for types in t1
+	public static CubexType swapParams(List<CubexPName> generics, CubexCType t1, CubexCType t2){
+		// t1 and generics should have same params length
+		List<CubexType> newParams = new ArrayList<CubexType>(t2.params);
+		for(int i = 0; i < generics.size(); i++){
+			// for each generic g_i, replace all instances of g_i in t2 with t1_i
+			CubexPType g = new CubexPType(generics.get(i));
+			for(int j = 0; j < newParams.size(); j++){
+				if(newParams.get(i).equals(g)) {
+					newParams.set(i, t1.params.get(i));
 				}
 			}
 		}
-		return false;
+		return new CubexCType(t2.name, newParams);
 	}
 
-	public static boolean extend (CubexClassContext cc, CubexCType t1, CubexType t2) {
-		// check that t1 in class context
-		CubexObject obj = cc.get(t1.name);
-		// see that obj extends t2
-		return subType(cc, new CubexKindContext(obj.kCont), obj.type, t2);
+	// overloaded for non ctypes
+	public static CubexType swapParams(List<CubexPName> generics, CubexCType t1, CubexType t2) {
+		return t2;
 	}
+
 
 	// method lookup
-	public static boolean hasMethod(CubexClassContext cc, CubexKindContext kc, CubexType c, CubexFunHeader method) {
-		// enumerate all superclasses
-		for(CubexCName name : superClasses(cc, kc, c)){
-			if(hasMethod(cc, name, method)) return true;
-		}
-		return false;
+	public static CubexTypeScheme method(CubexClassContext cc, CubexKindContext kc, CubexType t, CubexVName v) {
+		//todo: dom
+		return null;
 	}
 
-	public static boolean hasMethod(CubexClassContext cc, CubexKindContext kc, Nothing n, CubexFunHeader method) {
-		return true;
-	}
-
-	public static boolean hasMethod(CubexClassContext cc, CubexCName c, CubexFunHeader method) {
-		return (cc.contains(c)) && (cc.get(c).funList.contains(method));
+	public static CubexTypeScheme method(CubexClassContext cc, CubexKindContext kc, Nothing n, CubexVName v) {
+		// nothing definable here
+		return null;
 	}
 
 
