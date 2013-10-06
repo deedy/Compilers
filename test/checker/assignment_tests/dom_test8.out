@@ -1,0 +1,1 @@
+for ( i in 3 . through < > ( 4 , true , true ) ++ 5 ++ 4 . onwards < > ( true ) ) { k := 5 . through < > ( 7 , true , true ) ; j := k ++ k ++ [ 1 , 2 , 3 ] ; }

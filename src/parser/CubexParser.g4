@@ -91,8 +91,8 @@ expr returns [CubexExpression cu]
     | NEGATE e=expr { $cu = new CubexMethodCall($e.cu, "negate");}
 
     // binary operators
-    | e1=expr tok=(DIVIDE | TIMES | MODULO | PLUS | MINUS) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
-
+    | e1=expr tok=(DIVIDE | TIMES | MODULO) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
+    | e1=expr tok=(PLUS | MINUS) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
     // range operators
     | e1=expr tok=(STRICTSTRICTBINOP | STRICTOPENBINOP | OPENSTRICTBINOP | OPENOPENBINOP) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
     | e1=expr RANGEOPUNARY { $cu = new CubexMethodCall($e1.cu, $RANGEOPUNARY.text); }

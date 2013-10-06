@@ -1,0 +1,1 @@
+class Fib < > ( v : Int < > ) extends InterviewQuestions < > { super ( ) ; fun fib < > ( n : Int < > ) : Int < > if ( n . negate < > ( ) ) return 1 ; else { } } return 5 ;
