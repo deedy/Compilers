@@ -30,12 +30,13 @@ public class CubexTypeChecker {
 				hs.add(immpair.getRight());
 				allSuperTypes.add(hs);
 			}
-			for (CubexType ct : immpair.getRight().superTypes(cc)) {
+			for (CubexType ct : immpair.getRight().immediateSuperTypes(cc)) {
 				superTypeQueue.add(new ImmutablePair(level+1, ct));
 			}
 		}
 		return allSuperTypes;
 	}
+
 
 	public static CubexType join (CubexClassContext cc, CubexKindContext kc, CubexType t1, CubexType t2)
 			throws UnexpectedTypeHierarchyException {
@@ -101,16 +102,16 @@ public class CubexTypeChecker {
 		return subType(cc, kc, t, i.a) && subType(cc, kc, t, i.b);
 	}
 
-	public static List<CubexType> superTypes(CubexClassContext cc, CubexKindContext kc, CubexType t){
+	public static List<CubexType> immediateSuperTypes(CubexClassContext cc, CubexKindContext kc, CubexType t){
 		ArrayList<CubexType> ret = new ArrayList<CubexType>();
 		Stack<CubexType> stack = new Stack<CubexType>();
-		for(CubexType name : t.superTypes(cc)){
+		for(CubexType name : t.immediateSuperTypes(cc)){
 			stack.push(name);
 		}
 		while(!stack.empty()){
 			CubexType ty = stack.pop();
 			ret.add(ty);
-			for(CubexType n : ty.superTypes(cc)){
+			for(CubexType n : ty.immediateSuperTypes(cc)){
 				stack.push(n);
 			}
 		}

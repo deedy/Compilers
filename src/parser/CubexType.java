@@ -13,7 +13,7 @@ public abstract class CubexType {
 	public static CubexType getThing() { return _Thing;}
 
 	public abstract List<CubexCName> getClasses();
-	public abstract List<CubexType> superTypes(CubexClassContext cc);
+	public abstract List<CubexType> immediateSuperTypes(CubexClassContext cc);
   public abstract String toString();
   public int hashCode() {
     return new HashCodeBuilder(17, 37).
@@ -42,7 +42,7 @@ class Nothing extends CubexType {
 		return new ArrayList<CubexCName>();
 	}
 
-	public List<CubexType> superTypes(CubexClassContext cc) {
+	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		return new ArrayList<CubexType>(
     		Arrays.asList(this));
 	}
@@ -68,7 +68,7 @@ class Thing extends CubexType {
 		return new ArrayList<CubexCName>();
 	}
 
-	public List<CubexType> superTypes(CubexClassContext cc) {
+	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		return new ArrayList<CubexType>();
 	}
 }
@@ -95,7 +95,7 @@ class CubexPType extends CubexType{
 		return new ArrayList<CubexCName>();
 	}
 
-	public List<CubexType> superTypes(CubexClassContext cc) {
+	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		return new ArrayList<CubexType>();
 	}
 }
@@ -135,7 +135,7 @@ class CubexCType extends CubexType{
 		return l;
 	}
 
-	public List<CubexType> superTypes(CubexClassContext cc) {
+	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		CubexObject obj = cc.get(name);
 		return new ArrayList<CubexType>(
     		Arrays.asList(obj.type));
@@ -170,7 +170,7 @@ class CubexIType extends CubexType{
 		return l;
 	}
 
-	public List<CubexType> superTypes(CubexClassContext cc) {
+	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		return new ArrayList<CubexType>(
     		Arrays.asList(a, b));
 	}
