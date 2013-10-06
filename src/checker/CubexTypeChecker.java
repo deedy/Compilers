@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.HashMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class CubexTypeChecker {
@@ -111,14 +113,15 @@ public class CubexTypeChecker {
 		return subType(cc, kc, t, i.a) && subType(cc, kc, t, i.b);
 	}
 
-	public static List<CubexType> immediateSuperTypes(CubexClassContext cc, CubexKindContext kc, CubexType t){
-		ArrayList<CubexType> ret = new ArrayList<CubexType>();
+	public static Collection<CubexType> immediateSuperTypes(CubexClassContext cc, CubexKindContext kc, CubexType t){
+		HashSet<CubexType> ret = new HashSet<CubexType>();
 		Stack<CubexType> stack = new Stack<CubexType>();
 		for(CubexType name : t.immediateSuperTypes(cc)){
 			stack.push(name);
 		}
 		while(!stack.empty()){
 			CubexType ty = stack.pop();
+			if(ret.contains(ty)) continue;
 			ret.add(ty);
 			for(CubexType n : ty.immediateSuperTypes(cc)){
 				stack.push(n);
@@ -210,8 +213,35 @@ public class CubexTypeChecker {
 			// supertypes give no luck
 			return null;
 		}
-		// this class contains the method
-		return s;
+		// make type replacements
+		CubexObject obj = cc.get(t);
+		List<CubexPName> generics = obj.kCont;
+		// initialize the new context
+		CubexTypeContext ct = new CubexTypeContext();
+		// get the old type context
+		CubexTypeContext oc = s.tCont;
+		// for all g_i in obj, if s_j = g_i, s_j <- t_i
+		for(int j = 0; j < oc.types.size(); j++) {
+			CubexVName vj = oc.names.get(j);
+			CubexType tj = oc.types.get(j);
+			for(int i = 0; i < generics.size(); i++) {
+				CubexPType p = new CubexPType(generics.get(i));
+				// match found, replace generic
+				if(tj.equals(p)) {
+					tj = t.params.get(i);
+				}
+				// either way, append name and type to context
+				ct.add(vj, tj);
+			}
+		}
+		CubexType retType = s.type;
+		// replace return type if it is a generic
+		int retIndex = generics.indexOf(retType);
+		if(retIndex != -1) {
+			retType = t.params.get(retIndex);
+		}
+		// copy over generics, add new type context
+		return new CubexTypeScheme(s.kCont, ct, retType);
 	}
 
 	// only makes sense for CTypes to have methods
@@ -272,16 +302,75 @@ public class CubexTypeChecker {
 	public static CubexType constructable(CubexClassContext cc, CubexKindContext kc, Thing t2) {
 		return t2;
 	}
-
+ 
 	public static CubexType constructable(CubexClassContext cc, CubexKindContext kc, CubexIType t) {
 		CubexType a = t.a;
 		CubexType b = t.b;
-		// make sure b contains only interfaces
-		//CubexType  
-
-		return null;
+		CubexType ret = constructable(cc, kc, a);
+		if(ret == null) return null;
+		// b constructs thing
+		if(!constructable(cc, kc, b).equals(CubexType.getThing())) return null;
+		// get the intersection of their superclasses
+		// pairwise check all supertypes for compatibility
+		for(CubexType v1 : immediateSuperTypes(cc, kc, a)) {
+			for(CubexType v2 : immediateSuperTypes(cc, kc, b)) {
+				if(!compatible(cc, kc, a, b, v1, v2)) return null;
+			}
+		}
+		// get all methods of a and b
+		Collection<CubexVName> aMethods = allMethods(cc, kc, a);
+		Collection<CubexVName> bMethods = allMethods(cc, kc, b);
+		// check that methods with the same name have same type scheme
+		for(CubexVName n1 : aMethods) {
+			for(CubexVName n2 : bMethods) {
+				if(n1.equals(n2)) {
+					// get the typeschemes
+					CubexTypeScheme s1 = method(cc, kc, a, n1);
+					CubexTypeScheme s2 = method(cc, kc, b, n2);
+					// signatures must be exactly the same
+					if(!s1.equals(s2)) return null;
+				}
+			}
+		}
+		// intersection passes all tests
+		return ret;
 	}
 
+	// used to compute the second line of intersection validation
+	private static boolean compatible(CubexClassContext cc, CubexKindContext kc, CubexType t1, CubexType t2, CubexCType c1, CubexCType c2) {
+		// classes are compatible if they have different names, or they have the same name and compatible types
+		if(!c1.name.equals(c2.name)) return true;
+		return subType(cc, kc, t1, c2) && subType(cc, kc, t2, c1);
+	}
+
+	// non-classes are compatible by default
+	private static boolean compatible(CubexClassContext cc, CubexKindContext kc, CubexType t1, CubexType t2, CubexType t3, CubexType t4) {
+		return true;
+	}
+
+	// return all method names of t and its supertypes
+	public static Collection<CubexVName> allMethods(CubexClassContext cc, CubexKindContext kc, CubexType t) {
+		HashSet<CubexVName> methods = new HashSet<CubexVName>();
+		for(CubexType v : immediateSuperTypes(cc, kc, t)) {
+			methods.addAll(allMethods(cc, v));
+		}
+		return methods;
+	}
+
+	public static List<CubexVName> allMethods(CubexClassContext cc, CubexCType c) {
+		ArrayList<CubexVName> names = new ArrayList<CubexVName>();
+		for(CubexFunHeader f : cc.get(c).funList) {
+			names.add(f.name);
+		}
+		return names;
+	}
+
+	public static List<CubexVName> allMethods(CubexClassContext cc, CubexType c) {
+		// non-ctypes have no methods
+		return new ArrayList<CubexVName>();
+	}
+
+	// everything else cannot construct anything
 	public static CubexType constructable(CubexClassContext cc, CubexKindContext kc, CubexType t) { 
 		return null;
 	}
