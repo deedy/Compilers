@@ -1,0 +1,23 @@
+interface List<E> {
+	fun elements() : Iterable<E>;
+}
+class Nil() extends List<Nothing> {
+	fun elements() : Iterable<Nothing> {
+		return [];
+	}
+}
+class Cons<E>(head : E, tail : List<E>) extends List<Nothing> {
+	elems := [head] ++ tail.elements();
+	fun elements() : Iterable<E> {return elems;}
+}
+
+l := Cons<Int>(
+	3, Cons<Int>(
+		2, Cons<Int>(
+			1, Nil()
+			)
+		)
+	);
+for(i in l){
+	monad := Printer();
+}
