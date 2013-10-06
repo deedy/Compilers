@@ -1,6 +1,0 @@
-# test append and more range ops
-# check parse tree for left assoc
-for( i in (3..4 ++ 5) ++ (4...)){
-	k := 5..7;
-	j := k ++ k ++ [1,2,3];
-}
