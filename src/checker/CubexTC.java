@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.HashMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-public class CubexTypeChecker {
+public class CubexTC {
 	static class UnexpectedTypeHierarchyException extends Exception {
 		UnexpectedTypeHierarchyException(String message) {
 			super(message);
