@@ -233,7 +233,7 @@ public class CubexTypeChecker {
 		CubexType a = t.a;
 		CubexType b = t.b;
 		// make sure b contains only interfaces
-		CubexType  
+		//CubexType  
 
 		return null;
 	}
