@@ -40,6 +40,15 @@ public class CubexTypeChecker {
 
 	public static CubexType join (CubexClassContext cc, CubexKindContext kc, CubexType t1, CubexType t2)
 			throws UnexpectedTypeHierarchyException {
+		if (t1 instanceof Nothing) {
+			return t2;
+		} else if (t2 instanceof Nothing) {
+			return t1;
+		} else if (t1 instanceof Thing) {
+			return t1;
+		} else if (t2 instanceof Thing) {
+			return t2;
+		}
 		ArrayList<HashSet<CubexType>> levelPathToRootOne = findLevelPathToRoot(cc, kc, t1);
 		ArrayList<HashSet<CubexType>> levelPathToRootTwo = findLevelPathToRoot(cc, kc, t2);
 

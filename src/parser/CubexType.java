@@ -35,8 +35,7 @@ class Nothing extends CubexType {
 	}
 
 	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
-		return new ArrayList<CubexType>(
-    		Arrays.asList(this));
+		return new ArrayList<CubexType>();
 	}
 }
 
@@ -96,15 +95,12 @@ class CubexCType extends CubexType{
 	}
 
 	public List<CubexCName> getClasses() {
-		List<CubexCName> l = new ArrayList<CubexCName>();
-		l.add(name);
-		return l;
+    return new ArrayList<CubexCName>(Arrays.asList(name));
 	}
 
 	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		CubexObject obj = cc.get(name);
-		return new ArrayList<CubexType>(
-    		Arrays.asList(obj.type));
+		return new ArrayList<CubexType>(Arrays.asList(obj.type));
 	}
 
 }
@@ -129,8 +125,7 @@ class CubexIType extends CubexType{
 	}
 
 	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
-		return new ArrayList<CubexType>(
-    		Arrays.asList(a, b));
+		return new ArrayList<CubexType>(Arrays.asList(a, b));
 	}
 
 }
