@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 // t ::= v_p | v_c <t,...,t> | t & t | thing | nothing
 public abstract class CubexType {
@@ -13,6 +14,12 @@ public abstract class CubexType {
 
 	public abstract List<CubexCName> getClasses();
 	public abstract List<CubexType> superTypes(CubexClassContext cc);
+  public abstract String toString();
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37).
+       append(this.toString()).
+       toHashCode();
+  }
 }
 
 class Nothing extends CubexType {
@@ -131,7 +138,7 @@ class CubexCType extends CubexType{
 	public List<CubexType> superTypes(CubexClassContext cc) {
 		CubexObject obj = cc.get(name);
 		return new ArrayList<CubexType>(
-    		Arrays.asList(this, obj.type));
+    		Arrays.asList(obj.type));
 	}
 
 }
