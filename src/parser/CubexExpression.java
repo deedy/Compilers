@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import org.antlr.v4.runtime.*;
 
+
 public abstract class CubexExpression {
 
     /**
@@ -38,12 +39,18 @@ class CubexFunctionCall extends CubexExpression {
             // show that it is a subtype
             if(!CubexTC.subType(cc, kc, eType, exp)){
                 // not a subtype, error
-                return null;
+                throw new CubexTC.TypeCheckException(
+                    String.format("%s IS NOT A SUBTYPE OF %s IN FUNCTION CALL %s", 
+                        eType.toString(), exp.toString(), toString())
+                    );
             }
         }
         //check the validity of the return type
         if(CubexTC.isValid(cc, kc, swapped.type)) return swapped.type;
-        return null;
+        throw new CubexTC.TypeCheckException(
+            String.format("%s IS NOT A VALID TYPE IN FUNCTION CALL %s", 
+                swapped.type, toString())
+            );
 
     }
 
@@ -74,7 +81,10 @@ class CubexVar extends CubexExpression {
     public CubexType getType(CubexClassContext cc, 
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         // simply return the type from the symbol table
-        return st.get(name);
+        if(st.contains(name)) return st.get(name);
+        throw new CubexTC.TypeCheckException(
+            String.format("%s IS NOT IN SYMBOL TABLE", name.toString())
+        );
     }
 }
 
@@ -105,14 +115,18 @@ class CubexMethodCall extends CubexExpression {
             CubexType exp = expected.get(i);
             // show that it is a subtype
             if(!CubexTC.subType(cc, kc, eType, exp)){
-                // not a subtype, error
-                return null;
+                throw new CubexTC.TypeCheckException(
+                    String.format("%s IS NOT A SUBTYPE OF %s IN METHOD CALL %s", 
+                        eType.toString(), exp.toString(), toString())
+                    );
             }
         }
         //check the validity of the return type
         if(CubexTC.isValid(cc, kc, swapped.type)) return swapped.type;
-        return null;
-
+        throw new CubexTC.TypeCheckException(
+            String.format("%s IS NOT A VALID TYPE IN METHOD CALL %s", 
+                swapped.type, toString())
+            );
     }
 
     public CubexMethodCall(CubexExpression e, CubexVName n, List<CubexType>  tl, List<CubexExpression> el) {
@@ -279,15 +293,18 @@ class CubexAppend extends CubexExpression {
             commonType = CubexTC.join(cc, kc, lt, rt);
             
         } catch(CubexTC.UnexpectedTypeHierarchyException e){
-            System.out.println("NO COMMON SUPERTYPE FOR ALL THE ELEMENTS IN THE LIST");
+            throw new CubexTC.TypeCheckException(
+                String.format("ERROR GETTING JOIN TYPE OF %s", toString())
+                );
         }
         List<CubexType> params = new ArrayList<CubexType>();
         params.add(commonType);
         out = new CubexCType(new CubexCName("Iterable"), params);
         // check for validity
         if(CubexTC.isValid(cc, kc, out)) return out;
-        return null;
-
+        throw new CubexTC.TypeCheckException(
+            String.format("TYPE %s IS NOT VALID IN %s", out.toString(), toString())
+            );
     }
 
     public CubexAppend(CubexExpression l, CubexExpression r) {
@@ -312,12 +329,18 @@ class CubexIterable extends CubexExpression {
             try {
                 commonType = CubexTC.join(cc, kc, commonType, elem.getType(cc, kc, fc, st));
             } catch (CubexTC.UnexpectedTypeHierarchyException e) {
-                System.out.println("NO COMMON SUPERTYPE FOR ALL THE ELEMENTS IN THE LIST");
+            throw new CubexTC.TypeCheckException(
+                String.format("ERROR GETTING JOIN TYPE OF %s", toString())
+                );
             }
         }
         List<CubexType> params = new ArrayList<CubexType>();
         params.add(commonType);
-        return new CubexCType(new CubexCName("Iterable"), params);
+        CubexType out = new CubexCType(new CubexCName("Iterable"), params);
+        if(CubexTC.isValid(cc, kc, out)) return out;
+        throw new CubexTC.TypeCheckException(
+            String.format("TYPE %s IS NOT VALID IN %s", out.toString(), toString())
+            );
     }
 
     public CubexIterable(List<CubexExpression> elems) {
