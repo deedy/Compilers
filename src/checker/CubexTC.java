@@ -165,7 +165,7 @@ public class CubexTC {
 			// get the extended type
 			CubexType ext = obj.type;
 			// create a new type by swapping generics for types in the extended type
-			CubexType swapped = swapParams(generics, t1, ext);
+			CubexType swapped = replaceGenerics(generics, t1.params, ext);
 			// see if the new type is a successful subtype, else recurse up
 			if(subType(cc,kc, swapped, t2)) return true;
 			for(CubexType t : t1.immediateSuperTypes(cc)){
@@ -173,22 +173,6 @@ public class CubexTC {
 			}
 		}
 		return false;
-	}
-
-	// exchange generics in t2 for types in t1
-	public static CubexType swapParams(List<CubexPName> generics, CubexCType t1, CubexCType t2){
-		// t1 and generics should have same params length
-		List<CubexType> newParams = new ArrayList<CubexType>(t2.params);
-		for(int i = 0; i < generics.size(); i++){
-			// for each generic g_i, replace all instances of g_i in t2 with t1_i
-			CubexPType g = new CubexPType(generics.get(i));
-			for(int j = 0; j < newParams.size(); j++){
-				if(newParams.get(i).equals(g)) {
-					newParams.set(i, t1.params.get(i));
-				}
-			}
-		}
-		return new CubexCType(t2.name, newParams);
 	}
 
 	// overloaded for non ctypes
