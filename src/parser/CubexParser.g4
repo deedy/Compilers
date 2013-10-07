@@ -87,32 +87,26 @@ expr returns [CubexExpression cu]
 		$cu = new CubexMethodCall($e.cu, $n.cu, t, $es.cu);
 		} 
     // unary prefixes
-    | MINUS e=expr { $cu = new CubexMethodCall($e.cu, "negative");}
-    | NEGATE e=expr { $cu = new CubexMethodCall($e.cu, "negate");}
+    | tok=(MINUS | NEGATE)  e=expr { $cu = new CubexMethodCall($e.cu, $tok);}
 
     // binary operators
     | e1=expr tok=(DIVIDE | TIMES | MODULO) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
     | e1=expr tok=(PLUS | MINUS) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
     // range operators
     | e1=expr tok=(STRICTSTRICTBINOP | STRICTOPENBINOP | OPENSTRICTBINOP | OPENOPENBINOP) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
-    | e1=expr RANGEOPUNARY { $cu = new CubexMethodCall($e1.cu, $RANGEOPUNARY.text); }
+    | e1=expr tok=(OPENONWARDSUNARYOP | STRICTONWARDSUNARYOP) { $cu = new CubexMethodCall($e1.cu, $tok); }
 
     // append operator (here for precedence)
     | l=expr PLUSPLUS r=expr { $cu = new CubexAppend($l.cu, $r.cu); }
 
     // inequality operators
-    | e1=expr LANGLE e2=expr { $cu = new CubexMethodCall($e1.cu, "lessThan", $e2.cu, "true"); }
-    | e1=expr RANGLE e2=expr { $cu = new CubexMethodCall($e2.cu, "lessThan", $e1.cu, "true"); }
-    | e1=expr LTE e2=expr { $cu = new CubexMethodCall($e1.cu, "lessThan", $e2.cu, "false"); }
-    | e1=expr GTE e2=expr { $cu = new CubexMethodCall($e2.cu, "lessThan", $e1.cu, "false"); }
+    | e1=expr tok=(LANGLE | RANGLE | LTE | GTE) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
 
     // equality operators
-	| e1=expr tok=EQ e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
-	| e1=expr tok=NE e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
+	| e1=expr tok=(EQ | NE) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
 
 	// boolean operators
-	| e1=expr tok=AND e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
-	| e1=expr tok=OR e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
+	| e1=expr tok=(AND | OR) e2=expr { $cu = new CubexMethodCall($e1.cu, $tok, $e2.cu); }
 
 	// parentheses (just forget about them, the tree does scoping)
 	| LPAREN e=expr RPAREN  { $cu = $e.cu; };

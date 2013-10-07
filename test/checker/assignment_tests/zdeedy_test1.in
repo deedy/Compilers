@@ -1,5 +1,6 @@
 fun sum ( range : Iterable<Integer> ) : Integer
 {
+
   ret := 0;
   for ( i in range )
   {

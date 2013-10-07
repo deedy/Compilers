@@ -64,7 +64,7 @@ class CubexMethodCall extends CubexExpression {
     List<CubexExpression> exprList;
 
     public CubexType getType(CubexClassContext cc, 
-    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){   
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){   
         return fc.get(this.name).scheme.type;
     }
 
@@ -76,7 +76,8 @@ class CubexMethodCall extends CubexExpression {
     }
 
     // constructor for desugaring unary prefixes and suffixes
-    public CubexMethodCall(CubexExpression e, String s) {
+    public CubexMethodCall(CubexExpression e, Token t) {
+        String s = desugarUnaryOp.get(CubexLexer.ruleNames[t.getType()-1]);
         expr = e;
         boolean isRange = false;
         String b = "";
@@ -96,9 +97,15 @@ class CubexMethodCall extends CubexExpression {
             name = new CubexVName(s);
         }
     }
-    enum BinaryOp {
-        TIMES, PLUS, MINUS, MODULO, DIVIDE, EQ, NE, STRICTSTRICTBINOP;
-    }
+    private static final Map<String, String> desugarUnaryOp = new HashMap<String, String>(){
+        {
+            put("STRICTONWARDSUNARYOP", "...");
+            put("OPENONWARDSUNARYOP", "<..");
+            put("MINUS", "negative");
+            put("NEGATE", "negate");
+        }
+    };
+
     private static final Map<String, String> desugarBinOp = new HashMap<String, String>(){
         {
             put("TIMES", "times");
@@ -114,6 +121,10 @@ class CubexMethodCall extends CubexExpression {
             put("OPENSTRICTBINOP", "<.");
             put("STRICTOPENBINOP", ".<");
             put("OPENOPENBINOP", "<<");
+            put("RANGLE", ">");
+            put("LANGLE", "<");
+            put("LTE", "<=");
+            put("GTE", ">=");
         }
     };
 
@@ -128,6 +139,7 @@ class CubexMethodCall extends CubexExpression {
         boolean isEq = false;
         boolean isNeg = false;
         String b1 = "", b2 = "";
+        // Binary Range Operators
         if(s.equals("..")) {
             b1 = "true";
             b2 = "true";
@@ -158,6 +170,7 @@ class CubexMethodCall extends CubexExpression {
             exprList.add(new CubexBoolean(b1));
             exprList.add(new CubexBoolean(b2));
         } else if (isEq) {
+            // NEGATE and EQ 
             if (isNeg) {
                 // create a new method call to the equals
                 expr = new CubexMethodCall(e, "==", f);
@@ -167,20 +180,29 @@ class CubexMethodCall extends CubexExpression {
                 name = new CubexVName("equals");
                 exprList.add(f);
             }
+        } else if (isInequalityOperator(s)) {
+            // INEQUALITY OPERATOR
+            String strictness = "true";
+            name = new CubexVName("lessThan");
+            if (s.equals("<=") || s.equals(">=")) {
+                strictness = "false" ;
+            }
+            if (s.equals("<") || s.equals("<=")) {
+                expr = e;
+                exprList.add(f);
+            } else {
+                expr = f;
+                exprList.add(e);
+            }
+            exprList.add(new CubexBoolean(strictness));
         } else {
             name = new CubexVName(s);
             exprList.add(f);   
         }
     }
 
-    // constructor for ineqaulity operators
-    public CubexMethodCall(CubexExpression e, String n, CubexExpression f, String strict) {
-        expr = e;
-        name = new CubexVName(n);
-        typeList = new ArrayList<CubexType>();
-        exprList = new ArrayList<CubexExpression>();
-        exprList.add(f);
-        exprList.add(new CubexBoolean(strict));
+    private boolean isInequalityOperator(String s) {
+        return s.equals("<=") || s.equals(">=") || s.equals("<") || s.equals(">");
     }
 
     public String toString() {
