@@ -1,0 +1,8 @@
+
+class Fib (v : Int) {
+    fun fib(n : Int) : Int {
+        if ( !n ) {
+            return 1; 
+        }
+    }
+}
