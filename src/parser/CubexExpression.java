@@ -13,7 +13,6 @@ public abstract class CubexExpression {
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st);
 }
 
-
 // every function of a type context
 
 class CubexFunctionCall extends CubexExpression {
@@ -242,8 +241,18 @@ class CubexIterable extends CubexExpression {
     List<? extends CubexExpression> mElements;
 
     public CubexType getType(CubexClassContext cc, 
-    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
-        return new CubexCType("Iterable");
+    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st) {
+        CubexType commonType = new Nothing();
+        for (CubexExpression elem : mElements) {
+            try {
+                commonType = CubexTypeChecker.join(cc, kc, commonType, elem.getType(cc, kc, fc, st));
+            } catch (CubexTypeChecker.UnexpectedTypeHierarchyException e) {
+                System.out.println("NO COMMON SUPERTYPE FOR ALL THE ELEMENTS IN THE LIST");
+            }
+        }
+        List<CubexType> params = new ArrayList<CubexType>();
+        params.add(commonType);
+        return new CubexCType(new CubexCName("Iterable"), params);
     }
 
     public CubexIterable(List<CubexExpression> elems) {
