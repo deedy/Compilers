@@ -20,6 +20,12 @@ public abstract class CubexType {
   public int hashCode() {
     return this.toString().hashCode();
   }
+
+  public boolean isIterable(CubexClassContext cc, CubexKindContext kc) {
+  	List<CubexType> p = new ArrayList<CubexType>();
+  	p.add(new Thing());
+  	return CubexTC.subType(cc, kc, this, new CubexCType(new CubexCName("Iterable"), p));
+  } 
 }
 
 class Nothing extends CubexType {

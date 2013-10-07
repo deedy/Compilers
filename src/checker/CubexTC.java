@@ -147,7 +147,7 @@ public class CubexTC {
 					if(!(subType(cc,kc,params1.get(i), params2.get(i)))) return false;
 				}
 				// check that t'_i <: t_i
-				if(!t1.name.name.equals("Iterable")){
+				if(!(t1.isIterable(cc, kc) && t2.isIterable(cc, kc))){
 					for(int i = 0; i < params1.size(); i++) {
 						if(!(subType(cc,kc,params2.get(i), params1.get(i)))) return false;
 					}

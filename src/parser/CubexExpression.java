@@ -287,6 +287,13 @@ class CubexAppend extends CubexExpression {
         // get the types of left and right
         CubexType lt = left.getType(cc, kc, fc, st);
         CubexType rt = right.getType(cc, kc, fc, st);
+
+        // check that they are iterables
+        if(!lt.isIterable(cc, kc) || !rt.isIterable(cc,kc)) {
+            throw new CubexTC.TypeCheckException(
+                String.format("%s OR %s ARE NOT ITERABLE", lt.toString(), rt.toString())
+                );
+        }
         CubexType out = new Nothing();
         CubexType commonType = new Nothing();
         try {
