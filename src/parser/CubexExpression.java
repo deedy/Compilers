@@ -22,8 +22,29 @@ class CubexFunctionCall extends CubexExpression {
 
     public CubexType getType(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
-        
-        return fc.get(this.name).scheme.type;
+        // check if name in function context
+        CubexFunHeader f = fc.get(name);
+        // get the de-generic'd type scheme
+        CubexTypeScheme swapped = CubexTC.replaceGenerics(f.scheme.kCont, typeList, f.scheme);
+        // show that each expression is a subtype
+        List<CubexType> expected = swapped.tCont.types;
+        for(int i = 0; i < exprList.size(); i++) {
+            // get the expression
+            CubexExpression expr = exprList.get(i);
+            // get its type
+            CubexType eType = expr.getType(cc, kc, fc, st);
+            // get the type from the scheme
+            CubexType exp = expected.get(i);
+            // show that it is a subtype
+            if(!CubexTC.subType(cc, kc, eType, exp)){
+                // not a subtype, error
+                return null;
+            }
+        }
+        //check the validity of the return type
+        if(CubexTC.isValid(cc, kc, swapped.type)) return swapped.type;
+        return null;
+
     }
 
     public CubexFunctionCall(CubexName n, List<CubexType> tl, List<CubexExpression> el) {
@@ -52,6 +73,7 @@ class CubexVar extends CubexExpression {
 
     public CubexType getType(CubexClassContext cc, 
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
+        // simply return the type from the symbol table
         return st.get(name);
     }
 }
@@ -70,7 +92,25 @@ class CubexMethodCall extends CubexExpression {
         CubexTypeScheme s = CubexTC.method(cc, kc, base, name);
         // todo - proper error
         if(s == null) return null;
-        // do generic replacement
+        // swap out generics
+        CubexTypeScheme swapped = CubexTC.replaceGenerics(s.kCont, typeList, s);
+        // show that each expression is a subtype
+        List<CubexType> expected = swapped.tCont.types;
+        for(int i = 0; i < exprList.size(); i++) {
+            // get the expression
+            CubexExpression expr = exprList.get(i);
+            // get its type
+            CubexType eType = expr.getType(cc, kc, fc, st);
+            // get the type from the scheme
+            CubexType exp = expected.get(i);
+            // show that it is a subtype
+            if(!CubexTC.subType(cc, kc, eType, exp)){
+                // not a subtype, error
+                return null;
+            }
+        }
+        //check the validity of the return type
+        if(CubexTC.isValid(cc, kc, swapped.type)) return swapped.type;
         return null;
 
     }
@@ -233,14 +273,20 @@ class CubexAppend extends CubexExpression {
         // get the types of left and right
         CubexType lt = left.getType(cc, kc, fc, st);
         CubexType rt = right.getType(cc, kc, fc, st);
+        CubexType out = new Nothing();
+        CubexType commonType = new Nothing();
         try {
-            CubexType commonType = CubexTC.join(cc, kc, lt, rt);
-            List<CubexType> params = new ArrayList<CubexType>();
-            params.add(commonType);
-            return new CubexCType(new CubexCName("Iterable"), params);
+            commonType = CubexTC.join(cc, kc, lt, rt);
+            
         } catch(CubexTC.UnexpectedTypeHierarchyException e){
-            return null;
+            System.out.println("NO COMMON SUPERTYPE FOR ALL THE ELEMENTS IN THE LIST");
         }
+        List<CubexType> params = new ArrayList<CubexType>();
+        params.add(commonType);
+        out = new CubexCType(new CubexCName("Iterable"), params);
+        // check for validity
+        if(CubexTC.isValid(cc, kc, out)) return out;
+        return null;
 
     }
 
