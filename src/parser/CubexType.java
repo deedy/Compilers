@@ -98,7 +98,7 @@ class CubexCType extends CubexType{
     return new ArrayList<CubexCName>(Arrays.asList(name));
 	}
 
-	public boolean isInterface() {
+	public boolean isInterface(CubexClassContext cc) {
 		return cc.get(name) instanceof CubexInterface;
 	}
 
