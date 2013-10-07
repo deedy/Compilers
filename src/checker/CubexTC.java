@@ -216,32 +216,7 @@ public class CubexTC {
 		// make type replacements
 		CubexObject obj = cc.get(t);
 		List<CubexPName> generics = obj.kCont;
-		// initialize the new context
-		CubexTypeContext ct = new CubexTypeContext();
-		// get the old type context
-		CubexTypeContext oc = s.tCont;
-		// for all g_i in obj, if s_j = g_i, s_j <- t_i
-		for(int j = 0; j < oc.types.size(); j++) {
-			CubexVName vj = oc.names.get(j);
-			CubexType tj = oc.types.get(j);
-			for(int i = 0; i < generics.size(); i++) {
-				CubexPType p = new CubexPType(generics.get(i));
-				// match found, replace generic
-				if(tj.equals(p)) {
-					tj = t.params.get(i);
-				}
-				// either way, append name and type to context
-				ct.add(vj, tj);
-			}
-		}
-		CubexType retType = s.type;
-		// replace return type if it is a generic
-		int retIndex = generics.indexOf(retType);
-		if(retIndex != -1) {
-			retType = t.params.get(retIndex);
-		}
-		// copy over generics, add new type context
-		return new CubexTypeScheme(s.kCont, ct, retType);
+		return replaceGenerics(generics, t.params, s);
 	}
 
 	// only makes sense for CTypes to have methods
@@ -387,5 +362,50 @@ public class CubexTC {
 		CubexKindContext hat = new CubexKindContext(s.kCont);
 		CubexKindContext kc2 = kc.merge(hat);
 		return isValid(cc, kc2, s.tCont) && isValid(cc, kc2, s.type);
+	}
+
+	// returns a copy of c2 with members of generics replaced with members of repTypes
+	public static CubexType replaceGenerics(List<CubexPName> generics, List<CubexType> repTypes, CubexCType c) {
+		// new arraylist is a copy of the old one
+		ArrayList<CubexType> ret = new ArrayList<CubexType>(c.params);
+		for(int j = 0; j < ret.size(); j++) {
+			// recursive
+			ret.set(j, replaceGenerics(generics, repTypes, ret.get(j)));
+		}
+		return new CubexCType(c.name, ret);
+	}
+
+	public static CubexType replaceGenerics(List<CubexPName> generics, List<CubexType> repTypes, CubexIType t) {
+		CubexType a = replaceGenerics(generics, repTypes, t.a);
+		CubexType b = replaceGenerics(generics, repTypes, t.b);
+		return new CubexIType(a, b);
+	}
+
+	public static CubexType replaceGenerics(List<CubexPName> generics, List<CubexType> repTypes, CubexPType p) {
+		int i = generics.indexOf(p.name);
+		if(i != -1){
+			return repTypes.get(i);
+		}
+		return p;
+	}
+
+	public static CubexType replaceGenerics(List<CubexPName> generics, List<CubexType> repTypes, CubexType t) {
+		return t;
+	}
+
+	public static CubexTypeScheme replaceGenerics(List<CubexPName> generics, List<CubexType> repTypes, CubexTypeScheme ts) {
+		// save function generics
+		List<CubexPName> funGen = ts.kCont;
+		// replace type context
+		List<CubexVName> names = ts.tCont.names;
+		List<CubexType> types = ts.tCont.types;
+		ArrayList<CubexType> ret = new ArrayList<CubexType>(types);
+		for(int j = 0; j < ret.size(); j++) {
+			// reset each type
+			ret.set(j, replaceGenerics(generics, repTypes, ret.get(j)));
+		}
+		// replace the return type
+		CubexType retType = replaceGenerics(generics, repTypes, ts.type);
+		return new CubexTypeScheme(funGen, new CubexTypeContext(names, ret), retType);
 	}
 }

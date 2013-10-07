@@ -52,7 +52,7 @@ class CubexVar extends CubexExpression {
 
     public CubexType getType(CubexClassContext cc, 
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
-        return fc.get(this.name).scheme.type;
+        return st.get(name);
     }
 }
 
@@ -63,8 +63,16 @@ class CubexMethodCall extends CubexExpression {
     List<CubexExpression> exprList;
 
     public CubexType getType(CubexClassContext cc, 
-        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){   
-        return fc.get(this.name).scheme.type;
+    CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
+        // get the type of the base
+        CubexType base = expr.getType(cc, kc, fc, st);
+        // get the typescheme of the method
+        CubexTypeScheme s = CubexTC.method(cc, kc, base, name);
+        // todo - proper error
+        if(s == null) return null;
+        // do generic replacement
+        return null;
+
     }
 
     public CubexMethodCall(CubexExpression e, CubexVName n, List<CubexType>  tl, List<CubexExpression> el) {
@@ -222,7 +230,18 @@ class CubexAppend extends CubexExpression {
 
     public CubexType getType(CubexClassContext cc, 
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
-        return new CubexCType("XXX");
+        // get the types of left and right
+        CubexType lt = left.getType(cc, kc, fc, st);
+        CubexType rt = right.getType(cc, kc, fc, st);
+        try {
+            CubexType commonType = CubexTC.join(cc, kc, lt, rt);
+            List<CubexType> params = new ArrayList<CubexType>();
+            params.add(commonType);
+            return new CubexCType(new CubexCName("Iterable"), params);
+        } catch(CubexTC.UnexpectedTypeHierarchyException e){
+            return null;
+        }
+
     }
 
     public CubexAppend(CubexExpression l, CubexExpression r) {
@@ -245,8 +264,8 @@ class CubexIterable extends CubexExpression {
         CubexType commonType = new Nothing();
         for (CubexExpression elem : mElements) {
             try {
-                commonType = CubexTypeChecker.join(cc, kc, commonType, elem.getType(cc, kc, fc, st));
-            } catch (CubexTypeChecker.UnexpectedTypeHierarchyException e) {
+                commonType = CubexTC.join(cc, kc, commonType, elem.getType(cc, kc, fc, st));
+            } catch (CubexTC.UnexpectedTypeHierarchyException e) {
                 System.out.println("NO COMMON SUPERTYPE FOR ALL THE ELEMENTS IN THE LIST");
             }
         }
@@ -318,3 +337,4 @@ class CubexString extends CubexExpression {
         return str;
     }
 }
+

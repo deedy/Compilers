@@ -12,6 +12,12 @@ public class CubexTypeContext {
         names = new ArrayList<CubexVName>();
         types = new ArrayList<CubexType>();
     }
+
+    public CubexTypeContext( List<CubexVName> n, List<CubexType> t) {
+        names = n;
+        types = t;
+    }
+
     public void add(CubexVName n, CubexType t) {
         names.add(n);
         types.add(t);
