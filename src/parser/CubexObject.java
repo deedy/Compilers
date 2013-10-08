@@ -89,166 +89,149 @@ class CubexIterableClass extends CubexClass {
 
 }
 
+// class CubexBooleanClass extends CubexClass {
+//     public CubexBooleanClass(){
+//         super();
+//         name = new CubexCName("Boolean");
+//         kCont = new ArrayList<CubexPName>();
+//         kCont.add(new CubexPName("E"));
+//         tCont = new CubexTypeContext();
+//         type = CubexType.getThing();
+//         stmt = new ArrayList<CubexStatement>();
+//         expr = new ArrayList<CubexExpression>();
+//         funList = new ArrayList<CubexFunction>();
+//     }
 
-class CubexIterableClass extends CubexClass {
-    public CubexIterableClass() {
-        super();
-        name = new CubexCName("Iterable");
-        kCont = new ArrayList<CubexPName>();
-        kCont.add(new CubexPName("E"));
-        tCont = new CubexTypeContext();
-        type = CubexType.getThing();
-        stmt = new ArrayList<CubexStatement>();
-        expr = new ArrayList<CubexExpression>();
-        funList = new ArrayList<CubexFunction>();
-    }
+//     boolean negate(){
 
-}
+//     } 
 
+//     boolean and (boolean that){
 
-class CubexBooleanClass extends CubexClass {
-    public CubexBooleanClass(){
-        super();
-        name = new CubexCName("Boolean");
-        kCont = new ArrayList<CubexPName>();
-        kCont.add(new CubexPName("E"));
-        tCont = new CubexTypeContext();
-        type = CubexType.getThing();
-        stmt = new ArrayList<CubexStatement>();
-        expr = new ArrayList<CubexExpression>();
-        funList = new ArrayList<CubexFunction>();
-    }
+//     }
 
-    boolean negate(){
+//     boolean or (boolean that){
 
-    } 
+//     }
 
-    boolean and (boolean that){
+//     ArrayList<boolean> through (boolean upper, boolean includeLower, boolean includeUpper){
 
-    }
+//     }
 
-    boolean or (boolean that){
+//     ArrayList<boolean> onwards (boolean inclusive){
 
-    }
+//     }
 
-    ArrayList<boolean> through (boolean upper, boolean includeLower, boolean includeUpper){
+//     boolean lessThan (boolean that, boolean strict){
 
-    }
+//     }
 
-    ArrayList<boolean> onwards (boolean inclusive){
+//     boolean equals (boolean that){
 
-    }
+//     }
 
-    boolean lessThan (boolean that, boolean strict){
-
-    }
-
-    boolean equals (boolean that){
-
-    }
-
-}
+// }
 
 
-class CubexIntegerClass extends CubexClass {
+// class CubexIntegerClass extends CubexClass {
 
-    public CubexIntegerClass(){
-        super();
-        name = new CubexCName("Integer");
-        kCont = new ArrayList<CubexPName>();
-        kCont.add(new CubexPName("E"));
-        tCont = new CubexTypeContext();
-        type = CubexType.getThing();
-        stmt = new ArrayList<CubexStatement>();
-        expr = new ArrayList<CubexExpression>();
-        funList = new ArrayList<CubexFunction>();
-    }
+//     public CubexIntegerClass(){
+//         super();
+//         name = new CubexCName("Integer");
+//         kCont = new ArrayList<CubexPName>();
+//         kCont.add(new CubexPName("E"));
+//         tCont = new CubexTypeContext();
+//         type = CubexType.getThing();
+//         stmt = new ArrayList<CubexStatement>();
+//         expr = new ArrayList<CubexExpression>();
+//         funList = new ArrayList<CubexFunction>();
+//     }
 
-    int negative (){
+//     int negative (){
 
-    } 
+//     } 
 
-    int times (int factor){
+//     int times (int factor){
 
-    } 
+//     } 
 
-    ArrayList<Integer> divide (int divisor){
+//     ArrayList<Integer> divide (int divisor){
 
-    } 
+//     } 
 
-    ArrayList<Integer> modulo (int modulus){
+//     ArrayList<Integer> modulo (int modulus){
 
-    }
+//     }
 
-    int plus (int summand){
+//     int plus (int summand){
 
-    } 
+//     } 
 
-    int minus (int subtrahend){
+//     int minus (int subtrahend){
 
-    }
+//     }
 
-    ArrayList through (int upper, boolean includeLower,boolean includeUpper){
+//     ArrayList through (int upper, boolean includeLower,boolean includeUpper){
 
-    }
+//     }
 
-    ArrayList onwards (boolean inclusive){
+//     ArrayList onwards (boolean inclusive){
 
-    }
+//     }
 
-    boolean lessThan (int that, boolean strict){
+//     boolean lessThan (int that, boolean strict){
 
-    }
+//     }
 
-    boolean equals (int that){
+//     boolean equals (int that){
 
-    }
+//     }
 
-}
-
-
-class CubexCharacterClass extends CubexClass {
-
-    public CubexCharacterClass(){
-        super();
-        name = new CubexCName("Character");
-        kCont = new ArrayList<CubexPName>();
-        kCont.add(new CubexPName("E"));
-        tCont = new CubexTypeContext();
-        type = CubexType.getThing();
-        stmt = new ArrayList<CubexStatement>();
-        expr = new ArrayList<CubexExpression>();
-        funList = new ArrayList<CubexFunction>();
-    }
+// }
 
 
-    int unicode(){
+// class CubexCharacterClass extends CubexClass {
 
-    }
+//     public CubexCharacterClass(){
+//         super();
+//         name = new CubexCName("Character");
+//         kCont = new ArrayList<CubexPName>();
+//         kCont.add(new CubexPName("E"));
+//         tCont = new CubexTypeContext();
+//         type = CubexType.getThing();
+//         stmt = new ArrayList<CubexStatement>();
+//         expr = new ArrayList<CubexExpression>();
+//         funList = new ArrayList<CubexFunction>();
+//     }
 
-    boolean equals (char that){
 
-    }
+//     int unicode(){
 
-}
+//     }
+
+//     boolean equals (char that){
+
+//     }
+
+// }
 
 
-class CubexStringClass extends ArrayList<Character> {
+// class CubexStringClass extends ArrayList<Character> {
 
-        public CubexStringClass(){
-        super();
-        name = new CubexCName("String");
-        kCont = new ArrayList<CubexPName>();
-        kCont.add(new CubexPName("E"));
-        tCont = new CubexTypeContext();
-        type = CubexType.getThing();
-        stmt = new ArrayList<CubexStatement>();
-        expr = new ArrayList<CubexExpression>();
-        funList = new ArrayList<CubexFunction>();
-    }
+//         public CubexStringClass(){
+//         super();
+//         name = new CubexCName("String");
+//         kCont = new ArrayList<CubexPName>();
+//         kCont.add(new CubexPName("E"));
+//         tCont = new CubexTypeContext();
+//         type = CubexType.getThing();
+//         stmt = new ArrayList<CubexStatement>();
+//         expr = new ArrayList<CubexExpression>();
+//         funList = new ArrayList<CubexFunction>();
+//     }
 
- boolean equals(String that){
+//  boolean equals(String that){
 
- } 
+//  } 
 
-}
+// }
