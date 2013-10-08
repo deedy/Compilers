@@ -11,7 +11,7 @@ import java.util.HashMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class CubexTC {
-	static class UnexpectedTypeHierarchyException extends Exception {
+	static class UnexpectedTypeHierarchyException extends RuntimeException {
 		UnexpectedTypeHierarchyException(String message) {
 			super(message);
 		}

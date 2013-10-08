@@ -1,11 +1,15 @@
 import java.util.List;
 import java.util.ArrayList;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public abstract class CubexStatement {
     /*
         Returns the outgoing of this class expression or throws an error
     */
     public abstract SymbolTable getOutgoingTypes(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt);
+
+    public abstract ImmutablePair<Boolean, SymbolTable> getReturn(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt);
 }
 
@@ -17,8 +21,18 @@ class CubexBlock extends CubexStatement {
 
     public SymbolTable getOutgoingTypes(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+        SymbolTable curOutgoing = mutableSt;
+        for (CubexStatement s : stmts) {
+            curOutgoing = s.getOutgoingTypes(cc, kc, fc, st, curOutgoing);
+        }
+        return curOutgoing;
+    }
+
+    public ImmutablePair<Boolean, SymbolTable> getReturn(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
         return null;
     }
+
     public String toString() {
         String s = ListPrinter.listToString(stmts, " ");
         return String.format("{ %s}", ListPrinter.nullify(s));
@@ -36,11 +50,23 @@ class CubexAssign extends CubexStatement {
     public SymbolTable getOutgoingTypes(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
 
+        CubexType curType = st.get(name);
+        // No name hiding!
+        if (curType != null) {
+            throw new CubexTC.TypeCheckException(
+                String.format("%s IS BOUND TO %s", name, curType));
+        }
+
         SymbolTable mergedSt = st.merge(mutableSt);
         CubexType type = expr.getType(cc, kc, fc, mergedSt);
 
-        // return a ST with the VName bound/rebound
-        return mergedSt.set(name, type);
+        // return a mutable ST with the VName bound/rebound
+        return mutableSt.set(name, type);
+    }
+
+    public ImmutablePair<Boolean, SymbolTable> getReturn(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+        return null;
     }
 
     public String toString() {
@@ -74,14 +100,20 @@ class CubexConditional extends CubexStatement {
         CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
         boolean isBoolean = CubexTC.subType(cc, kc, exprType, new CubexCType("Boolean"));
 
+        if (!isBoolean) {
+            throw new CubexTC.TypeCheckException(
+                String.format("%s IS NOT A BOOLEAN", expr.toString()));
+        }
+
         SymbolTable s1OutgoingTypes = stmt1.getOutgoingTypes(cc, kc, fc, st, mutableSt);
         SymbolTable s2OutgoingTypes = stmt2.getOutgoingTypes(cc, kc, fc, st, mutableSt);
-
-        if (!isBoolean) {
-            throw new CubexTC.TypeCheckException(toString());
-        }
         
-        return mutableSt;
+        return s1OutgoingTypes.intersection(s2OutgoingTypes, cc, kc);
+    }
+
+    public ImmutablePair<Boolean, SymbolTable> getReturn(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+        return null;
     }
 
     public String toString() {
@@ -107,10 +139,16 @@ class CubexWhileLoop extends CubexStatement {
         boolean isBoolean = CubexTC.subType(cc, kc, exprType, new CubexCType("Boolean"));
 
         if (!isBoolean) {
-            throw new CubexTC.TypeCheckException(toString());
+            throw new CubexTC.TypeCheckException(
+                String.format("%s IS NOT A BOOLEAN", expr.toString()));
         }
         
         return mutableSt;
+    }
+
+    public ImmutablePair<Boolean, SymbolTable> getReturn(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+        return null;
     }
 
     public String toString() {
@@ -132,6 +170,18 @@ class CubexForLoop extends CubexStatement {
 
     public SymbolTable getOutgoingTypes(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+        CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
+
+        if (!exprType.isIterable(cc, kc)) {
+            throw new CubexTC.TypeCheckException(
+                String.format("%s IS NOT AN ITERABLE", expr.toString()));
+        }
+        
+        return mutableSt;
+    }
+
+    public ImmutablePair<Boolean, SymbolTable> getReturn(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
         return null;
     }
 
@@ -150,6 +200,11 @@ class CubexReturn extends CubexStatement {
     }
 
     public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+        return null;
+    }
+
+    public ImmutablePair<Boolean, SymbolTable> getReturn(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
         return null;
     }
