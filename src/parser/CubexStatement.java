@@ -1,13 +1,8 @@
 import java.util.List;
 import java.util.ArrayList;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public abstract class CubexStatement {
-    public abstract SymbolTable getOutgoingTypes(CubexClassContext cc, 
-        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt);
-
-    // get the return type if possible. non-returning statements return Nothing
-    public abstract ImmutablePair<Boolean, CubexType> getReturn(CubexClassContext cc, 
+    public abstract Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt);
 }
 
@@ -17,29 +12,22 @@ class CubexBlock extends CubexStatement {
         stmts = s;
     }
 
-    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
-        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
-        SymbolTable curOutgoing = mutableSt;
-        for (CubexStatement s : stmts) {
-            curOutgoing = s.getOutgoingTypes(cc, kc, fc, st, curOutgoing);
-        }
-        return curOutgoing;
-    }
-
-    public ImmutablePair<Boolean, CubexType> getReturn(CubexClassContext cc, 
+    public Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
         // check that any contained statement is does return
         CubexType foldType = new Nothing();
         boolean doesReturn = false;
+        SymbolTable currOutgoing = mutableSt;
         for(CubexStatement s : stmts) {
-            ImmutablePair<Boolean, CubexType> imm = s.getReturn(cc, kc, fc, st, mutableSt);
-            if(imm.getLeft().booleanValue()) {
+            Triple<SymbolTable, Boolean, CubexType> imm = s.typeCheck(cc, kc, fc, st, currOutgoing);
+            if(imm.getMiddle().booleanValue()) {
                 doesReturn = true;
             }
             // find the common return type (always)
             foldType = CubexTC.join(cc, kc, foldType, imm.getRight());
+            currOutgoing = imm.getLeft();
         }
-        return new ImmutablePair<Boolean, CubexType>(new Boolean(doesReturn), foldType);
+        return new Triple<SymbolTable, Boolean, CubexType>(currOutgoing, new Boolean(doesReturn), foldType);
     }
 
     public String toString() {
@@ -56,7 +44,7 @@ class CubexAssign extends CubexStatement {
         expr = e;
     }
 
-    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+    public Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
 
         CubexType curType = st.get(name);
@@ -70,13 +58,9 @@ class CubexAssign extends CubexStatement {
         CubexType type = expr.getType(cc, kc, fc, mergedSt);
 
         // return a mutable ST with the VName bound/rebound
-        return mutableSt.set(name, type);
-    }
-
-    public ImmutablePair<Boolean, CubexType> getReturn(CubexClassContext cc, 
-        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
-        // assignments never return
-        return new ImmutablePair<Boolean, CubexType>(new Boolean(false), new Nothing());
+        SymbolTable retTable = mutableSt.set(name, type);
+        // assignments never return, so return false, nothing
+        return new Triple<SymbolTable, Boolean, CubexType>(retTable, new Boolean(false), new Nothing());
     }
 
     public String toString() {
@@ -96,15 +80,7 @@ class CubexConditional extends CubexStatement {
         stmt2 = s2;
     }
 
-    // // constructor with no else block
-    // public CubexConditional(CubexExpression e, CubexStatement s1) {
-    //     expr = e;
-    //     stmt1 = s1;
-    //     // else block is empty list
-    //     stmt2 = new CubexBlock(new ArrayList<CubexStatement>());
-    // }
-
-    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+    public Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
 
         CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
@@ -115,27 +91,23 @@ class CubexConditional extends CubexStatement {
                 String.format("%s IS NOT A BOOLEAN", expr.toString()));
         }
 
-        SymbolTable s1OutgoingTypes = stmt1.getOutgoingTypes(cc, kc, fc, st, mutableSt);
-        SymbolTable s2OutgoingTypes = stmt2.getOutgoingTypes(cc, kc, fc, st, mutableSt);
-        
-        return s1OutgoingTypes.intersection(s2OutgoingTypes, cc, kc);
-    }
-
-    public ImmutablePair<Boolean, CubexType> getReturn(CubexClassContext cc, 
-        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
         // get the return types of both sides
-        ImmutablePair<Boolean, CubexType> ret1 = stmt1.getReturn(cc, kc, fc, st, mutableSt);
-        ImmutablePair<Boolean, CubexType> ret2 = stmt2.getReturn(cc, kc, fc, st, mutableSt);
+        Triple<SymbolTable, Boolean, CubexType> ret1 = stmt1.typeCheck(cc, kc, fc, st, mutableSt);
+        Triple<SymbolTable, Boolean, CubexType> ret2 = stmt2.typeCheck(cc, kc, fc, st, mutableSt);
 
-        boolean b1 = ret1.getLeft().booleanValue();
-        boolean b2 = ret2.getLeft().booleanValue();
+        SymbolTable s1 = ret1.getLeft();
+        SymbolTable s2 = ret2.getLeft();
+
+        boolean b1 = ret1.getMiddle().booleanValue();
+        boolean b2 = ret2.getMiddle().booleanValue();
 
         CubexType t1 = ret1.getRight();
         CubexType t2 = ret2.getRight();
 
         CubexType commonType = CubexTC.join(cc, kc, t1, t2);
- 
-        return new ImmutablePair<Boolean, CubexType>(new Boolean(b1 && b2), commonType);
+
+        SymbolTable merged = s1.intersection(s2, cc, kc);
+        return new Triple<SymbolTable, Boolean, CubexType>(merged, new Boolean(b1 && b2), commonType);
     }
 
     public String toString() {
@@ -154,7 +126,8 @@ class CubexWhileLoop extends CubexStatement {
         stmt = s;
     }
 
-    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+
+    public Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
 
         CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
@@ -166,17 +139,10 @@ class CubexWhileLoop extends CubexStatement {
         }
 
         // check that the statement type checks
-        SymbolTable nst = stmt.getOutgoingTypes(cc, kc, fc, st, mutableSt);
-        
-        return mutableSt;
-    }
+        Triple<SymbolTable, Boolean, CubexType> imm = stmt.typeCheck(cc, kc, fc, st, mutableSt);
 
-    public ImmutablePair<Boolean, CubexType> getReturn(CubexClassContext cc, 
-        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
-
-        ImmutablePair<Boolean, CubexType> ret = stmt.getReturn(cc, kc, fc, st, mutableSt);
         // while returns same type as statement but not guarunteed to return
-        return new ImmutablePair<Boolean, CubexType>(new Boolean(false), ret.getRight());
+        return new Triple<SymbolTable, Boolean, CubexType>(mutableSt, new Boolean(false), imm.getRight());
     }
 
     public String toString() {
@@ -196,8 +162,9 @@ class CubexForLoop extends CubexStatement {
         stmt = s;
     }
 
-    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+    public Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+
         CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
 
         if (!exprType.isIterable(cc, kc)) {
@@ -214,28 +181,9 @@ class CubexForLoop extends CubexStatement {
 
         SymbolTable tmp = mutableSt.set(name, foundIter.params.get(0));
 
-        // check that the statement type checks
-        SymbolTable nst = stmt.getOutgoingTypes(cc, kc, fc, st, tmp);
-        
-        return mutableSt;
-    }
-
-    public ImmutablePair<Boolean, CubexType> getReturn(CubexClassContext cc, 
-        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
-
-        CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
-        // get the iterable type by joining with iterable<nothing>
-        ArrayList<CubexType> params = new ArrayList<CubexType>();
-        params.add(new Nothing());
-        CubexType testIter = new CubexCType(new CubexCName("Iterable"), params);
-        // this cast should be safe
-        CubexCType foundIter = (CubexCType) CubexTC.join(cc, kc, testIter, exprType);
-
-        SymbolTable tmp = mutableSt.set(name, foundIter.params.get(0));
-
-        ImmutablePair<Boolean, CubexType> ret = stmt.getReturn(cc, kc, fc, st, tmp);
+        Triple<SymbolTable, Boolean, CubexType> ret = stmt.typeCheck(cc, kc, fc, st, tmp);
         // for returns same type as statement but not guarunteed to return
-        return new ImmutablePair<Boolean, CubexType>(new Boolean(false), ret.getRight());
+        return new Triple<SymbolTable, Boolean, CubexType>(mutableSt, new Boolean(false), ret.getRight());
     }
 
     public String toString() {
@@ -252,17 +200,11 @@ class CubexReturn extends CubexStatement {
         expr = e;
     }
 
-    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+    public Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
-        // check that expr type checks
-        CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
-        return mutableSt;
-    }
 
-    public ImmutablePair<Boolean, CubexType> getReturn(CubexClassContext cc, 
-        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
         CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
-        return new ImmutablePair<Boolean, CubexType>(new Boolean(true), exprType);
+        return new Triple<SymbolTable, Boolean, CubexType>(mutableSt, new Boolean(true), exprType);
     }
 
     public String toString() {
