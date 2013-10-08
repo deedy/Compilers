@@ -11,8 +11,6 @@ class CubexFunctionContext {
 		map = m;
 	}
 
-	// functional
-	// ^ takes in 2 arguments, can't be functional. -bae
 	public CubexFunctionContext set(CubexName name, CubexFunHeader fun) {
 		return new CubexFunctionContext(map.plus(name, fun));
 	}
@@ -23,6 +21,10 @@ class CubexFunctionContext {
 
 	public boolean contains(CubexName name) {
 		return map.containsKey(name);
+	}
+
+	public CubexFunctionContext merge(CubexFunctionContext fc) {
+		return new CubexFunctionContext(map.plusAll(fc.map));
 	}
 
 }
