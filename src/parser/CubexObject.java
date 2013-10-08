@@ -94,40 +94,44 @@ class CubexIterableClass extends CubexClass {
 //         super();
 //         name = new CubexCName("Boolean");
 //         kCont = new ArrayList<CubexPName>();
-//         kCont.add(new CubexPName("E"));
 //         tCont = new CubexTypeContext();
 //         type = CubexType.getThing();
 //         stmt = new ArrayList<CubexStatement>();
 //         expr = new ArrayList<CubexExpression>();
 //         funList = new ArrayList<CubexFunction>();
+    
+//         CubexFunction negate = new CubexFunction();
+//         negate.name = "negate";
+// RESUME
+//         funList.append(CubexFunction("negate", tCont, negate));
 //     }
 
 //     boolean negate(){
-
+//         return true;
 //     } 
 
-//     boolean and (boolean that){
-
+//     boolean and(boolean that){
+//         return true;
 //     }
 
-//     boolean or (boolean that){
-
+//     boolean or(boolean that){
+//         return true;
 //     }
 
-//     ArrayList<boolean> through (boolean upper, boolean includeLower, boolean includeUpper){
-
+//     ArrayList<boolean> through(boolean upper, boolean includeLower, boolean includeUpper){
+//         return new ArrayList();
 //     }
 
-//     ArrayList<boolean> onwards (boolean inclusive){
-
+//     ArrayList<boolean> onwards(boolean inclusive){
+//         return new ArrayList();
 //     }
 
-//     boolean lessThan (boolean that, boolean strict){
-
+//     boolean lessThan(boolean that, boolean strict){
+//         return true;
 //     }
 
-//     boolean equals (boolean that){
-
+//     boolean equals(boolean that){
+//         return true;
 //     }
 
 // }
@@ -148,43 +152,43 @@ class CubexIterableClass extends CubexClass {
 //     }
 
 //     int negative (){
-
+//         return 0;
 //     } 
 
 //     int times (int factor){
-
+//         return 0;
 //     } 
 
 //     ArrayList<Integer> divide (int divisor){
-
+//         return new ArrayList();
 //     } 
 
 //     ArrayList<Integer> modulo (int modulus){
-
+//         return new ArrayList();
 //     }
 
 //     int plus (int summand){
-
+//         return 0;
 //     } 
 
 //     int minus (int subtrahend){
-
+//         return 0;
 //     }
 
 //     ArrayList through (int upper, boolean includeLower,boolean includeUpper){
-
+//         return new ArrayList();
 //     }
 
 //     ArrayList onwards (boolean inclusive){
-
+//         return new ArrayList();
 //     }
 
 //     boolean lessThan (int that, boolean strict){
-
+//         return true;
 //     }
 
 //     boolean equals (int that){
-
+//         return true;
 //     }
 
 // }
@@ -206,11 +210,11 @@ class CubexIterableClass extends CubexClass {
 
 
 //     int unicode(){
-
+//         return 0;
 //     }
 
 //     boolean equals (char that){
-
+//         return true;
 //     }
 
 // }
@@ -231,7 +235,7 @@ class CubexIterableClass extends CubexClass {
 //     }
 
 //  boolean equals(String that){
-
+//     return true;
 //  } 
 
 // }
