@@ -27,7 +27,7 @@ public class CubexTC {
 		// Not Sure what CubexKindContext should be doing here (deedy)
 		ArrayList<HashSet<CubexType>> allSuperTypes = new ArrayList<HashSet<CubexType>>();
 		Queue<ImmutablePair<Integer, CubexType>> superTypeQueue = new LinkedList<ImmutablePair<Integer, CubexType>>();
-		superTypeQueue.add(new ImmutablePair(0,t));
+		superTypeQueue.add(new ImmutablePair<Integer, CubexType>(0,t));
 		while (!superTypeQueue.isEmpty()) {
 			ImmutablePair<Integer,CubexType> immpair = superTypeQueue.poll();
 			int level = immpair.getLeft();
@@ -39,7 +39,7 @@ public class CubexTC {
 				allSuperTypes.add(hs);
 			}
 			for (CubexType ct : immpair.getRight().immediateSuperTypes(cc)) {
-				superTypeQueue.add(new ImmutablePair(level+1, ct));
+				superTypeQueue.add(new ImmutablePair<Integer, CubexType>(level+1, ct));
 			}
 		}
 		return allSuperTypes;
