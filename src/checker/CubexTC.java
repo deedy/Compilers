@@ -45,7 +45,6 @@ public class CubexTC {
 		return allSuperTypes;
 	}
 
-
 	public static CubexType join (CubexClassContext cc, CubexKindContext kc, CubexType t1, CubexType t2)
 			throws UnexpectedTypeHierarchyException {
 		if (t1 instanceof Nothing) {
@@ -77,8 +76,27 @@ public class CubexTC {
 		if (common == null) {
 			throw new UnexpectedTypeHierarchyException("No common super class found");
 		}
-		if (common.size() > 1) {
+		if (common.size() > 2) {
 			throw new UnexpectedTypeHierarchyException("Ambiguous common super class"); 
+		}
+		// Return nearest super class which is an intersection type
+		if (common.size() == 2) {
+			CubexType[] typearr = (CubexType[]) common.toArray();
+			if (typearr[0] instanceof CubexCType && typearr[1] instanceof CubexCType) {
+				// Return class first in the intersection type
+				if (!((CubexCType)typearr[1]).isInterface(cc)) {
+					return new CubexIType(typearr[1], typearr[0]);
+				}
+				// Return class first in the intersection type
+				if (!((CubexCType)typearr[0]).isInterface(cc)) {
+					return new CubexIType(typearr[0], typearr[1]);
+				}
+				// If both interfaces, order doesn't matter
+				return new CubexIType(typearr[0], typearr[1]);
+			} else {
+				// Super classes aren't interfaces or classes
+				throw new UnexpectedTypeHierarchyException("Intersection super class cannot be constructed"); 
+			}
 		}
 		// Return first element of intersection 
 		for (CubexType ct : common) {
@@ -86,7 +104,7 @@ public class CubexTC {
 		}
 		return null;
 	}
-
+	
 	// axioms for thing and nothing
 	public static boolean subType(CubexClassContext cc, CubexKindContext kc, Thing t, CubexType ct) {
 		return (ct.equals(t));
