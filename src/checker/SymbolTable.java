@@ -24,4 +24,8 @@ class SymbolTable {
 		return map.containsKey(name);
 	}
 
+	public SymbolTable merge(SymbolTable st) {
+		return new SymbolTable(map.plusAll(st.map));
+	}
+
 }

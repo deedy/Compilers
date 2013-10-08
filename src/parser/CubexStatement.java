@@ -2,6 +2,11 @@ import java.util.List;
 import java.util.ArrayList;
 
 public abstract class CubexStatement {
+    /*
+        Returns the outgoing of this class expression or throws an error
+    */
+    public abstract SymbolTable getOutgoingTypes(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt);
 }
 
 class CubexBlock extends CubexStatement {
@@ -10,7 +15,10 @@ class CubexBlock extends CubexStatement {
         stmts = s;
     }
 
-
+    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+        return null;
+    }
     public String toString() {
         String s = ListPrinter.listToString(stmts, " ");
         return String.format("{ %s}", ListPrinter.nullify(s));
@@ -18,11 +26,21 @@ class CubexBlock extends CubexStatement {
 }
 
 class CubexAssign extends CubexStatement {
-    private CubexName name;
+    private CubexVName name;
     private CubexExpression expr;
-    public CubexAssign(CubexName n, CubexExpression e) {
+    public CubexAssign(CubexVName n, CubexExpression e) {
         name = n;
         expr = e;
+    }
+
+    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+
+        SymbolTable mergedSt = st.merge(mutableSt);
+        CubexType type = expr.getType(cc, kc, fc, mergedSt);
+
+        // return a ST with the VName bound/rebound
+        return mergedSt.set(name, type);
     }
 
     public String toString() {
@@ -50,6 +68,22 @@ class CubexConditional extends CubexStatement {
     //     stmt2 = new CubexBlock(new ArrayList<CubexStatement>());
     // }
 
+    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+
+        CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
+        boolean isBoolean = CubexTC.subType(cc, kc, exprType, new CubexCType("Boolean"));
+
+        SymbolTable s1OutgoingTypes = stmt1.getOutgoingTypes(cc, kc, fc, st, mutableSt);
+        SymbolTable s2OutgoingTypes = stmt2.getOutgoingTypes(cc, kc, fc, st, mutableSt);
+
+        if (!isBoolean) {
+            throw new CubexTC.TypeCheckException(toString());
+        }
+        
+        return mutableSt;
+    }
+
     public String toString() {
         String e = expr.toString();
         String s1 = stmt1.toString();
@@ -64,6 +98,19 @@ class CubexWhileLoop extends CubexStatement {
     public CubexWhileLoop(CubexExpression e, CubexStatement s) {
         expr = e;
         stmt = s;
+    }
+
+    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+
+        CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
+        boolean isBoolean = CubexTC.subType(cc, kc, exprType, new CubexCType("Boolean"));
+
+        if (!isBoolean) {
+            throw new CubexTC.TypeCheckException(toString());
+        }
+        
+        return mutableSt;
     }
 
     public String toString() {
@@ -83,6 +130,11 @@ class CubexForLoop extends CubexStatement {
         stmt = s;
     }
 
+    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+        return null;
+    }
+
     public String toString() {
         String n = name.toString();
         String e = expr.toString();
@@ -95,6 +147,11 @@ class CubexReturn extends CubexStatement {
     private CubexExpression expr;
     public CubexReturn(CubexExpression e) {
         expr = e;
+    }
+
+    public SymbolTable getOutgoingTypes(CubexClassContext cc, 
+        CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
+        return null;
     }
 
     public String toString() {

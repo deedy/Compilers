@@ -17,6 +17,12 @@ public class CubexTC {
 		}
 	}
 
+	public static class TypeCheckException extends RuntimeException {
+		public TypeCheckException(String message) {
+			super(message);
+		}
+	}
+
 	private static ArrayList<HashSet<CubexType>> findLevelPathToRoot(CubexClassContext cc, CubexKindContext kc, CubexType t) {
 		// Not Sure what CubexKindContext should be doing here (deedy)
 		ArrayList<HashSet<CubexType>> allSuperTypes = new ArrayList<HashSet<CubexType>>();
