@@ -8,6 +8,7 @@ public abstract class CubexObject {
     List<? extends CubexFunHeader> funList;
 }
 
+
 class CubexInterface extends CubexObject {
 
     public CubexInterface(CubexCName c, List<CubexPName> k, CubexType t, List<CubexFunHeader> f) {
@@ -30,6 +31,7 @@ class CubexInterface extends CubexObject {
                             ListPrinter.nullify(f));
     }
 }
+
 
 class CubexClass extends CubexObject {
 
@@ -71,6 +73,7 @@ class CubexClass extends CubexObject {
     }
 }
 
+
 class CubexIterableClass extends CubexClass {
     public CubexIterableClass() {
         super();
@@ -84,5 +87,168 @@ class CubexIterableClass extends CubexClass {
         funList = new ArrayList<CubexFunction>();
     }
 
+}
+
+
+class CubexIterableClass extends CubexClass {
+    public CubexIterableClass() {
+        super();
+        name = new CubexCName("Iterable");
+        kCont = new ArrayList<CubexPName>();
+        kCont.add(new CubexPName("E"));
+        tCont = new CubexTypeContext();
+        type = CubexType.getThing();
+        stmt = new ArrayList<CubexStatement>();
+        expr = new ArrayList<CubexExpression>();
+        funList = new ArrayList<CubexFunction>();
+    }
+
+}
+
+
+class CubexBooleanClass extends CubexClass {
+    public CubexBooleanClass(){
+        super();
+        name = new CubexCName("Boolean");
+        kCont = new ArrayList<CubexPName>();
+        kCont.add(new CubexPName("E"));
+        tCont = new CubexTypeContext();
+        type = CubexType.getThing();
+        stmt = new ArrayList<CubexStatement>();
+        expr = new ArrayList<CubexExpression>();
+        funList = new ArrayList<CubexFunction>();
+    }
+
+    boolean negate(){
+
+    } 
+
+    boolean and (boolean that){
+
+    }
+
+    boolean or (boolean that){
+
+    }
+
+    ArrayList<boolean> through (boolean upper, boolean includeLower, boolean includeUpper){
+
+    }
+
+    ArrayList<boolean> onwards (boolean inclusive){
+
+    }
+
+    boolean lessThan (boolean that, boolean strict){
+
+    }
+
+    boolean equals (boolean that){
+
+    }
+
+}
+
+
+class CubexIntegerClass extends CubexClass {
+
+    public CubexIntegerClass(){
+        super();
+        name = new CubexCName("Integer");
+        kCont = new ArrayList<CubexPName>();
+        kCont.add(new CubexPName("E"));
+        tCont = new CubexTypeContext();
+        type = CubexType.getThing();
+        stmt = new ArrayList<CubexStatement>();
+        expr = new ArrayList<CubexExpression>();
+        funList = new ArrayList<CubexFunction>();
+    }
+
+    int negative (){
+
+    } 
+
+    int times (int factor){
+
+    } 
+
+    ArrayList<Integer> divide (int divisor){
+
+    } 
+
+    ArrayList<Integer> modulo (int modulus){
+
+    }
+
+    int plus (int summand){
+
+    } 
+
+    int minus (int subtrahend){
+
+    }
+
+    ArrayList through (int upper, boolean includeLower,boolean includeUpper){
+
+    }
+
+    ArrayList onwards (boolean inclusive){
+
+    }
+
+    boolean lessThan (int that, boolean strict){
+
+    }
+
+    boolean equals (int that){
+
+    }
+
+}
+
+
+class CubexCharacterClass extends CubexClass {
+
+    public CubexCharacterClass(){
+        super();
+        name = new CubexCName("Character");
+        kCont = new ArrayList<CubexPName>();
+        kCont.add(new CubexPName("E"));
+        tCont = new CubexTypeContext();
+        type = CubexType.getThing();
+        stmt = new ArrayList<CubexStatement>();
+        expr = new ArrayList<CubexExpression>();
+        funList = new ArrayList<CubexFunction>();
+    }
+
+
+    int unicode(){
+
+    }
+
+    boolean equals (char that){
+
+    }
+
+}
+
+
+class CubexStringClass extends ArrayList<Character> {
+
+        public CubexStringClass(){
+        super();
+        name = new CubexCName("String");
+        kCont = new ArrayList<CubexPName>();
+        kCont.add(new CubexPName("E"));
+        tCont = new CubexTypeContext();
+        type = CubexType.getThing();
+        stmt = new ArrayList<CubexStatement>();
+        expr = new ArrayList<CubexExpression>();
+        funList = new ArrayList<CubexFunction>();
+    }
+
+ boolean equals(String that){
+
+ } 
 
 }
