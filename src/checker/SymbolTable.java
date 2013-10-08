@@ -1,5 +1,6 @@
 import org.pcollections.PMap;
 import org.pcollections.HashTreePMap;
+import java.util.Map;
 
 class SymbolTable {
 	PMap<CubexVName, CubexType> map;
@@ -27,5 +28,11 @@ class SymbolTable {
 	public SymbolTable merge(SymbolTable st) {
 		return new SymbolTable(map.plusAll(st.map));
 	}
-
+	public SymbolTable intersection(SymbolTable st) {
+		PMap<CubexVName, CubexType> newMap = map;
+		for (Map.Entry<CubexVName, CubexType> e : map.entrySet()) {
+			newMap = newMap.plus(e.getKey(), e.getValue());
+		}
+		return new SymbolTable(newMap);
+	}
 }
