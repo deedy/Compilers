@@ -1,6 +1,8 @@
 import org.pcollections.PMap;
 import org.pcollections.HashTreePMap;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
 
 class SymbolTable {
 	PMap<CubexVName, CubexType> map;
@@ -41,5 +43,17 @@ class SymbolTable {
 			}
 		}
 		return new SymbolTable(newMap);
+	}
+
+	public SymbolTable(CubexTypeContext tc) {
+		HashMap<CubexVName, CubexType> m = new HashMap<CubexVName, CubexType>();
+		for(int i = 0; i < tc.names.size(); i++) {
+			m.put(tc.names.get(i), tc.types.get(i));
+		}
+		map = HashTreePMap.from(m);
+	}
+
+	public Collection<CubexVName> keys() {
+		return map.keySet();
 	}
 }

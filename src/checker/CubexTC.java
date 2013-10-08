@@ -199,9 +199,35 @@ public class CubexTC {
 		return false;
 	}
 
-	// overloaded for non ctypes
-	public static CubexType swapParams(List<CubexPName> generics, CubexCType t1, CubexType t2) {
-		return t2;
+	public static boolean subType(CubexClassContext cc, CubexKindContext kc, SymbolTable st1, SymbolTable st2) {
+		// get the keys of st1
+		Collection<CubexVName> vars = st1.keys();
+		for(CubexVName name : vars) {
+			if(st2.contains(name)){
+				CubexType t1 = st1.get(name);
+				CubexType t2 = st2.get(name);
+				if(!subType(cc, kc, t1, t2)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+
+	public static boolean equiv(CubexClassContext cc, CubexKindContext kc, CubexTypeScheme ts1, CubexTypeScheme ts2) {
+		// check equivalence of type contexts
+		SymbolTable st1 = new SymbolTable(ts1.tCont);
+		SymbolTable st2 = new SymbolTable(ts2.tCont);
+		if(!subType(cc, kc, st1, st2)) return false;
+		if(!subType(cc, kc, st2, st1)) return false;
+		// check type equivalence
+		CubexType t1 = ts1.type;
+		CubexType t2 = ts2.type;
+		if(!subType(cc, kc, t1, t2)) return false;
+		if(!subType(cc, kc, t2, t1)) return false;
+		// all tests pass
+		return true;
 	}
 
 
@@ -310,8 +336,8 @@ public class CubexTC {
 					// get the typeschemes
 					CubexTypeScheme s1 = method(cc, kc, a, n1);
 					CubexTypeScheme s2 = method(cc, kc, b, n2);
-					// signatures must be exactly the same
-					if(!s1.equals(s2)) return null;
+					// signatures must be equivalent
+					if(!equiv(cc, kc, s1, s2)) return null;
 				}
 			}
 		}

@@ -1,15 +1,68 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public abstract class CubexObject {
     CubexCName name;
     List<CubexPName> kCont;
     CubexType type;
     List<? extends CubexFunHeader> funList;
+
+    public abstract ImmutablePair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st);
 }
 
 
 class CubexInterface extends CubexObject {
+
+    public ImmutablePair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st) {
+        // make a new kind context
+        CubexKindContext theta = new CubexKindContext(kCont);
+        // check construction of extended type
+        CubexType con = CubexTC.constructable(cc, theta, type);
+        if(!con.equals(new Thing())) {
+            throw new CubexTC.TypeCheckException(
+                String.format("%s DOES NOT CONSTRUCT TRUE IN INTERFACE", 
+                    type.toString(), name.toString())
+                );
+        }
+
+        // make a new class context
+        CubexClassContext cc2 = cc.set(name, this);
+
+        // get all the methods the parent must implement
+        Collection<CubexVName> parentMethods = CubexTC.allMethods(cc, theta, type);
+
+        // check every fun header for validity and match with parent
+        for(CubexFunHeader header : funList) {
+            CubexTypeScheme s = header.scheme;
+            // check if valid
+            if(!CubexTC.isValid(cc2, theta, s)) {
+                throw new CubexTC.TypeCheckException(
+                    String.format("%s IS AN INVALID TYPESCHEME IN INTERFACE %s", 
+                        s.toString(), name.toString())
+                    );
+            }
+
+            // check if parent has this function
+            for(CubexVName n2 : parentMethods) {
+                if(n2.equals(header.name)) {
+                    CubexTypeScheme s2 = CubexTC.method(cc, theta, type, n2);
+                    // signatures must be exactly the same
+                    if(!s.equals(s2)) {
+                        throw new CubexTC.TypeCheckException(
+                            String.format("FUNCTION %s WITH SCHEME %s IN INTERFACE %s DOES NOT MATCH %s IN PARENT TYPE", 
+                                header.name.toString(), s.toString(), name.toString(), s2.toString())
+                            );
+                    }
+                }
+            }
+        }
+
+        // everything passes
+        return new ImmutablePair<CubexClassContext, CubexFunctionContext>(new CubexClassContext().set(name, this), new CubexFunctionContext());
+
+    }
 
     public CubexInterface(CubexCName c, List<CubexPName> k, CubexType t, List<CubexFunHeader> f) {
         name = c;
@@ -38,6 +91,10 @@ class CubexClass extends CubexObject {
     CubexTypeContext tCont; 
     List<CubexStatement> stmt;
     List<CubexExpression> expr;
+
+    public ImmutablePair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext kc, SymbolTable st) {
+        return null;
+    }
     
     public CubexClass(CubexCName c, List<CubexPName> k, CubexTypeContext t, 
         CubexType ty, List<CubexStatement> s, List<CubexExpression> e, List<CubexFunction> f) {
