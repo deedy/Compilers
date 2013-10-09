@@ -216,17 +216,28 @@ classdef returns [CubexClass cu]
     $cu = new CubexClass($c.cu, kl, $ty.cu, ct, $s.cu, es, $f.cu);
   };
 
+// at least one, fixes left recursion
+mutlifuns returns [List<CubexFunction> cu] 
+    : {
+        $cu = new ArrayList<CubexFunction>();
+      }
+    (c=fundef { $cu.add($c.cu); })+;
 
-progs returns [List<CubexProg> cu]
-	: { $cu=new ArrayList<CubexProg>(); }
-	( s=statement {  $cu.add(new CubexStatementProg($s.cu)); }  
-  | f1=fundef { $cu.add(new CubexFunctionProg($f1.cu)); }
-  | i=interfacedef { $cu.add(new CubexInterfaceProg($i.cu)); }
-  | c=classdef { $cu.add(new CubexClassProg($c.cu)); })*
-	s=statement { $cu.add(new CubexStatementProg($s.cu)); };
-	
-prog returns [CubexProgs cu]
-  : p=progs {$cu = new CubexProgs($p.cu);}
-  | errorchar { int n = 1 / 0; };
+multistatement returns [List<CubexStatement> cu] 
+    : { $cu = new ArrayList<CubexStatement>(); }
+      ((s=nbstatement { $cu.add($s.cu); } | t=bracestatement { $cu.addAll($t.cu); } )
+       ((s=nbstatement { $cu.add($s.cu); }) | t=bracestatement { $cu.addAll($t.cu); } )*
+      );
 
-errorchar : .*?;
+
+almostprog returns [CubexProg cu]
+	: s=multistatement p=almostprog { $cu = new CubexStatementsProg($s.cu, $p.cu); }  
+  | f=mutlifuns p=almostprog { $cu = new CubexFuncsProg($f.cu, $p.cu); }
+  | i=interfacedef p=almostprog { $cu = new CubexInterfaceProg($i.cu, $p.cu); }
+  | c=classdef p=almostprog { $cu = new CubexClassProg($c.cu, $p.cu); }
+	| s2=statement { $cu = new CubexStatementProg($s2.cu); };
+
+prog returns [CubexProg cu]
+  : p=almostprog EOF{ $cu = $p.cu; };
+
+errorchar : .*? { int n = 1 / 0; } | EOF;

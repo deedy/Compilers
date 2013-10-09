@@ -44,5 +44,7 @@ class CubexClassContext {
 		return map.containsKey(c) && get(c) instanceof CubexInterface;
 	}
 
-
+	public CubexClassContext merge(CubexClassContext cc) {
+		return new CubexClassContext(map.plusAll(cc.map));
+	}
 }

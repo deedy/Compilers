@@ -21,8 +21,8 @@ public class CubexCheckerProg {
         StringBuilder output = new StringBuilder();
         parser.setBuildParseTree(true);
         try {
-            CubexProgs progs = parser.prog().cu;
-            return progs.toString();
+            CubexProg prog = parser.prog().cu;
+            return prog.toString();
         } catch(Exception e){
             // e.printStackTrace();
             // a divide by zero error was thrown by the error char
@@ -35,7 +35,7 @@ public class CubexCheckerProg {
     }
 
     public static void viewTree(CubexParser parser) {
-        ParserRuleContext tree = parser.progs();
+        ParserRuleContext tree = parser.prog();
         tree.inspect(parser);
         parser.reset();
     }

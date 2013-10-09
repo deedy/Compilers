@@ -43,7 +43,7 @@ public class ParserAssignmentTest {
 						System.out.printf("Test %s failed\n", f.getPath());
 						// read the infile
 						String infile = readFileAsString(f.getPath());
-						System.out.printf("Input stream:\n%s\n", infile);
+						// System.out.printf("Input stream:\n%s\n", infile);
 						System.out.printf("Expected:\t%s\n", expected);
 						System.out.printf("Recieved:\t%s\n", parsed);
 						// view the tree
