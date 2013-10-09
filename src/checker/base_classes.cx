@@ -1,0 +1,44 @@
+class Iterable <I> () extends Thing { }
+
+class Boolean<> ()extends Thing {
+	fun negate <> () : Boolean <> {}
+	fun and <> (that : Boolean <> ) : Boolean <>{}
+	fun or<>(that : Boolean<>) : Boolean<>{}
+	fun through<>(upper : Boolean<>, 
+			  includeLower : Boolean<>,
+			  includeUpper : Boolean<>)
+			  : Iterable<Boolean<>>{}
+	fun onwards<>(inclusive : Boolean<>) : Iterable <Boolean <>>{}
+	fun lessThan<>(that : Boolean<>, strict : Boolean<>) : Boolean <>{}
+	fun equals<>(that : Boolean<>) : Boolean<>{}
+}
+
+class Integer<> ()extends Thing {
+	fun negative<>() : Integer<>{}
+	fun times<>(factor : Integer<>) : Integer<>{}
+	fun divide<>(divisor : Integer<>) : Iterable<Integer<>>{}
+	fun modulo<>(modulous : Integer<>) : Iterable<Integer<>>{}
+	fun plus<>(summand : Integer<>) : Integer<>{}
+	fun minus<>(subtrahend : Integer<>) : Integer<>{}
+	fun through<>(upper : Integer<>, 
+			  includeLower : Boolean<>,
+			  includeUpper : Boolean<>) : Iterable<Integer<>>{}
+	fun onwards<>(inclusive : Boolean<>) : Iterable<Integer<>>{}
+	fun lessThan<>(that : Integer<>, strict : Boolean<>) : Boolean<>{}
+	fun equals<>(that : Integer<>) : Boolean<>{}
+}
+
+class Character<>() extends Thing {
+	fun unicode<>() : Integer<>{}
+	fun equals(that : Character<>) : Boolean<>{}
+}
+
+class String <>()extends Iterable<Character<>>{
+	fun equals<>(that : String<>) : Boolean<>{}
+}
+
+fun character<>(unicode : Integer<>) : Character<> {}
+
+fun string<>(characters : Iterable<Character>) : String<> {}
+
+input := [""];
