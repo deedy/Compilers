@@ -144,7 +144,7 @@ class CubexClass extends CubexObject {
 
         // type check the super call
         // if super is thing, check that expression list is empty
-        if(type.equals(new Thing())) {
+        if(con.equals(new Thing())) {
             if(exprs.size() > 0) {
                 throw new CubexTC.TypeCheckException(
                     String.format("INVALID CALL TO SUPER IN CLASS %s", 

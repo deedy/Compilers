@@ -178,6 +178,8 @@ class CubexForLoop extends CubexStatement {
         params.add(new Nothing());
         CubexType testIter = new CubexCType(new CubexCName("Iterable"), params);
         // this cast should be safe
+        // System.out.println(expr);
+        // System.out.println(exprType);
         CubexCType foundIter = (CubexCType) CubexTC.join(cc, kc, testIter, exprType);
         SymbolTable tmp = mutableSt.set(name, foundIter.params.get(0));
 

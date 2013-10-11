@@ -388,40 +388,18 @@ public class CubexTC {
 		if(!constructable(cc, kc, b).equals(CubexType.getThing())) return null;
 		// get the intersection of their superclasses
 		// pairwise check all supertypes for compatibility
-		for(CubexType v1 : immediateSuperTypes(cc, kc, a)) {
-			for(CubexType v2 : immediateSuperTypes(cc, kc, b)) {
-				if(!compatible(cc, kc, a, b, v1, v2)) return null;
-			}
-		}
-		// get all methods of a and b
-		Collection<CubexVName> aMethods = allMethods(cc, kc, a);
-		Collection<CubexVName> bMethods = allMethods(cc, kc, b);
-		// check that methods with the same name have same type scheme
-		for(CubexVName n1 : aMethods) {
-			for(CubexVName n2 : bMethods) {
-				if(n1.equals(n2)) {
-					// get the typeschemes
-					CubexTypeScheme s1 = method(cc, kc, a, n1);
-					CubexTypeScheme s2 = method(cc, kc, b, n2);
-					// signatures must be equivalent
-					if(!equiv(cc, kc, s1, s2)) return null;
+		Collection<CubexType> st1 = immediateSuperTypes(cc, kc, a);
+		st1.add(a);
+		// System.out.printf("%s <: %s\n", a, st1);
+		for(CubexType v : st1) {
+			if(subType(cc, kc, b, v) || b.equals(v)){
+				if(!(subType(cc, kc, new Thing(), v))) {
+					return null;
 				}
 			}
 		}
 		// intersection passes all tests
 		return ret;
-	}
-
-	// used to compute the second line of intersection validation
-	private static boolean compatible(CubexClassContext cc, CubexKindContext kc, CubexType t1, CubexType t2, CubexCType c1, CubexCType c2) {
-		// classes are compatible if they have different names, or they have the same name and compatible types
-		if(!c1.name.equals(c2.name)) return true;
-		return subType(cc, kc, t1, c2) && subType(cc, kc, t2, c1);
-	}
-
-	// non-classes are compatible by default
-	private static boolean compatible(CubexClassContext cc, CubexKindContext kc, CubexType t1, CubexType t2, CubexType t3, CubexType t4) {
-		return true;
 	}
 
 	// return all method names of t and its supertypes
