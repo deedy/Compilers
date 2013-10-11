@@ -1,14 +1,18 @@
-public abstract class CubexName {
+public class CubexName {
 	String name;
 
 	public String toString(){
 		return name;
 	}
 
-	public boolean equals(CubexName n) {
-		return name.equals(n.name);
+	public boolean equals(Object obj) {
+		if(obj instanceof CubexName) {
+			CubexName n = (CubexName) obj;
+			return name.equals(n.name);
+		}
+		else return false;
 	}
-
+	@Override
 	public int hashCode() {
 		return name.hashCode();
 	}

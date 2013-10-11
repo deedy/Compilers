@@ -1,5 +1,6 @@
 import org.pcollections.PMap;
 import org.pcollections.HashTreePMap;
+import java.util.Set;
 
 class CubexClassContext {
 	PMap<CubexCName, CubexObject> map;
@@ -37,11 +38,11 @@ class CubexClassContext {
 	}
 
 	public boolean containsClass(CubexCType c) {
-		return map.containsKey(c) && get(c) instanceof CubexClass;
+		return map.containsKey(c.name) && get(c.name) instanceof CubexClass;
 	}
 
 	public boolean containsInterface(CubexCType c) {
-		return map.containsKey(c) && get(c) instanceof CubexInterface;
+		return map.containsKey(c.name) && get(c) instanceof CubexInterface;
 	}
 
 	public CubexClassContext merge(CubexClassContext cc) {

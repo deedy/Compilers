@@ -14,7 +14,10 @@ public abstract class CubexType {
 	public abstract List<CubexCName> getClasses();
 	public abstract List<CubexType> immediateSuperTypes(CubexClassContext cc);
   public abstract String toString();
-  public boolean equals(CubexType ct) {
+
+  public boolean equals(Object obj) {
+  	if(!(obj instanceof CubexType)) return false;
+  	CubexType ct = (CubexType) obj;
     return this.toString().equals(ct.toString());
   }
   public int hashCode() {
@@ -112,6 +115,11 @@ class CubexCType extends CubexType{
 	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		CubexObject obj = cc.get(name);
 		return new ArrayList<CubexType>(Arrays.asList(obj.type));
+	}
+
+	public boolean isIterable(CubexClassContext cc, CubexKindContext kc) {
+		if(this.name.name.equals("Iterable")) return true;
+		return super.isIterable(cc, kc);
 	}
 
 }

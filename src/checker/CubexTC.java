@@ -104,28 +104,42 @@ public class CubexTC {
 		}
 		return null;
 	}
-	
-	// axioms for thing and nothing
-	public static boolean subType(CubexClassContext cc, CubexKindContext kc, Thing t, CubexType ct) {
-		return (ct.equals(t));
-	}
-
-	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexType ct, Thing t) {
-		return true;
-	}
-
-	public static boolean subType(CubexClassContext cc, CubexKindContext kc, Nothing t, CubexType ct) {
-		return true;
-	}
-
-	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexType ct , Nothing t) {
-		return ct.equals(t);
-	}
 
 	// axiom for identity
 	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexType t1, CubexType t2) {
-		// fix this)
-		return (t1.equals(t2));
+		if(t1 instanceof CubexIType) {
+			CubexIType left = (CubexIType) t1;
+			if(t2 instanceof CubexIType) {
+				CubexIType right = (CubexIType) t2;
+				return subType(cc, kc, t1, right);
+			} else if (t2 instanceof CubexCType) {
+				CubexCType right = (CubexCType) t2;
+				return subType(cc, kc, left, right);
+			} else if (t2 instanceof Thing) {
+				return true;
+			} else if (t2 instanceof Nothing){
+				return t1.equals(t2);
+			} else return (left.equals(t2));
+
+		} else if (t1 instanceof CubexCType) {
+			CubexCType left = (CubexCType) t1;
+			if(t2 instanceof CubexIType) {
+				CubexIType right = (CubexIType) t2;
+				return subType(cc, kc, t1, right);
+			} else if (t2 instanceof CubexCType) {
+				CubexCType right = (CubexCType) t2;
+				return subType(cc, kc, left, right);
+			} else if (t2 instanceof Thing) {
+				return true;
+			} else if (t2 instanceof Nothing){
+				return t1.equals(t2);
+			} else return (left.equals(t2));
+
+		} else if (t1 instanceof Thing) {
+			return t2 instanceof Thing;
+		} else if (t1 instanceof Nothing){
+			return true;
+		} else return (t1.equals(t2));
 	}
 
 	// intersection rules
@@ -255,8 +269,10 @@ public class CubexTC {
 
 	// only makes sense for CTypes to have methods
 	public static CubexTypeScheme method(CubexClassContext cc, CubexKindContext kc, CubexType t, CubexVName v) {
-		// nothing definable here
-		return null;
+		if(t instanceof CubexCType) {
+			return method(cc, kc, (CubexCType) t, v);
+		}
+		else return null;
 	}
 
 	public static CubexTypeScheme method(CubexClassContext cc, CubexCType c, CubexVName v) {
@@ -281,15 +297,13 @@ public class CubexTC {
 	// type validity
 	// valid type
 	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, CubexType t) {
+		if(t instanceof CubexPType) {
+			 return kc.contains(((CubexPType) t).name);
+		}
+		if(t instanceof Nothing) {
+			return true;
+		}
 		return constructable(cc,kc, t) != null;
-	}
-
-	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, Nothing t) {
-		return true;
-	}
-
-	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, CubexPType t) {
-		return kc.contains(t.name);
 	}
 
 	public static CubexType constructable(CubexClassContext cc, CubexKindContext kc, CubexCType c) {
@@ -380,14 +394,25 @@ public class CubexTC {
 	}
 
 	// everything else cannot construct anything
-	public static CubexType constructable(CubexClassContext cc, CubexKindContext kc, CubexType t) { 
-		return null;
+	public static CubexType constructable(CubexClassContext cc, CubexKindContext kc, CubexType t) {
+		if(t instanceof CubexIType) {
+			return constructable(cc, kc, (CubexIType) t);
+		} else if (t instanceof CubexCType) {
+			return constructable(cc, kc, (CubexCType) t);
+		} else if (t instanceof Thing) {
+			return constructable(cc, kc, (Thing) t);
+		} else {
+			return null;
+		}
 	}
 
 
 	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, CubexTypeContext tc) {
 		for(CubexType t : tc.types) {
-			if(!isValid(cc, kc, t)) return false;
+			if(!isValid(cc, kc, t)) {
+				System.out.println(t);
+				return false;
+			}
 		}
 		return true;
 	}
@@ -395,7 +420,9 @@ public class CubexTC {
 	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, CubexTypeScheme s) {
 		CubexKindContext hat = new CubexKindContext(s.kCont);
 		CubexKindContext kc2 = kc.merge(hat);
-		return isValid(cc, kc2, s.tCont) && isValid(cc, kc2, s.type);
+		boolean a = isValid(cc, kc2, s.tCont);
+		boolean b =  isValid(cc, kc2, s.type);
+		return a && b;
 	}
 
 	// returns a copy of c2 with members of generics replaced with members of repTypes

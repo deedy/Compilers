@@ -97,6 +97,7 @@ class CubexClass extends CubexObject {
         CubexKindContext theta = new CubexKindContext(kCont);
         // check construction of extended type
         CubexType con = CubexTC.constructable(cc, theta, type);
+
         if(con == null) {
             throw new CubexTC.TypeCheckException(
                 String.format("%s IS NOT CONSTRUCTABLE IN CLASS %s", 
@@ -122,8 +123,8 @@ class CubexClass extends CubexObject {
         // check type context
         if(!CubexTC.isValid(cc2, theta, tCont)) {
             throw new CubexTC.TypeCheckException(
-                String.format("CLASS %s HAS INVALID TYPE CONTEXT", 
-                    name.toString())
+                String.format("CLASS %s HAS INVALID TYPE CONTEXT %s", 
+                    name.toString(), tCont.toString())
                 );
         }
 
@@ -175,8 +176,8 @@ class CubexClass extends CubexObject {
             // check the typescheme
             if(!CubexTC.isValid(cc2, theta, f.scheme)){
                 throw new CubexTC.TypeCheckException(
-                    String.format("FUNCTION %s IN CLASS %s HAS INVALID TYPESCHEME", 
-                        f.name.toString(), name.toString())
+                    String.format("FUNCTION %s IN CLASS %s HAS INVALID TYPESCHEME %s", 
+                        f.name.toString(), name.toString(), f.scheme.toString())
                     );   
             }
 

@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 abstract class CubexProg {
+	public CubexProg prog;
 	public abstract boolean typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st);
 }
 
@@ -41,7 +42,7 @@ class CubexStatementProg extends CubexProg {
 
 class CubexStatementsProg extends CubexProg {
 	public List<CubexStatement> stmts;
-	public CubexProg prog;
+
 	public CubexStatementsProg(List<CubexStatement> stats, CubexProg prog){
 		stmts = stats;
 		this.prog = prog;
@@ -71,7 +72,7 @@ class CubexStatementsProg extends CubexProg {
 
 class CubexFuncsProg extends CubexProg {
 	public List<CubexFunction> funcs;
-	public CubexProg prog;
+
 	public CubexFuncsProg(List<CubexFunction> funs, CubexProg prog){
 		funcs = funs;
 		this.prog = prog;
@@ -133,7 +134,7 @@ class CubexFuncsProg extends CubexProg {
 
 class CubexInterfaceProg extends CubexProg {
 	public CubexInterface intf;
-	public CubexProg prog;
+
 	public CubexInterfaceProg(CubexInterface inter, CubexProg prog){
 		intf = inter;
 		this.prog = prog;
@@ -151,7 +152,7 @@ class CubexInterfaceProg extends CubexProg {
 
 class CubexClassProg extends CubexProg {
 	public CubexClass cls;
-	public CubexProg prog;
+
 	public CubexClassProg(CubexClass clss, CubexProg prog){
 		cls = clss;
 		this.prog = prog;
