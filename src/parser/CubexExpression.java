@@ -25,6 +25,12 @@ class CubexFunctionCall extends CubexExpression {
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         // check if name in function context
         CubexFunHeader f = fc.get(name);
+        if(f == null) {
+            throw new CubexTC.TypeCheckException(
+                String.format("%s IS NOT IN FUNCTION CONTEXT", 
+                    name)
+                );
+        }
         // get the de-generic'd type scheme
         CubexTypeScheme swapped = CubexTC.replaceGenerics(f.scheme.kCont, typeList, f.scheme);
         // show that each expression is a subtype
@@ -39,7 +45,7 @@ class CubexFunctionCall extends CubexExpression {
             // show that it is a subtype
             if(!CubexTC.subType(cc, kc, eType, exp)){
                 // not a subtype, error
-                System.out.println(swapped);
+                // System.out.println(swapped);
                 throw new CubexTC.TypeCheckException(
                     String.format("%s IS NOT A SUBTYPE OF %s IN FUNCTION CALL %s", 
                         eType.toString(), exp.toString(), toString())

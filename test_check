@@ -1,0 +1,9 @@
+#! /bin/bash
+for i in {1..20}
+ do 
+  echo -n "$i "
+  java -jar build/jar/Cubex.jar ../CompilersTestCases/PA3/tc_test$i.in
+  echo -n " "
+  cat "../CompilersTestCases/PA3/tc_test$i.out"
+  echo ""
+done

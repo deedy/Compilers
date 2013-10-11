@@ -113,6 +113,7 @@ public class CubexTC {
 
 	// axiom for identity
 	public static boolean subType(CubexClassContext cc, CubexKindContext kc, CubexType t1, CubexType t2) {
+		if(t1.equals(t2)) return true;
 		if(t1 instanceof CubexIType) {
 			CubexIType left = (CubexIType) t1;
 			if(t2 instanceof CubexIType) {
@@ -145,7 +146,7 @@ public class CubexTC {
 			return t2 instanceof Thing;
 		} else if (t1 instanceof Nothing){
 			return true;
-		} else return (t1.equals(t2));
+		} else return false;
 	}
 
 	// intersection rules
@@ -253,6 +254,7 @@ public class CubexTC {
 
 	// method lookup
 	public static CubexTypeScheme method(CubexClassContext cc, CubexKindContext kc, CubexCType t, CubexVName v) {
+		// System.out.printf("1 : %s.%s\n", t, v);
 		// get the scheme from the class
 		CubexTypeScheme s = method(cc, t, v);
 		if(s == null){
@@ -260,6 +262,7 @@ public class CubexTC {
 			// we only need to return the first one we see
 			// because the spec says if we see more than one
 			// they must be equal
+			// System.out.println(t.immediateSuperTypes(cc));
 			for(CubexType et : t.immediateSuperTypes(cc)){
 				CubexTypeScheme es = method(cc, kc, et, v);
 				if(es != null) return es;
@@ -277,12 +280,14 @@ public class CubexTC {
 
 	// only makes sense for CTypes to have methods
 	public static CubexTypeScheme method(CubexClassContext cc, CubexKindContext kc, CubexType t, CubexVName v) {
+		// System.out.printf("2 : %s.%s\n", t, v);
 		if(t instanceof CubexCType) {
 			return method(cc, kc, (CubexCType) t, v);
 		} else if (t instanceof Nothing) {
 			return null;
 		}
 		else {
+			// System.out.println(t.immediateSuperTypes(cc));
 			throw new CubexTC.TypeCheckException(
                 String.format("%s DOES NOT HAVE METHOD %s", 
                     t.toString(), v.toString())
@@ -291,7 +296,7 @@ public class CubexTC {
 	}
 
 	public static CubexTypeScheme method(CubexClassContext cc, CubexCType c, CubexVName v) {
-		// System.out.println(cc);
+		// System.out.printf("3 : %s.%s\n", c, v);
 		if(cc.contains(c)){
 			CubexObject obj = cc.get(c);
 			CubexFunHeader f = null;
@@ -311,16 +316,17 @@ public class CubexTC {
 				}
 				// no match
 				if(f == null) {
-					throw new CubexTC.TypeCheckException(
-		                String.format("%s DOES NOT HAVE METHOD %s", 
-		                    c.toString(), v.toString())
-		                );
+					// System.out.println(c.immediateSuperTypes(cc));
+					return null;
 				}
 				return f.scheme; 
 			} else {
+				// System.out.println(((CubexInterface) obj).funList);
 				for(CubexFunHeader g : ((CubexInterface) obj).funList){
 					if(g.name.equals(v)){
 						// need exactly one match
+						// if(!(g instanceof CubexFunction)) continue;
+						// System.out.println((CubexFunction) g);
 						if(f != null) {
 				           	throw new CubexTC.TypeCheckException(
 				                String.format("%s HAS METHOD %s MORE THAN ONCE", 

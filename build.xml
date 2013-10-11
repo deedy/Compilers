@@ -102,7 +102,7 @@
 
     <target name="test_checker">
         <java classname="CheckerAssignmentTest" fork="true" dir="build/classes">
-            <arg line="../../test/checker/assignment_tests/"/>
+            <arg line="../../../CompilersTestCases/PA3"/>
         </java>
     </target>
 </project> 

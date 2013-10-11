@@ -155,8 +155,8 @@ class CubexClass extends CubexObject {
             // else, check that parent(exprs) is a valid function call
             CubexCType supertype = (CubexCType) con;
             CubexFunctionCall superCall = new CubexFunctionCall(supertype.name, supertype.params, exprs);
-            CubexType superRet = superCall.getType(cc, theta, fc2, merged);
-            if(CubexTC.subType(cc, theta, superRet, con)) {
+            CubexType superRet = superCall.getType(cc2, theta, fc2, merged);
+            if(!CubexTC.subType(cc2, theta, superRet, con)) {
                 throw new CubexTC.TypeCheckException(
                     String.format("CALL TO SUPER IN CLASS %s RETURNS %s BUT EXPECTED %s", 
                         name.toString(), superRet.toString(), con.toString())

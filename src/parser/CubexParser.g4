@@ -162,7 +162,8 @@ funheaders returns [List<CubexFunHeader> cu]
     : {
         $cu = new ArrayList<CubexFunHeader>();
       }
-    (c=funheader SEMICOLON { $cu.add($c.cu); })*;
+    (c=funheader SEMICOLON { $cu.add($c.cu); }
+    | d=fundef { $cu.add($d.cu); })*;
 
 fundef returns [CubexFunction cu]
 	// overide with immediate return statement

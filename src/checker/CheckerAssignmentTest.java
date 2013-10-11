@@ -48,7 +48,7 @@ public class CheckerAssignmentTest {
             System.out.printf("Recieved:\t%s\n", parsed);
             // view the tree
             par.reset();
-                  CubexCheckerProg.viewTree(par);
+                  // CubexCheckerProg.viewTree(par);
           }
         } catch(IOException e){
           System.out.printf("Exception reading file %s\n", outfile.toString());

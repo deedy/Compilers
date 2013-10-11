@@ -1,0 +1,20 @@
+Names:
+Dominick Twitty
+Debarghya Das
+Simon Li
+Bryce Evans
+
+Discussion partners:
+Minor discussion with Matthew Lorring and Andrew Demaio
+
+Division of labor:
+Dominick did (stole from rest of team) bulk of the work, with Deedy and Simon amply contributing on all parts. Bryce wrote test cases. 
+
+Notes:
+This submission includes the pcollections library, which, while being extremely useful, may not be on the appropriate classpath. 
+
+We will probably resubmit tomorrow
+
+
+Also, ANTLR might print errors...we do not know how to surpress them
+
