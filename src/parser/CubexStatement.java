@@ -142,7 +142,7 @@ class CubexWhileLoop extends CubexStatement {
         Triple<SymbolTable, Boolean, CubexType> imm = stmt.typeCheck(cc, kc, fc, st, mutableSt);
 
         // while returns same type as statement but not guarunteed to return
-        return new Triple<SymbolTable, Boolean, CubexType>(mutableSt, new Boolean(false), imm.getRight());
+        return new Triple<SymbolTable, Boolean, CubexType>(mutableSt.intersection(imm.getLeft(), cc, kc), new Boolean(false), imm.getRight());
     }
 
     public String toString() {
@@ -183,7 +183,7 @@ class CubexForLoop extends CubexStatement {
 
         Triple<SymbolTable, Boolean, CubexType> ret = stmt.typeCheck(cc, kc, fc, st, tmp);
         // for returns same type as statement but not guarunteed to return
-        return new Triple<SymbolTable, Boolean, CubexType>(mutableSt, new Boolean(false), ret.getRight());
+        return new Triple<SymbolTable, Boolean, CubexType>(mutableSt.intersection(ret.getLeft(), cc, kc), new Boolean(false), ret.getRight());
     }
 
     public String toString() {

@@ -42,10 +42,14 @@ class CubexClassContext {
 	}
 
 	public boolean containsInterface(CubexCType c) {
-		return map.containsKey(c.name) && get(c) instanceof CubexInterface;
+		return map.containsKey(c.name) && get(c.name) instanceof CubexInterface;
 	}
 
 	public CubexClassContext merge(CubexClassContext cc) {
 		return new CubexClassContext(map.plusAll(cc.map));
+	}
+
+	public String toString() {
+		return map.toString();
 	}
 }

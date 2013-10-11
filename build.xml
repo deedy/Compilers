@@ -83,7 +83,7 @@
                 <attribute name="Main-Class" value="CubexCheckerProg"/>
             </manifest>
             <fileset dir="build/classes" includes="**/*.class" />
-            <fileset dir="src" includes="**/*.java **/*.g4" />
+            <fileset dir="src" includes="**/*.java **/*.g4 **/*.cx" />
             <zipgroupfileset dir="lib" includes="**/*.jar" />
         </jar>
     </target>

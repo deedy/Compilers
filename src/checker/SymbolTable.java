@@ -56,4 +56,8 @@ class SymbolTable {
 	public Collection<CubexVName> keys() {
 		return map.keySet();
 	}
+
+	public String toString() {
+		return map.toString();
+	}
 }

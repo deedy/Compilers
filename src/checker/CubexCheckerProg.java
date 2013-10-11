@@ -5,6 +5,9 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.ArrayList;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import java.lang.StringBuffer;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 
 public class CubexCheckerProg {
@@ -28,8 +31,13 @@ public class CubexCheckerProg {
             // System.out.println(prog);
 
 
-            return ((Boolean) prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())).toString();
+            if(prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())) return "accept";
+            else return "reject";
 
+        } catch (CubexTC.TypeCheckException tc) {
+            // System.out.println(tc.getMessage());
+            tc.printStackTrace();
+            return "reject";
         } catch(Exception e){
             // System.out.println(e);
             e.printStackTrace();
@@ -41,7 +49,12 @@ public class CubexCheckerProg {
 
     public static Triple<CubexClassContext, CubexFunctionContext, SymbolTable> buildBase() {
         try {
-            CubexLexer baseLex = new CubexLexer(new ANTLRFileStream("../../src/checker/base_classes.cx"));
+            StringBuffer sb = new StringBuffer();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.class.getResourceAsStream("/checker/base_classes.cx"), "UTF-8"));
+            for (int c = br.read(); c != -1; c = br.read()) sb.append((char)c);
+  
+            CubexLexer baseLex = new CubexLexer(new ANTLRInputStream(sb.toString()));
             CommonTokenStream baseTokens = new CommonTokenStream(baseLex);
             CubexParser basePar = new CubexParser(baseTokens);
             basePar.setBuildParseTree(true);
@@ -65,15 +78,13 @@ public class CubexCheckerProg {
                     for(CubexFunction fun : funs) {
                         fc = fc.set(fun.name, fun);
                     }
-                } else {
-                    ArrayList<CubexType> param = new ArrayList<CubexType>();
-                    param.add(new CubexCType("String"));
-                    CubexType itString = new CubexCType(new CubexCName("Iterable"), param);
-                    st = st.set(new CubexVName("input"), itString);
                 }
+                ArrayList<CubexType> param = new ArrayList<CubexType>();
+                param.add(new CubexCType("String"));
+                CubexType itString = new CubexCType(new CubexCName("Iterable"), param);
+                st = st.set(new CubexVName("input"), itString);
                 based = based.prog;
             }
-
             return new Triple<CubexClassContext, CubexFunctionContext, SymbolTable>(cc, fc, st);
             } catch(Exception e) {
                 e.printStackTrace();

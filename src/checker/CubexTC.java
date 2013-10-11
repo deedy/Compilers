@@ -90,7 +90,7 @@ public class CubexTC {
 				if(!containsNothing(test)) {
 					lowest = test;
 				} else {
-					if(containsNothing(lowest)) {
+					if(containsNothing(lowest) || lowest instanceof Thing) {
 						lowest = test;
 					}
 				}
@@ -279,6 +279,8 @@ public class CubexTC {
 	public static CubexTypeScheme method(CubexClassContext cc, CubexKindContext kc, CubexType t, CubexVName v) {
 		if(t instanceof CubexCType) {
 			return method(cc, kc, (CubexCType) t, v);
+		} else if (t instanceof Nothing) {
+			return null;
 		}
 		else {
 			throw new CubexTC.TypeCheckException(
@@ -289,29 +291,54 @@ public class CubexTC {
 	}
 
 	public static CubexTypeScheme method(CubexClassContext cc, CubexCType c, CubexVName v) {
+		// System.out.println(cc);
 		if(cc.contains(c)){
 			CubexObject obj = cc.get(c);
 			CubexFunHeader f = null;
-			for(CubexFunHeader g : obj.funList){
-				if(g.name.equals(v)){
-					// need exactly one match
-					if(f != null) {
-			           	throw new CubexTC.TypeCheckException(
-			                String.format("%s HAS METHOD %s MORE THAN ONCE", 
-			                    c.toString(), v.toString())
-			                );
+			// System.out.println(obj);
+			if(obj instanceof CubexClass) {
+				for(CubexFunHeader g : ((CubexClass) obj).funList){
+					if(g.name.equals(v)){
+						// need exactly one match
+						if(f != null) {
+				           	throw new CubexTC.TypeCheckException(
+				                String.format("%s HAS METHOD %s MORE THAN ONCE", 
+				                    c.toString(), v.toString())
+				                );
+						}
+						f = g;
 					}
-					f = g;
 				}
+				// no match
+				if(f == null) {
+					throw new CubexTC.TypeCheckException(
+		                String.format("%s DOES NOT HAVE METHOD %s", 
+		                    c.toString(), v.toString())
+		                );
+				}
+				return f.scheme; 
+			} else {
+				for(CubexFunHeader g : ((CubexInterface) obj).funList){
+					if(g.name.equals(v)){
+						// need exactly one match
+						if(f != null) {
+				           	throw new CubexTC.TypeCheckException(
+				                String.format("%s HAS METHOD %s MORE THAN ONCE", 
+				                    c.toString(), v.toString())
+				                );
+						}
+						f = g;
+					}
+				}
+				// no match
+				if(f == null) {
+					throw new CubexTC.TypeCheckException(
+		                String.format("%s DOES NOT HAVE METHOD %s", 
+		                    c.toString(), v.toString())
+		                );
+				}
+				return f.scheme; 
 			}
-			// no match
-			if(f == null) {
-				throw new CubexTC.TypeCheckException(
-	                String.format("%s DOES NOT HAVE METHOD %s", 
-	                    c.toString(), v.toString())
-	                );
-			}
-			return f.scheme; 
 		}
        	throw new CubexTC.TypeCheckException(
             String.format("%s NOT IN CLASS CONTEXT WHEN CHECKING METHOD %s", 
