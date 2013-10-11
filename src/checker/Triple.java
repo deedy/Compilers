@@ -20,4 +20,8 @@ public class Triple<A,B,C> {
 	public C getRight() {
 		return right;
 	}
+
+	public String toString() {
+		return String.format("< %s, %s, %s >", left, middle, right);
+	}
 }

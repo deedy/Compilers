@@ -166,6 +166,7 @@ class CubexForLoop extends CubexStatement {
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
 
         CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
+        // System.out.println(exprType);
 
         if (!exprType.isIterable(cc, kc)) {
             throw new CubexTC.TypeCheckException(
@@ -178,7 +179,6 @@ class CubexForLoop extends CubexStatement {
         CubexType testIter = new CubexCType(new CubexCName("Iterable"), params);
         // this cast should be safe
         CubexCType foundIter = (CubexCType) CubexTC.join(cc, kc, testIter, exprType);
-
         SymbolTable tmp = mutableSt.set(name, foundIter.params.get(0));
 
         Triple<SymbolTable, Boolean, CubexType> ret = stmt.typeCheck(cc, kc, fc, st, tmp);

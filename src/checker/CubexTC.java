@@ -58,51 +58,57 @@ public class CubexTC {
 		}
 		ArrayList<HashSet<CubexType>> levelPathToRootOne = findLevelPathToRoot(cc, kc, t1);
 		ArrayList<HashSet<CubexType>> levelPathToRootTwo = findLevelPathToRoot(cc, kc, t2);
+		HashSet<CubexType> common = new HashSet<CubexType>();
+		// System.out.println(levelPathToRootOne);
+		// System.out.println(levelPathToRootTwo);
+		for(HashSet<CubexType> hs : levelPathToRootOne) {
+			for(CubexType a : hs) {
+				for(HashSet<CubexType> hs2 : levelPathToRootTwo) {
+					for(CubexType b : hs2) {
+						if(subType(cc, kc, a, b)) {
+							common.add(b);
+						}
+						if(subType(cc, kc, a, b)) {
+							common.add(a);
+						}
+						if(!(a instanceof Thing) && !(b instanceof Thing)) {
+							if(isValid(cc, kc, new CubexIType(a,b))) {
+								common.add(new CubexIType(a,b));
+							}
+							if(isValid(cc, kc, new CubexIType(b,a))) {
+								common.add(new CubexIType(b,a));
+							}
+						}
+					}
+				}
+			}
+		}
+		// System.out.printf("The common supertypes of %s and %s are %s\n", t1, t2, common);
+		CubexType lowest = new Thing();
+		for(CubexType test : common) {
+			if(subType(cc, kc, test, lowest)) {
+				if(!containsNothing(test)) {
+					lowest = test;
+				} else {
+					if(containsNothing(lowest)) {
+						lowest = test;
+					}
+				}
+			}
+		}
+		// System.out.printf("And the join is %s\n", lowest);
+	 	return lowest;
+	}
 
-		int pointOne = levelPathToRootOne.size()-1;
-		int pointTwo = levelPathToRootTwo.size()-1;
-		HashSet<CubexType> common = null;
-		for (int i = Math.min(pointOne, pointTwo); i >= 0; i--) {
-			HashSet<CubexType> intersection = new HashSet<CubexType>(levelPathToRootOne.get(pointOne));
-			intersection.retainAll(levelPathToRootTwo.get(pointTwo));
-			if (intersection.size() > 0) {
-				common = intersection;
-				pointOne--;
-				pointTwo--;
-			} else {
-				break;
+	private static boolean containsNothing(CubexType t) {
+		if(t instanceof Nothing) return true;
+		if(t instanceof CubexCType) {
+			CubexCType c = (CubexCType) t;
+			for(CubexType param : c.params) {
+				if(containsNothing(param)) return true;
 			}
 		}
-		if (common == null) {
-			throw new UnexpectedTypeHierarchyException("No common super class found");
-		}
-		if (common.size() > 2) {
-			throw new UnexpectedTypeHierarchyException("Ambiguous common super class"); 
-		}
-		// Return nearest super class which is an intersection type
-		if (common.size() == 2) {
-			CubexType[] typearr = (CubexType[]) common.toArray();
-			if (typearr[0] instanceof CubexCType && typearr[1] instanceof CubexCType) {
-				// Return class first in the intersection type
-				if (!((CubexCType)typearr[1]).isInterface(cc)) {
-					return new CubexIType(typearr[1], typearr[0]);
-				}
-				// Return class first in the intersection type
-				if (!((CubexCType)typearr[0]).isInterface(cc)) {
-					return new CubexIType(typearr[0], typearr[1]);
-				}
-				// If both interfaces, order doesn't matter
-				return new CubexIType(typearr[0], typearr[1]);
-			} else {
-				// Super classes aren't interfaces or classes
-				throw new UnexpectedTypeHierarchyException("Intersection super class cannot be constructed"); 
-			}
-		}
-		// Return first element of intersection 
-		for (CubexType ct : common) {
-			return ct;
-		}
-		return null;
+		return false;
 	}
 
 	// axiom for identity
@@ -191,7 +197,7 @@ public class CubexTC {
 			return false;
 		}
 		// names do not match, try supertype
-		return false;
+		return subType(cc, kc, t1, (CubexType) t2);
 	}
 
 	// recursively check superclasses
@@ -258,9 +264,11 @@ public class CubexTC {
 				CubexTypeScheme es = method(cc, kc, et, v);
 				if(es != null) return es;
 			}
-			// supertypes give no luck
-			return null;
-		}
+           	throw new CubexTC.TypeCheckException(
+                String.format("%s DOES NOT HAVE METHOD %s", 
+                    t.toString(), v.toString())
+                );		
+           }
 		// make type replacements
 		CubexObject obj = cc.get(t);
 		List<CubexPName> generics = obj.kCont;
@@ -272,7 +280,12 @@ public class CubexTC {
 		if(t instanceof CubexCType) {
 			return method(cc, kc, (CubexCType) t, v);
 		}
-		else return null;
+		else {
+			throw new CubexTC.TypeCheckException(
+                String.format("%s DOES NOT HAVE METHOD %s", 
+                    t.toString(), v.toString())
+                );
+		}
 	}
 
 	public static CubexTypeScheme method(CubexClassContext cc, CubexCType c, CubexVName v) {
@@ -282,15 +295,28 @@ public class CubexTC {
 			for(CubexFunHeader g : obj.funList){
 				if(g.name.equals(v)){
 					// need exactly one match
-					if(f != null) return null;
+					if(f != null) {
+			           	throw new CubexTC.TypeCheckException(
+			                String.format("%s HAS METHOD %s MORE THAN ONCE", 
+			                    c.toString(), v.toString())
+			                );
+					}
 					f = g;
 				}
 			}
 			// no match
-			if(f == null) return null;
+			if(f == null) {
+				throw new CubexTC.TypeCheckException(
+	                String.format("%s DOES NOT HAVE METHOD %s", 
+	                    c.toString(), v.toString())
+	                );
+			}
 			return f.scheme; 
 		}
-		return null;
+       	throw new CubexTC.TypeCheckException(
+            String.format("%s NOT IN CLASS CONTEXT WHEN CHECKING METHOD %s", 
+                c.toString(), v.toString())
+            );
 	}
 
 
@@ -410,7 +436,6 @@ public class CubexTC {
 	public static boolean isValid(CubexClassContext cc, CubexKindContext kc, CubexTypeContext tc) {
 		for(CubexType t : tc.types) {
 			if(!isValid(cc, kc, t)) {
-				System.out.println(t);
 				return false;
 			}
 		}
@@ -451,7 +476,15 @@ public class CubexTC {
 	}
 
 	public static CubexType replaceGenerics(List<CubexPName> generics, List<CubexType> repTypes, CubexType t) {
-		return t;
+		if(t instanceof CubexIType) {
+			return replaceGenerics(generics, repTypes, (CubexIType) t);
+		} else if (t instanceof CubexCType) {
+			return replaceGenerics(generics, repTypes, (CubexCType) t);
+		} else if (t instanceof CubexPType) {
+			return replaceGenerics(generics, repTypes, (CubexPType) t);
+		} else {
+			return t;
+		}
 	}
 
 	public static CubexTypeScheme replaceGenerics(List<CubexPName> generics, List<CubexType> repTypes, CubexTypeScheme ts) {

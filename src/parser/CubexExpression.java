@@ -39,6 +39,7 @@ class CubexFunctionCall extends CubexExpression {
             // show that it is a subtype
             if(!CubexTC.subType(cc, kc, eType, exp)){
                 // not a subtype, error
+                System.out.println(swapped);
                 throw new CubexTC.TypeCheckException(
                     String.format("%s IS NOT A SUBTYPE OF %s IN FUNCTION CALL %s", 
                         eType.toString(), exp.toString(), toString())
@@ -100,8 +101,12 @@ class CubexMethodCall extends CubexExpression {
         CubexType base = expr.getType(cc, kc, fc, st);
         // get the typescheme of the method
         CubexTypeScheme s = CubexTC.method(cc, kc, base, name);
-        // todo - proper error
-        if(s == null) return null;
+        if(s == null) {
+            throw new CubexTC.TypeCheckException(
+                String.format("METHOD CALL %s IS NOT VALID", 
+                    this.toString())
+                );
+        }
         // swap out generics
         CubexTypeScheme swapped = CubexTC.replaceGenerics(s.kCont, typeList, s);
         // show that each expression is a subtype
@@ -304,11 +309,9 @@ class CubexAppend extends CubexExpression {
                 String.format("ERROR GETTING JOIN TYPE OF %s", toString())
                 );
         }
-        List<CubexType> params = new ArrayList<CubexType>();
-        params.add(commonType);
-        out = new CubexCType(new CubexCName("Iterable"), params);
         // check for validity
-        if(CubexTC.isValid(cc, kc, out)) return out;
+        // System.out.printf("%s : %s ++ %s : %s -> %s\n", left, lt, right, rt, commonType);
+        if(CubexTC.isValid(cc, kc, commonType)) return out;
         throw new CubexTC.TypeCheckException(
             String.format("TYPE %s IS NOT VALID IN %s", out.toString(), toString())
             );

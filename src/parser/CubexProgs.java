@@ -119,7 +119,6 @@ class CubexFuncsProg extends CubexProg {
                         fun.name.toString())
                     ); 
             }
-
             // check that it returns a subtype of its declared type
             if(!CubexTC.subType(cc, kc, ret.getRight(), retType)){
                 throw new CubexTC.TypeCheckException(
