@@ -1,0 +1,24 @@
+class PascalsTriangle() {
+    super();
+
+    fun triangle(prevRow : Iterable<Integer<>>, row : Integer<>, totalRows : Integer<>) : Iterable<Integer<>> {
+        if (row > totalRows) {
+            return prevRow;
+        }
+        curRow := [];
+        i := row - 1;
+        while (i >= 0) {
+            if (i == 0 | i == row - 1) {
+                curRow := curRow ++ [1];
+            }
+            else {
+                curRow := curRow ++ [1];
+            }
+            i := i - 1;
+        }
+        curRow := triangle(curRow, row + 1, totalRows);
+        return prevRow;
+    }
+}
+
+return ["sup"];
