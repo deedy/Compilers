@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.HashMap;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class CubexTC {
 	static class UnexpectedTypeHierarchyException extends RuntimeException {
@@ -26,10 +25,10 @@ public class CubexTC {
 	private static ArrayList<HashSet<CubexType>> findLevelPathToRoot(CubexClassContext cc, CubexKindContext kc, CubexType t) {
 		// Not Sure what CubexKindContext should be doing here (deedy)
 		ArrayList<HashSet<CubexType>> allSuperTypes = new ArrayList<HashSet<CubexType>>();
-		Queue<ImmutablePair<Integer, CubexType>> superTypeQueue = new LinkedList<ImmutablePair<Integer, CubexType>>();
-		superTypeQueue.add(new ImmutablePair<Integer, CubexType>(0,t));
+		Queue<Pair<Integer, CubexType>> superTypeQueue = new LinkedList<Pair<Integer, CubexType>>();
+		superTypeQueue.add(new Pair<Integer, CubexType>(0,t));
 		while (!superTypeQueue.isEmpty()) {
-			ImmutablePair<Integer,CubexType> immpair = superTypeQueue.poll();
+			Pair<Integer,CubexType> immpair = superTypeQueue.poll();
 			int level = immpair.getLeft();
 			if (level < allSuperTypes.size()) {
 				allSuperTypes.get(level).add(immpair.getRight());
@@ -39,7 +38,7 @@ public class CubexTC {
 				allSuperTypes.add(hs);
 			}
 			for (CubexType ct : immpair.getRight().immediateSuperTypes(cc)) {
-				superTypeQueue.add(new ImmutablePair<Integer, CubexType>(level+1, ct));
+				superTypeQueue.add(new Pair<Integer, CubexType>(level+1, ct));
 			}
 		}
 		return allSuperTypes;

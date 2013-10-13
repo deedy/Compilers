@@ -1,7 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public abstract class CubexObject {
     CubexCName name;
@@ -9,13 +8,13 @@ public abstract class CubexObject {
     CubexType type;
     List<? extends CubexFunHeader> funList;
 
-    public abstract ImmutablePair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st);
+    public abstract Pair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st);
 }
 
 
 class CubexInterface extends CubexObject {
 
-    public ImmutablePair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st) {
+    public Pair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st) {
         // make a new kind context
         CubexKindContext theta = new CubexKindContext(kCont);
         // check construction of extended type
@@ -60,7 +59,7 @@ class CubexInterface extends CubexObject {
         }
 
         // everything passes
-        return new ImmutablePair<CubexClassContext, CubexFunctionContext>(new CubexClassContext().set(name, this), new CubexFunctionContext());
+        return new Pair<CubexClassContext, CubexFunctionContext>(new CubexClassContext().set(name, this), new CubexFunctionContext());
 
     }
 
@@ -92,7 +91,7 @@ class CubexClass extends CubexObject {
     List<CubexStatement> stmts;
     List<CubexExpression> exprs;
 
-    public ImmutablePair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st) {
+    public Pair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st) {
         // make a new kind context
         CubexKindContext theta = new CubexKindContext(kCont);
         // check construction of extended type
@@ -233,7 +232,7 @@ class CubexClass extends CubexObject {
         }
 
         // all tests pass
-        return new ImmutablePair<CubexClassContext, CubexFunctionContext>(ccp, fcp);
+        return new Pair<CubexClassContext, CubexFunctionContext>(ccp, fcp);
     }
     
     public CubexClass(CubexCName c, List<CubexPName> k, CubexTypeContext t, 

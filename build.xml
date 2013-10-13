@@ -81,12 +81,29 @@
         <jar destfile="build/jar/Cubex.jar">
             <manifest>
                 <attribute name="Main-Class" value="CubexCheckerProg"/>
+                <attribute name="Class-Path" value="${mf.classpath}"/>
             </manifest>
             <fileset dir="build/classes" includes="**/*.class" />
             <fileset dir="src" includes="**/*.java **/*.g4 **/*.cx" />
             <zipgroupfileset dir="lib" includes="**/*.jar" />
         </jar>
     </target>
+
+    <path id="build.classpath">
+        <fileset dir=".">
+            <include name="lib/*.jar"/>
+        </fileset>
+    </path>
+
+    <pathconvert property="mf.classpath" pathsep=" ">
+        <path refid="build.classpath"/>
+        <mapper>
+            <chainedmapper>
+                <flattenmapper/>
+                <globmapper from="*.jar" to="lib/*.jar"/>
+            </chainedmapper>
+        </mapper>
+    </pathconvert>
 
     <target name="test_lexer">
         <java classname="LexerAssignmentTest" fork="true" dir="build/classes">
