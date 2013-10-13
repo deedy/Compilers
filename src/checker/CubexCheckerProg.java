@@ -4,7 +4,6 @@ import java.lang.StringBuilder;
 import java.util.BitSet;
 import java.util.List;
 import java.util.ArrayList;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import java.lang.StringBuffer;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,8 +13,10 @@ public class CubexCheckerProg {
     public static void main(String[] args) throws Exception {
         // lex the file
         CubexLexer lex = new CubexLexer(new ANTLRFileStream(args[0]));
+        lex.removeErrorListeners();
         CommonTokenStream tokens = new CommonTokenStream(lex);
         CubexParser par = new CubexParser(tokens);
+        par.removeErrorListeners();
         System.out.print(assignment3(lex, par));
     }
 

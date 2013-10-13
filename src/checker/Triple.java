@@ -25,3 +25,25 @@ public class Triple<A,B,C> {
 		return String.format("< %s, %s, %s >", left, middle, right);
 	}
 }
+
+class Pair<A, B> {
+	A left;
+	B right;
+
+	public Pair(A left, B right) {
+		this.left = left;
+		this.right = right;
+	}
+ 
+	public A getLeft() {
+		return left;
+	}
+
+	public B getRight() {
+		return right;
+	}
+
+	public String toString() {
+		return String.format("< %s, %s>", left, right);
+	}
+}

@@ -1,6 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+
 
 abstract class CubexProg {
 	public CubexProg prog;
@@ -144,7 +144,7 @@ class CubexInterfaceProg extends CubexProg {
 	}
 
 	public boolean typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st) {
-		ImmutablePair<CubexClassContext, CubexFunctionContext> imm = intf.typeCheck(cc, fc, st);
+		Pair<CubexClassContext, CubexFunctionContext> imm = intf.typeCheck(cc, fc, st);
 		return prog.typeCheck(cc.merge(imm.getLeft()), fc, st);
 	}
 }
@@ -162,7 +162,7 @@ class CubexClassProg extends CubexProg {
 	}
 
 	public boolean typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st) {
-		ImmutablePair<CubexClassContext, CubexFunctionContext> imm = cls.typeCheck(cc, fc, st);
+		Pair<CubexClassContext, CubexFunctionContext> imm = cls.typeCheck(cc, fc, st);
 		return prog.typeCheck(cc.merge(imm.getLeft()), fc.merge(imm.getRight()), st);
 	}
 }
