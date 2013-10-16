@@ -211,9 +211,6 @@ class CubexClass extends CubexObject {
             // check that the class has this method
             boolean found = false;
             CubexTypeScheme s2 = CubexTC.method(cc, theta, type, fun);
-            if(s2 == null) {
-                System.out.printf("%s does not have method %s\n", type, fun);
-            }
             for(CubexFunHeader f : funList) {
                 if(f.name.equals(fun)) {
                     found = true;
