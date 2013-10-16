@@ -17,7 +17,14 @@ class CubexClassContext {
 	}
 
 	public CubexObject get(CubexCName name) {
-		return map.get(name);
+		CubexObject ret = map.get(name);
+		if(ret == null){
+        	throw new CubexTC.TypeCheckException(
+                String.format("%s NOT IN CLASS CONTEXT", 
+                    name.toString())
+                ); 
+		}
+		return ret;
 	}
 
 	public boolean contains(CubexCName name) {
@@ -34,7 +41,14 @@ class CubexClassContext {
 	}
 
 	public CubexObject get(CubexCType c) {
-		return map.get(c.name);
+		CubexObject found = get(c.name);
+		if(found == null){
+        	throw new CubexTC.TypeCheckException(
+                String.format("%s NOT IN CLASS CONTEXT", 
+                    c.toString())
+                ); 
+		}
+		return found;
 	}
 
 	public boolean containsClass(CubexCType c) {

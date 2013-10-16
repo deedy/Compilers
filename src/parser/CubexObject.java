@@ -210,13 +210,16 @@ class CubexClass extends CubexObject {
         for(CubexVName fun : CubexTC.allMethods(cc, theta, type)) {
             // check that the class has this method
             boolean found = false;
+            CubexTypeScheme s2 = CubexTC.method(cc, theta, type, fun);
+            if(s2 == null) {
+                System.out.printf("%s does not have method %s\n", type, fun);
+            }
             for(CubexFunHeader f : funList) {
                 if(f.name.equals(fun)) {
                     found = true;
                     // check that their typeschemes are an exact match
                     CubexTypeScheme s1 = f.scheme;
-                    CubexTypeScheme s2 = CubexTC.method(cc, theta, type, fun);
-                    if(!s1.equals(s2)) {
+                    if(s1 == null || !s2.equals(s1)) {
                         throw new CubexTC.TypeCheckException(
                             String.format("FUNCTION %s WITH SCHEME %s IN CLASS %s DOES NOT MATCH %s IN PARENT TYPE", 
                                 f.name.toString(), s1.toString(), name.toString(), s2.toString())

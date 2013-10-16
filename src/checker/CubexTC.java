@@ -267,10 +267,7 @@ public class CubexTC {
 				CubexTypeScheme es = method(cc, kc, et, v);
 				if(es != null) return es;
 			}
-           	throw new CubexTC.TypeCheckException(
-                String.format("%s DOES NOT HAVE METHOD %s", 
-                    t.toString(), v.toString())
-                );		
+			return null;
            }
 		// make type replacements
 		CubexObject obj = cc.get(t);
@@ -283,15 +280,22 @@ public class CubexTC {
 		// System.out.printf("2 : %s.%s\n", t, v);
 		if(t instanceof CubexCType) {
 			return method(cc, kc, (CubexCType) t, v);
+		} else if(t instanceof CubexIType) {
+			CubexIType it = (CubexIType) t;
+			CubexTypeScheme s1 = method(cc, kc, it.a, v);
+			CubexTypeScheme s2 = method(cc, kc, it.b, v);
+			if(s1 == null) return s2;
+			else if(s2 != null) {
+				// neither are null, assert equiv
+				if(equiv(cc, kc, s1, s2)) {
+					return s1;
+				} else return null;
+			} else return null;
 		} else if (t instanceof Nothing) {
 			return null;
 		}
 		else {
-			// System.out.println(t.immediateSuperTypes(cc));
-			throw new CubexTC.TypeCheckException(
-                String.format("%s DOES NOT HAVE METHOD %s", 
-                    t.toString(), v.toString())
-                );
+			return null;
 		}
 	}
 
@@ -338,10 +342,7 @@ public class CubexTC {
 				}
 				// no match
 				if(f == null) {
-					throw new CubexTC.TypeCheckException(
-		                String.format("%s DOES NOT HAVE METHOD %s", 
-		                    c.toString(), v.toString())
-		                );
+					return null;
 				}
 				return f.scheme; 
 			}
@@ -410,6 +411,7 @@ public class CubexTC {
 
 	// return all method names of t and its supertypes
 	public static Collection<CubexVName> allMethods(CubexClassContext cc, CubexKindContext kc, CubexType t) {
+		// System.out.println("1");
 		HashSet<CubexVName> methods = new HashSet<CubexVName>();
 		for(CubexType v : immediateSuperTypes(cc, kc, t)) {
 			methods.addAll(allMethods(cc, v));
@@ -419,14 +421,19 @@ public class CubexTC {
 	}
 
 	public static List<CubexVName> allMethods(CubexClassContext cc, CubexCType c) {
+		// System.out.println("2");
 		ArrayList<CubexVName> names = new ArrayList<CubexVName>();
-		for(CubexFunHeader f : cc.get(c).funList) {
-			names.add(f.name);
+		CubexObject got = cc.get(c);
+		if(got != null) {
+			for(CubexFunHeader f : cc.get(c).funList) {
+				names.add(f.name);
+			}
 		}
 		return names;
 	}
 
 	public static List<CubexVName> allMethods(CubexClassContext cc, CubexType c) {
+		// System.out.println("3");
 		// non-ctypes have no methods
 		if( c instanceof CubexCType) return allMethods(cc, (CubexCType) c);
 		return new ArrayList<CubexVName>();
