@@ -290,7 +290,7 @@ public class CubexTC {
 				if(equiv(cc, kc, s1, s2)) {
 					return s1;
 				} else return null;
-			} else return null;
+			} else return s1;
 		} else if (t instanceof Nothing) {
 			return null;
 		}
