@@ -160,6 +160,7 @@ public class CubexTC {
 	public static Collection<CubexType> immediateSuperTypes(CubexClassContext cc, CubexKindContext kc, CubexType t){
 		HashSet<CubexType> ret = new HashSet<CubexType>();
 		Stack<CubexType> stack = new Stack<CubexType>();
+		// System.out.println(t);
 		for(CubexType name : t.immediateSuperTypes(cc)){
 			stack.push(name);
 		}
@@ -413,6 +414,7 @@ public class CubexTC {
 		for(CubexType v : immediateSuperTypes(cc, kc, t)) {
 			methods.addAll(allMethods(cc, v));
 		}
+		methods.addAll(allMethods(cc, t));
 		return methods;
 	}
 
@@ -426,6 +428,7 @@ public class CubexTC {
 
 	public static List<CubexVName> allMethods(CubexClassContext cc, CubexType c) {
 		// non-ctypes have no methods
+		if( c instanceof CubexCType) return allMethods(cc, (CubexCType) c);
 		return new ArrayList<CubexVName>();
 	}
 

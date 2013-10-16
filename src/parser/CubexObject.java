@@ -206,6 +206,7 @@ class CubexClass extends CubexObject {
         }
 
         // check every method of the supertype
+        // System.out.println(CubexTC.allMethods(cc, theta, type));
         for(CubexVName fun : CubexTC.allMethods(cc, theta, type)) {
             // check that the class has this method
             boolean found = false;

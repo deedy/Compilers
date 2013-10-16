@@ -36,7 +36,7 @@ public class CubexCheckerProg {
             else return "reject";
 
         } catch (CubexTC.TypeCheckException tc) {
-            // System.out.println(tc.getMessage());
+            System.out.println(tc.getMessage());
             // tc.printStackTrace();
             return "reject";
         } catch(Exception e){
