@@ -30,13 +30,11 @@ public class CubexCheckerProg {
             CubexProg prog = parser.prog().cu;
             Triple<CubexClassContext, CubexFunctionContext, SymbolTable> trip = buildBase();
             // System.out.println(prog);
-
-
             if(prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())) return "accept";
             else return "reject";
 
         } catch (CubexTC.TypeCheckException tc) {
-            System.out.println(tc.getMessage());
+            // System.out.println(tc.getMessage());
             // tc.printStackTrace();
             return "reject";
         } catch(Exception e){
