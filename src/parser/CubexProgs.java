@@ -2,10 +2,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-abstract class CubexProg extends CubexNode implements HVisitor{
+abstract class CubexProg extends CubexNode {
 	public CubexProg prog;
 	public abstract boolean typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st);
-	public abstract HNode visit(CubexNode c);
+	public abstract HNode accept(HVisitor c);
 }
 
 class CubexStatementProg extends CubexProg {
@@ -39,7 +39,7 @@ class CubexStatementProg extends CubexProg {
 		}
 		return true;
 	}
-	public HNode visit(CubexNode c) {
+	public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -72,7 +72,7 @@ class CubexStatementsProg extends CubexProg {
 		}
 		return prog.typeCheck(cc, fc, st.merge(imm.getLeft()));	
 	}
-	public HNode visit(CubexNode c) {
+	public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -136,7 +136,7 @@ class CubexFuncsProg extends CubexProg {
 		}
 		return prog.typeCheck(cc, fold, st);	
 	}
-	public HNode visit(CubexNode c) {
+	public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -157,7 +157,7 @@ class CubexInterfaceProg extends CubexProg {
 		Pair<CubexClassContext, CubexFunctionContext> imm = intf.typeCheck(cc, fc, st);
 		return prog.typeCheck(cc.merge(imm.getLeft()), fc, st);
 	}
-	public HNode visit(CubexNode c) {
+	public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -178,7 +178,7 @@ class CubexClassProg extends CubexProg {
 		Pair<CubexClassContext, CubexFunctionContext> imm = cls.typeCheck(cc, fc, st);
 		return prog.typeCheck(cc.merge(imm.getLeft()), fc.merge(imm.getRight()), st);
 	}
-	public HNode visit(CubexNode c) {
+	public HNode accept(HVisitor c) {
         return null;
     }
 }

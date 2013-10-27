@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class CubexFunHeader extends CubexNode implements HVisitor{
+public class CubexFunHeader extends CubexNode {
     CubexVName name;
     CubexTypeScheme scheme;
     public CubexFunHeader(CubexVName n, CubexTypeScheme s) {
@@ -16,7 +16,7 @@ public class CubexFunHeader extends CubexNode implements HVisitor{
         return (name.equals(f.name)) && (scheme.equals(f.scheme));
     }
 
-    public HNode visit(CubexNode c) {
+    public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -41,7 +41,7 @@ class CubexFunction extends CubexFunHeader{
     	return String.format("fun %s %s %s", n, s, b);
     }
 
-    public HNode visit(CubexNode c) {
+    public HNode accept(HVisitor c) {
         return null;
     }
 }

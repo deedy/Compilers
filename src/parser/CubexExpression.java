@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.*;
 
 
-public abstract class CubexExpression extends CubexNode implements HVisitor{
+public abstract class CubexExpression extends CubexNode {
 
     /**
         Returns the type of this class expression or throws an error
@@ -13,7 +13,7 @@ public abstract class CubexExpression extends CubexNode implements HVisitor{
     public abstract CubexType getType(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st);
 
-    public abstract HNode visit(CubexNode c);
+    public abstract HNode accept(HVisitor c);
 }
 
 // every function of a type context
@@ -76,7 +76,7 @@ class CubexFunctionCall extends CubexExpression {
         return String.format("%s < %s> ( %s)", n, ListPrinter.nullify(tl), ListPrinter.nullify(el));
     }
 
-    public HNode visit(CubexNode c) {
+    public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -100,7 +100,7 @@ class CubexVar extends CubexExpression {
         );
     }
 
-    public HNode visit(CubexNode c) {
+    public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -298,7 +298,7 @@ class CubexMethodCall extends CubexExpression {
                             ListPrinter.nullify(el));
     }
 
-    public HNode visit(CubexNode c) {
+    public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -348,7 +348,7 @@ class CubexAppend extends CubexExpression {
         return String.format("%s ++ %s", l, r);
     }
 
-    public HNode visit(CubexNode c) {
+    public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -386,7 +386,7 @@ class CubexIterable extends CubexExpression {
         return String.format("[ %s]", ListPrinter.nullify(elems));
     }
 
-    public HNode visit(CubexNode c) {
+    public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -408,7 +408,7 @@ class CubexBoolean extends CubexExpression {
         return bool;
     }
 
-    public HNode visit(CubexNode c) {
+    public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -430,7 +430,7 @@ class CubexInt extends CubexExpression {
         return String.format("%d", num);
     }
 
-    public HNode visit(CubexNode c) {
+    public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -452,7 +452,7 @@ class CubexString extends CubexExpression {
         return str;
     }
 
-    public HNode visit(CubexNode c) {
+    public HNode accept(HVisitor c) {
         return null;
     }
 }

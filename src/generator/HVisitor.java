@@ -1,3 +1,3 @@
 public interface HVisitor {
-    HNode visit(CubexNode n);
+    HNode accept(HVisitor n);
 }

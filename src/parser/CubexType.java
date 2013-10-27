@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 // t ::= v_p | v_c <t,...,t> | t & t | thing | nothing
-public abstract class CubexType extends CubexNode implements HVisitor {
+public abstract class CubexType extends CubexNode {
 	private static CubexType _Nothing = new Nothing();
 	public static CubexType getNothing() { return _Nothing;}
 	private static CubexType _Thing = new Thing();
@@ -30,7 +30,7 @@ public abstract class CubexType extends CubexNode implements HVisitor {
   		return CubexTC.subType(cc, kc, this, new CubexCType(new CubexCName("Iterable"), p));
   	}
 
-  	public abstract HNode visit(CubexNode c);
+  	public abstract HNode accept(HVisitor c);
 }
 
 class Nothing extends CubexType {
@@ -49,7 +49,7 @@ class Nothing extends CubexType {
 		return new ArrayList<CubexType>();
 	}
 
-	public HNode visit(CubexNode c) {
+	public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -70,7 +70,7 @@ class Thing extends CubexType {
 		return new ArrayList<CubexType>();
 	}
 
-	public HNode visit(CubexNode c) {
+	public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -93,7 +93,7 @@ class CubexPType extends CubexType{
 		return new ArrayList<CubexType>();
 	}
 
-	public HNode visit(CubexNode c) {
+	public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -135,7 +135,7 @@ class CubexCType extends CubexType{
 		return super.isIterable(cc, kc);
 	}
 
-	public HNode visit(CubexNode c) {
+	public HNode accept(HVisitor c) {
         return null;
     }
 }
@@ -163,7 +163,7 @@ class CubexIType extends CubexType{
 		return new ArrayList<CubexType>(Arrays.asList(a, b));
 	}
 
-	public HNode visit(CubexNode c) {
+	public HNode accept(HVisitor c) {
         return null;
     }
 }
