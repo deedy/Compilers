@@ -56,7 +56,7 @@ public class CubexParserProg extends CubexNode  {
         return false;
     }
 
-    public HNode accept(HVisitor c) {
-        return null;
+    public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }

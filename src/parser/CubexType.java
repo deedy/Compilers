@@ -30,7 +30,7 @@ public abstract class CubexType extends CubexNode {
   		return CubexTC.subType(cc, kc, this, new CubexCType(new CubexCName("Iterable"), p));
   	}
 
-  	public abstract HNode accept(HVisitor c);
+  	public abstract HNode accept(HVisitor v);
 }
 
 class Nothing extends CubexType {
@@ -49,8 +49,8 @@ class Nothing extends CubexType {
 		return new ArrayList<CubexType>();
 	}
 
-	public HNode accept(HVisitor c) {
-        return null;
+	public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -70,8 +70,8 @@ class Thing extends CubexType {
 		return new ArrayList<CubexType>();
 	}
 
-	public HNode accept(HVisitor c) {
-        return null;
+	public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }
 class CubexPType extends CubexType{
@@ -93,8 +93,8 @@ class CubexPType extends CubexType{
 		return new ArrayList<CubexType>();
 	}
 
-	public HNode accept(HVisitor c) {
-        return null;
+	public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -135,8 +135,8 @@ class CubexCType extends CubexType{
 		return super.isIterable(cc, kc);
 	}
 
-	public HNode accept(HVisitor c) {
-        return null;
+	public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -163,7 +163,7 @@ class CubexIType extends CubexType{
 		return new ArrayList<CubexType>(Arrays.asList(a, b));
 	}
 
-	public HNode accept(HVisitor c) {
-        return null;
+	public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }

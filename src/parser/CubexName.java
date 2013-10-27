@@ -17,8 +17,8 @@ public class CubexName extends CubexNode {
 		return name.hashCode();
 	}
 
-	public HNode accept(HVisitor c) {
-		return null;
+	public HNode accept(HVisitor v) {
+		return v.visit(this);
 	}
 }
 

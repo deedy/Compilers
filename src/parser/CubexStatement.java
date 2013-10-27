@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public abstract class CubexStatement extends CubexNode {
     public abstract Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt);
-    public abstract HNode accept(HVisitor c);
+    public abstract HNode accept(HVisitor v);
 }
 
 class CubexBlock extends CubexStatement {
@@ -36,8 +36,8 @@ class CubexBlock extends CubexStatement {
         return String.format("{ %s}", ListPrinter.nullify(s));
     }
 
-    public HNode accept(HVisitor c) {
-        return null;
+    public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -74,8 +74,8 @@ class CubexAssign extends CubexStatement {
         return String.format("%s := %s ;", n, e);
     }
 
-    public HNode accept(HVisitor c) {
-        return null;
+    public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -126,8 +126,8 @@ class CubexConditional extends CubexStatement {
         return String.format("if ( %s ) %s else %s", e, s1, s2);
     }
 
-    public HNode accept(HVisitor c) {
-        return null;
+    public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -164,8 +164,8 @@ class CubexWhileLoop extends CubexStatement {
         return String.format("while ( %s ) %s", e, s);
     }
 
-    public HNode accept(HVisitor c) {
-        return null;
+    public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -212,8 +212,8 @@ class CubexForLoop extends CubexStatement {
         return String.format("for ( %s in %s ) %s", n, e, s);   
     }
 
-    public HNode accept(HVisitor c) {
-        return null;
+    public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -235,7 +235,7 @@ class CubexReturn extends CubexStatement {
         return String.format("return %s ;", e);   
     }
 
-    public HNode accept(HVisitor c) {
-        return null;
+    public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }

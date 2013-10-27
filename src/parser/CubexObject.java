@@ -10,7 +10,7 @@ public abstract class CubexObject extends CubexNode  {
 
     public abstract Pair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st);
 
-    public abstract HNode accept(HVisitor c);
+    public abstract HNode accept(HVisitor v);
 }
 
 
@@ -85,8 +85,8 @@ class CubexInterface extends CubexObject {
                             ListPrinter.nullify(f));
     }
 
-    public HNode accept(HVisitor c) {
-        return null;
+    public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -271,7 +271,7 @@ class CubexClass extends CubexObject {
                             ListPrinter.nullify(f));
     }
 
-    public HNode accept(HVisitor c) {
-        return null;
+    public HNode accept(HVisitor v) {
+        return v.visit(this);
     }
 }

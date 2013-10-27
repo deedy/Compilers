@@ -1,3 +1,5 @@
-public interface HVisitor {
-    HNode accept(HVisitor n);
+public class HVisitor {
+    HNode visit(Object n) {
+        return null;
+    }
 }
