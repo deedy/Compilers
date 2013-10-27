@@ -2,13 +2,15 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public abstract class CubexObject {
+public abstract class CubexObject extends CubexNode implements HVisitor {
     CubexCName name;
     List<CubexPName> kCont;
     CubexType type;
     List<? extends CubexFunHeader> funList;
 
     public abstract Pair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st);
+
+    public abstract HNode visit(CubexNode c);
 }
 
 
@@ -81,6 +83,10 @@ class CubexInterface extends CubexObject {
                             n, ListPrinter.nullify(k),
                             t,
                             ListPrinter.nullify(f));
+    }
+
+    public HNode visit(CubexNode c) {
+        return null;
     }
 }
 
@@ -263,5 +269,9 @@ class CubexClass extends CubexObject {
                             ListPrinter.nullify(s),
                             ListPrinter.nullify(e),
                             ListPrinter.nullify(f));
+    }
+
+    public HNode visit(CubexNode c) {
+        return null;
     }
 }

@@ -5,7 +5,7 @@ import java.util.BitSet;
 import java.util.List;
 
 
-public class CubexParserProg {
+public class CubexParserProg extends CubexNode implements HVisitor {
     public static void main(String[] args) throws Exception {
         // lex the file
         CubexLexer lex = new CubexLexer(new ANTLRFileStream(args[0]));
@@ -54,5 +54,9 @@ public class CubexParserProg {
         }
         lex.reset();
         return false;
+    }
+
+    public HNode visit(CubexNode c) {
+        return null;
     }
 }

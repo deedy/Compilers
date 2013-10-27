@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 // t ::= v_p | v_c <t,...,t> | t & t | thing | nothing
-public abstract class CubexType {
+public abstract class CubexType extends CubexNode implements HVisitor {
 	private static CubexType _Nothing = new Nothing();
 	public static CubexType getNothing() { return _Nothing;}
 	private static CubexType _Thing = new Thing();
@@ -13,23 +13,24 @@ public abstract class CubexType {
 
 	public abstract List<CubexCName> getClasses();
 	public abstract List<CubexType> immediateSuperTypes(CubexClassContext cc);
-  public abstract String toString();
+    public abstract String toString();
 
-  public boolean equals(Object obj) {
-  	if(!(obj instanceof CubexType)) return false;
-  	CubexType ct = (CubexType) obj;
-    return this.toString().equals(ct.toString());
-  }
-  public int hashCode() {
-    return this.toString().hashCode();
-  }
+    public boolean equals(Object obj) {
+  		if(!(obj instanceof CubexType)) return false;
+		CubexType ct = (CubexType) obj;
+    	return this.toString().equals(ct.toString());
+  	}
+  	public int hashCode() {
+    	return this.toString().hashCode();
+  	}
 
-  public boolean isIterable(CubexClassContext cc, CubexKindContext kc) {
-  	List<CubexType> p = new ArrayList<CubexType>();
-  	p.add(new Thing());
-  	return CubexTC.subType(cc, kc, this, new CubexCType(new CubexCName("Iterable"), p));
-  } 
+  	public boolean isIterable(CubexClassContext cc, CubexKindContext kc) {
+  		List<CubexType> p = new ArrayList<CubexType>();
+  		p.add(new Thing());
+  		return CubexTC.subType(cc, kc, this, new CubexCType(new CubexCName("Iterable"), p));
+  	}
 
+  	public abstract HNode visit(CubexNode c);
 }
 
 class Nothing extends CubexType {
@@ -47,6 +48,10 @@ class Nothing extends CubexType {
 	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		return new ArrayList<CubexType>();
 	}
+
+	public HNode visit(CubexNode c) {
+        return null;
+    }
 }
 
 class Thing extends CubexType {
@@ -64,6 +69,10 @@ class Thing extends CubexType {
 	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		return new ArrayList<CubexType>();
 	}
+
+	public HNode visit(CubexNode c) {
+        return null;
+    }
 }
 class CubexPType extends CubexType{
 	CubexPName name;
@@ -83,6 +92,10 @@ class CubexPType extends CubexType{
 	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		return new ArrayList<CubexType>();
 	}
+
+	public HNode visit(CubexNode c) {
+        return null;
+    }
 }
 
 class CubexCType extends CubexType{
@@ -122,6 +135,9 @@ class CubexCType extends CubexType{
 		return super.isIterable(cc, kc);
 	}
 
+	public HNode visit(CubexNode c) {
+        return null;
+    }
 }
 
 class CubexIType extends CubexType{
@@ -147,4 +163,7 @@ class CubexIType extends CubexType{
 		return new ArrayList<CubexType>(Arrays.asList(a, b));
 	}
 
+	public HNode visit(CubexNode c) {
+        return null;
+    }
 }

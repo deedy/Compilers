@@ -1,4 +1,4 @@
-public class CubexName {
+public class CubexName extends CubexNode implements HVisitor{
 	String name;
 
 	public String toString(){
@@ -15,6 +15,10 @@ public class CubexName {
 	@Override
 	public int hashCode() {
 		return name.hashCode();
+	}
+
+	public HNode visit(CubexNode c) {
+		return null;
 	}
 }
 

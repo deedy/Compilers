@@ -1,9 +1,10 @@
 import java.util.List;
 import java.util.ArrayList;
 
-public abstract class CubexStatement {
+public abstract class CubexStatement extends CubexNode implements HVisitor{
     public abstract Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt);
+    public abstract HNode visit(CubexNode c);
 }
 
 class CubexBlock extends CubexStatement {
@@ -33,6 +34,10 @@ class CubexBlock extends CubexStatement {
     public String toString() {
         String s = ListPrinter.listToString(stmts, " ");
         return String.format("{ %s}", ListPrinter.nullify(s));
+    }
+
+    public HNode visit(CubexNode c) {
+        return null;
     }
 }
 
@@ -67,6 +72,10 @@ class CubexAssign extends CubexStatement {
         String n = name.toString();
         String e = expr.toString();
         return String.format("%s := %s ;", n, e);
+    }
+
+    public HNode visit(CubexNode c) {
+        return null;
     }
 }
 
@@ -116,6 +125,10 @@ class CubexConditional extends CubexStatement {
         String s2 = stmt2.toString();
         return String.format("if ( %s ) %s else %s", e, s1, s2);
     }
+
+    public HNode visit(CubexNode c) {
+        return null;
+    }
 }
 
 class CubexWhileLoop extends CubexStatement {
@@ -149,6 +162,10 @@ class CubexWhileLoop extends CubexStatement {
         String e = expr.toString();
         String s = stmt.toString();
         return String.format("while ( %s ) %s", e, s);
+    }
+
+    public HNode visit(CubexNode c) {
+        return null;
     }
 }
 
@@ -194,6 +211,10 @@ class CubexForLoop extends CubexStatement {
         String s = stmt.toString();
         return String.format("for ( %s in %s ) %s", n, e, s);   
     }
+
+    public HNode visit(CubexNode c) {
+        return null;
+    }
 }
 
 class CubexReturn extends CubexStatement {
@@ -212,5 +233,9 @@ class CubexReturn extends CubexStatement {
     public String toString() {
         String e = expr.toString();
         return String.format("return %s ;", e);   
+    }
+
+    public HNode visit(CubexNode c) {
+        return null;
     }
 }
