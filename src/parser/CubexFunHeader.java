@@ -49,7 +49,7 @@ class CubexFunction extends CubexFunHeader{
 
     public HFunction accept(HVisitor v) {
         
-        return new HFunction(name.name, body);
+        return null; //new HFunction(name.name, body.createHIR());
 
     }
 }

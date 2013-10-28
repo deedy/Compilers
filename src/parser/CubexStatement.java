@@ -43,7 +43,11 @@ class CubexBlock extends CubexStatement {
     }
 
     public HStatement createHIR() {
-        return new HBlock(stmts.createHIR());
+        ArrayList<HStatement> hstmts = new ArrayList<HStatement>();
+        for(CubexStatement s : stmts){
+            hstmts.add(s.createHIR());
+        }
+        return new HBlock(hstmts);
     }
 }
 
@@ -141,7 +145,7 @@ class CubexConditional extends CubexStatement {
     }
 
     public HStatement createHIR() {
-        return new HConditional(expr, stmt1, stmt2);
+        return new HConditional(expr.createHIR(), stmt1.createHIR(), stmt2.createHIR());
     }
 }
 
@@ -183,7 +187,7 @@ class CubexWhileLoop extends CubexStatement {
     }
 
     public HStatement createHIR() {
-        return new HWhileLoop(expr, stmt);
+        return new HWhileLoop(expr.createHIR(), stmt.createHIR());
     }
 }
 
@@ -235,7 +239,7 @@ class CubexForLoop extends CubexStatement {
     }
 
     public HStatement createHIR() {
-        return new HForLoop(expr, stmt);
+        return new HForLoop(expr.createHIR(), stmt.createHIR());
     }
 }
 
