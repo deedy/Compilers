@@ -130,8 +130,8 @@ public class CGenerator implements LVisitor {
 		localVars.add(elem);
 		// make a call to the built-in next function
 		return String.format(
-			"%s = copy(%s); while (%s) { %s = %s->curr; %s %s = next(%s);}",
-			iterName, iter, iterName, elem, iterName, stmt, iterName, iterName);
+			"%s = copy(%s); while (%s && %s->curr) { %s = %s->curr; %s next(%s);}",
+			iterName, iter, iterName, iterName, elem, iterName, stmt, iterName);
 
 	}
 
