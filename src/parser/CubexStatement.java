@@ -41,7 +41,7 @@ class CubexBlock extends CubexStatement {
     }
 
     public HStatement createHIR() {
-        return null;
+        return new HBlock(stmts.createHIR());
     }
 }
 
@@ -83,7 +83,7 @@ class CubexAssign extends CubexStatement {
     }
 
     public HStatement createHIR() {
-        return null;
+        return new HAssign(expr.createHIR(), name.createHIR());
     }
 }
 
@@ -139,7 +139,7 @@ class CubexConditional extends CubexStatement {
     }
 
     public HStatement createHIR() {
-        return null;
+        return new HConditional(expr, stmt1, stmt2);
     }
 }
 
@@ -181,7 +181,7 @@ class CubexWhileLoop extends CubexStatement {
     }
 
     public HStatement createHIR() {
-        return null;
+        return new HWhileLoop(expr, stmt);
     }
 }
 
@@ -233,7 +233,7 @@ class CubexForLoop extends CubexStatement {
     }
 
     public HStatement createHIR() {
-        return null;
+        return new HForLoop(expr, stmt);
     }
 }
 
@@ -260,6 +260,6 @@ class CubexReturn extends CubexStatement {
     }
 
     public HStatement createHIR() {
-        return null;
+        return new HReturn(expr.createHIR());
     }
 }

@@ -21,7 +21,9 @@ public class CubexFunHeader extends CubexNode {
     }
 
     public HFunction createHIR() {
-        return null;
+        
+        return new HFunction(name.name, null);
+
     }
 }
 
@@ -46,6 +48,8 @@ class CubexFunction extends CubexFunHeader{
     }
 
     public HFunction accept(HVisitor v) {
-        return null;
+        
+        return new HFunction(name.name, body);
+
     }
 }

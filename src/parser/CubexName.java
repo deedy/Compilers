@@ -1,4 +1,5 @@
 public class CubexName extends CubexNode {
+	
 	String name;
 
 	public String toString(){
@@ -12,6 +13,7 @@ public class CubexName extends CubexNode {
 		}
 		else return false;
 	}
+
 	@Override
 	public int hashCode() {
 		return name.hashCode();
@@ -22,7 +24,7 @@ public class CubexName extends CubexNode {
 	}
 
 	public String createHIR() {
-        return null;
+        return name;
     }
 }
 

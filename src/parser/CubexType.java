@@ -54,7 +54,7 @@ class Nothing extends CubexType {
     }
 
     public String createHIR() {
-        return null;
+        return "Nothing";
     }
 }
 
@@ -106,7 +106,7 @@ class CubexPType extends CubexType{
     }
 
     public String createHIR() {
-        return null;
+        return name.name;
     }
 }
 
@@ -152,7 +152,7 @@ class CubexCType extends CubexType{
     }
 
     public String createHIR() {
-        return null;
+        return name.name;
     }
 }
 
@@ -183,7 +183,7 @@ class CubexIType extends CubexType{
         return v.visit(this);
     }
 
-    public String createHIR() {
-        return null;
+    public List<String> createHIR() {
+    	return new ArrayList<String>(Arrays.asList(a.name, b.name));
     }
 }

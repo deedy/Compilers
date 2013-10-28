@@ -72,11 +72,34 @@ class HReturn extends HStatement {
     }
 }
 
+/// NO CUBEX... T.T
+class HBlock extends HStatement {
+
+    List<CubexStatement> stmts;
+
+    public HBlock(List<CubexStatement> stmts) {
+        this.stmts = stmts;
+    }
+}
+
+class HAssign extends HStatement {
+
+    HExpression expr;
+    CubexVName name;
+
+    public HAssign(CubexExpression expr, CubexVName name) {
+        this.expr = expr;
+        this.name = name;
+    }
+}
+
+
+
 class HFunction extends HExpression {
     String name;
-    HStatement body;
+    CubexReturn body;
 
-    public HFunction(String name, HStatement body) {
+    public HFunction(String name, CubexReturn body) {
         this.name = name;
         this.body = body;
     }
