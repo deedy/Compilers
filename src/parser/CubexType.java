@@ -31,6 +31,8 @@ public abstract class CubexType extends CubexNode {
   	}
 
   	public abstract HNode accept(HVisitor v);
+    
+    public abstract String createHIR();
 }
 
 class Nothing extends CubexType {
@@ -54,7 +56,7 @@ class Nothing extends CubexType {
     }
 
     public String createHIR() {
-        return null;
+        return toString();
     }
 }
 
@@ -79,7 +81,7 @@ class Thing extends CubexType {
     }
 
     public String createHIR() {
-        return null;
+        return toString();
     }
 }
 class CubexPType extends CubexType{
@@ -106,7 +108,7 @@ class CubexPType extends CubexType{
     }
 
     public String createHIR() {
-        return null;
+        return toString();
     }
 }
 
@@ -152,7 +154,7 @@ class CubexCType extends CubexType{
     }
 
     public String createHIR() {
-        return null;
+        return toString();
     }
 }
 
@@ -184,6 +186,6 @@ class CubexIType extends CubexType{
     }
 
     public String createHIR() {
-        return null;
+        return toString();
     }
 }
