@@ -15,13 +15,27 @@ abstract class HStatement extends HNode {
 }
 
 class HClass extends HNode {
-    static HashSet<HClass> classes; // a set of all the classes
+    static HashMap<String, HClass> classes = new HashMap<String, HClass>(); // a set of all the classes
+    String name;
     String superclass; // the name of the superclass
-    HashMap<String, HFunction> functions;
+    HashMap<String, HFunction> functions = new HashMap<String, HFunction>();
+    CubexTypeContext typeContext;
+    List<HStatement> stmts;
+    List<HExpression> exprs;
 
-    public HClass(String superclass, List<HFunction> funs) {
+    public HClass(String name, String superclass, List<HFunction> funs, 
+        List<String> paramNames, CubexTypeContext typeContext, List<HStatement> stmts, List<HExpression> exprs) {
+        this(name, superclass, funs, paramNames);
+        this.typeContext = typeContext;
+        this.stmts = stmts;
+        this.exprs = exprs;
+    }
+
+    public HClass(String name, String superclass, List<HFunction> funs, 
+        List<String> paramNames) {
+        this.name = name;
         this.superclass = superclass;
-        HClass.classes.add(this);
+        HClass.classes.put(name, this);
         for (HFunction f : funs) {
             functions.put(f.name, f);
         }

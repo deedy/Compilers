@@ -5,6 +5,8 @@ public abstract class CubexStatement extends CubexNode {
     public abstract Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt);
     public abstract HNode accept(HVisitor v);
+
+    public abstract HStatement createHIR();
 }
 
 class CubexBlock extends CubexStatement {

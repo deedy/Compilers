@@ -14,6 +14,8 @@ public abstract class CubexExpression extends CubexNode {
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st);
 
     public abstract HNode accept(HVisitor v);
+
+    public abstract HExpression createHIR();
 }
 
 // every function of a type context

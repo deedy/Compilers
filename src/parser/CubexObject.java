@@ -11,6 +11,19 @@ public abstract class CubexObject extends CubexNode  {
     public abstract Pair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st);
 
     public abstract HNode accept(HVisitor v);
+
+    public HClass createHIR() {
+        List<HFunction> funs = new ArrayList<HFunction>();
+        for (CubexFunHeader f : funList) {
+            funs.add(f.createHIR());
+        }
+
+        List<String> paramNames = new ArrayList<String>();
+        for (CubexPName c : kCont) {
+            paramNames.add(c.createHIR());
+        }
+        return new HClass(name.createHIR(), type.createHIR(), funs, paramNames);
+    }
 }
 
 
@@ -87,10 +100,6 @@ class CubexInterface extends CubexObject {
 
     public HNode accept(HVisitor v) {
         return v.visit(this);
-    }
-
-    public HClass createHIR() {
-        return null;
     }
 }
 
@@ -279,7 +288,23 @@ class CubexClass extends CubexObject {
         return v.visit(this);
     }
 
-    public HClass createHIR() {
-        return null;
+     public HClass createHIR() {
+        HClass c = super.createHIR();
+
+        List<HStatement> statements = new ArrayList<HStatement>();
+        for (CubexStatement s : stmts) {
+            statements.add(s.createHIR());
+        }
+
+        List<HExpression> expressions = new ArrayList<HExpression>();
+        for (CubexExpression e : exprs) {
+            expressions.add(e.createHIR());
+        }
+
+        c.stmts = statements;
+        c.exprs = expressions;
+        c.typeContext = tCont;
+
+        return c;
     }
 }
