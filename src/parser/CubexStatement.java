@@ -39,6 +39,10 @@ class CubexBlock extends CubexStatement {
     public HNode accept(HVisitor v) {
         return v.visit(this);
     }
+
+    public HStatement createHIR() {
+        return null;
+    }
 }
 
 class CubexAssign extends CubexStatement {
@@ -76,6 +80,10 @@ class CubexAssign extends CubexStatement {
 
     public HNode accept(HVisitor v) {
         return v.visit(this);
+    }
+
+    public HStatement createHIR() {
+        return null;
     }
 }
 
@@ -129,6 +137,10 @@ class CubexConditional extends CubexStatement {
     public HNode accept(HVisitor v) {
         return v.visit(this);
     }
+
+    public HStatement createHIR() {
+        return null;
+    }
 }
 
 class CubexWhileLoop extends CubexStatement {
@@ -166,6 +178,10 @@ class CubexWhileLoop extends CubexStatement {
 
     public HNode accept(HVisitor v) {
         return v.visit(this);
+    }
+
+    public HStatement createHIR() {
+        return null;
     }
 }
 
@@ -215,6 +231,10 @@ class CubexForLoop extends CubexStatement {
     public HNode accept(HVisitor v) {
         return v.visit(this);
     }
+
+    public HStatement createHIR() {
+        return null;
+    }
 }
 
 class CubexReturn extends CubexStatement {
@@ -237,5 +257,9 @@ class CubexReturn extends CubexStatement {
 
     public HNode accept(HVisitor v) {
         return v.visit(this);
+    }
+
+    public HStatement createHIR() {
+        return null;
     }
 }

@@ -1,1 +1,0 @@
-return 1 . times < > ( 2 ) . divide < > ( 3 . negative < > ( ) ) . plus < > ( 4 ) . minus < > ( 5 . negative < > ( ) . negative < > ( ) ) ; return 1 . plus < > ( 1 . plus < > ( 1 . plus < > ( 1 ) ) ) ; return 1 . plus < > ( 1 ) . plus < > ( 1 ) . plus < > ( 1 ) ; return 1 ;

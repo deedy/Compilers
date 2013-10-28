@@ -88,6 +88,10 @@ class CubexInterface extends CubexObject {
     public HNode accept(HVisitor v) {
         return v.visit(this);
     }
+
+    public HClass createHIR() {
+        return null;
+    }
 }
 
 
@@ -273,5 +277,9 @@ class CubexClass extends CubexObject {
 
     public HNode accept(HVisitor v) {
         return v.visit(this);
+    }
+
+    public HClass createHIR() {
+        return null;
     }
 }

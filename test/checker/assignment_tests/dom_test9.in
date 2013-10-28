@@ -1,7 +1,0 @@
-# associativity and parens
-# be sure to check the parse tree
-
-return 1 * 2 / -3 + 4 - - - 5; 
-return (1 + (1 + (1 + (1))));
-return ((((1) + 1) + 1) + 1);
-return ((((((((((((((((((1))))))))))))))))));

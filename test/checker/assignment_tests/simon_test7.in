@@ -1,3 +1,0 @@
-fun foo(y : Integer) : Integer = y * 2;
-
-return 1;

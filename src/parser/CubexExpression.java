@@ -76,7 +76,11 @@ class CubexFunctionCall extends CubexExpression {
         return String.format("%s < %s> ( %s)", n, ListPrinter.nullify(tl), ListPrinter.nullify(el));
     }
 
-    public HNode accept(HVisitor v) {
+    public HExpression accept(HVisitor v) {
+        return null;
+    }
+
+    public HExpression createHIR() {
         return null;
     }
 }
@@ -100,7 +104,11 @@ class CubexVar extends CubexExpression {
         );
     }
 
-    public HNode accept(HVisitor v) {
+    public HExpression accept(HVisitor v) {
+        return null;
+    }
+
+    public HExpression createHIR() {
         return null;
     }
 }
@@ -298,7 +306,11 @@ class CubexMethodCall extends CubexExpression {
                             ListPrinter.nullify(el));
     }
 
-    public HNode accept(HVisitor v) {
+    public HExpression accept(HVisitor v) {
+        return null;
+    }
+
+    public HExpression createHIR() {
         return null;
     }
 }
@@ -348,7 +360,11 @@ class CubexAppend extends CubexExpression {
         return String.format("%s ++ %s", l, r);
     }
 
-    public HNode accept(HVisitor v) {
+    public HExpression accept(HVisitor v) {
+        return null;
+    }
+
+    public HExpression createHIR() {
         return null;
     }
 }
@@ -386,7 +402,11 @@ class CubexIterable extends CubexExpression {
         return String.format("[ %s]", ListPrinter.nullify(elems));
     }
 
-    public HNode accept(HVisitor v) {
+    public HExpression accept(HVisitor v) {
+        return null;
+    }
+
+    public HExpression createHIR() {
         return null;
     }
 }
@@ -408,7 +428,11 @@ class CubexBoolean extends CubexExpression {
         return bool;
     }
 
-    public HNode accept(HVisitor v) {
+    public HExpression accept(HVisitor v) {
+        return null;
+    }
+
+    public HExpression createHIR() {
         return null;
     }
 }
@@ -430,7 +454,11 @@ class CubexInt extends CubexExpression {
         return String.format("%d", num);
     }
 
-    public HNode accept(HVisitor v) {
+    public HExpression accept(HVisitor v) {
+        return null;
+    }
+
+    public HExpression createHIR() {
         return null;
     }
 }
@@ -452,7 +480,11 @@ class CubexString extends CubexExpression {
         return str;
     }
 
-    public HNode accept(HVisitor v) {
+    public HExpression accept(HVisitor v) {
+        return null;
+    }
+
+    public HExpression createHIR() {
         return null;
     }
 }

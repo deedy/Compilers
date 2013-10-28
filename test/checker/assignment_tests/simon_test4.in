@@ -1,18 +1,6 @@
-class Nested () {
-    return 1;
-    {
-        return 2;
-        {   
-            return 2;
-            return 2;
-            { 
-                return 2;
-                return 2;
-            }
-        }
-    }
-    {}
-    return 3;
+interface Asset
+{
+    fun getValue() : Integer;
+    fun getManagerName() : String = 2;
 }
-
-return 4;
+return [];

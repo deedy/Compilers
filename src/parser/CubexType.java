@@ -52,6 +52,10 @@ class Nothing extends CubexType {
 	public HNode accept(HVisitor v) {
         return v.visit(this);
     }
+
+    public String createHIR() {
+        return null;
+    }
 }
 
 class Thing extends CubexType {
@@ -72,6 +76,10 @@ class Thing extends CubexType {
 
 	public HNode accept(HVisitor v) {
         return v.visit(this);
+    }
+
+    public String createHIR() {
+        return null;
     }
 }
 class CubexPType extends CubexType{
@@ -95,6 +103,10 @@ class CubexPType extends CubexType{
 
 	public HNode accept(HVisitor v) {
         return v.visit(this);
+    }
+
+    public String createHIR() {
+        return null;
     }
 }
 
@@ -138,6 +150,10 @@ class CubexCType extends CubexType{
 	public HNode accept(HVisitor v) {
         return v.visit(this);
     }
+
+    public String createHIR() {
+        return null;
+    }
 }
 
 class CubexIType extends CubexType{
@@ -165,5 +181,9 @@ class CubexIType extends CubexType{
 
 	public HNode accept(HVisitor v) {
         return v.visit(this);
+    }
+
+    public String createHIR() {
+        return null;
     }
 }

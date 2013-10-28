@@ -42,6 +42,10 @@ class CubexStatementProg extends CubexProg {
 	public HNode accept(HVisitor v) {
         return v.visit(this);
     }
+
+    public HNode createHIR() {
+        return null;
+    }
 }
 
 class CubexStatementsProg extends CubexProg {

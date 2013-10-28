@@ -1,9 +1,9 @@
 #! /bin/bash
-for i in {1..20}
+for f in `ls test/checker/assignment_tests/`
  do 
-  echo -n "$i "
-  java -jar build/jar/Cubex.jar ../CompilersTestCases/PA3/tc_test$i.in
+  echo -n "$f "
+  java -jar build/jar/Cubex.jar test/checker/assignment_tests/${f%.*}.in
   echo -n " "
-  cat "../CompilersTestCases/PA3/tc_test$i.out"
+  cat test/checker/assignment_tests/${f%.*}.out
   echo ""
 done

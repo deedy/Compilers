@@ -1,7 +1,10 @@
-class Nested () {
-    return 1;
-    {return 2;}
-    return 3;
+class Branch(address : String, name : String, value : Integer, managerName : String) extends Integer
+{
+    super();
+    fun getAddress() : String = address;
+    fun getName() : String = name;
+    fun getValue() : Integer = value;
+    fun getManagerName() : String = managerName;
 }
 
-return 4;
+return ["sup"];

@@ -1,2 +1,0 @@
-class Iterable <E> () extends Thing { }
-# should not parse because no statement

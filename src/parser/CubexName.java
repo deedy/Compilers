@@ -20,6 +20,10 @@ public class CubexName extends CubexNode {
 	public HNode accept(HVisitor v) {
 		return v.visit(this);
 	}
+
+	public String createHIR() {
+        return null;
+    }
 }
 
 // variable / function / method name
