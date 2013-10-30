@@ -1,0 +1,1 @@
+yao := 1 . through < > ( 3 , false , false ) . through < > ( 5 , true , false ) . through < > ( 7 , false , true ) . through < > ( 9 , true , true ) . onwards < > ( true ) ;

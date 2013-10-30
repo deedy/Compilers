@@ -1,0 +1,6 @@
+class Foo<A>() 
+{
+	fun bar<A>():Integer {return 0;}
+}
+
+return ["reject"];

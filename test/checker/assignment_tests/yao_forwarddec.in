@@ -1,0 +1,14 @@
+class Aa(elem : Integer)
+{
+	b := Bb("hello");
+	super();
+}
+
+class Bb(sss : String)
+{
+	a := Aa("get off");
+	super();
+}
+
+return ["accept"];
+	

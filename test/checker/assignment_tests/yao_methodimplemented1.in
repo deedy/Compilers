@@ -1,0 +1,12 @@
+class Aa(s : String)
+{
+	super();
+	fun getString() : String = s;
+}
+
+class Bb() extends Aa
+{
+	super("Hello World!");
+}
+
+return [Aa("hi World!").getString()];

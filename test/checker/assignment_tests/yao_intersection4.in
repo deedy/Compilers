@@ -1,0 +1,7 @@
+class Aa<T&P> (para1 : T&P)
+{
+	super();
+	fun getPara() : T&P = para1;
+}
+
+return ["accept"];

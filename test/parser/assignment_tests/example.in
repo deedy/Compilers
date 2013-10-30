@@ -1,0 +1,9 @@
+if (true){
+    carl := steve.add<>(2);
+    bob := 2;
+}
+else
+    joe :=4;
+bob := add<>(2,3);
+a:=2+3;
+a:=true&false;

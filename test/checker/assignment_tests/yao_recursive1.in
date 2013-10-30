@@ -1,0 +1,9 @@
+fun foo<>(i : Integer) : Integer
+{
+	if (i > 0)
+		foo(i-1);
+	else
+		return 0;
+}
+
+return ["accept"];

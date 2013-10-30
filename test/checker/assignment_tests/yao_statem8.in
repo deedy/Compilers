@@ -1,0 +1,6 @@
+# For loops can't have ranges that are boolean Yao!!!
+a := ("hello" == "hi");
+for (i in a)
+	b := "hello";
+
+return ["accept"];

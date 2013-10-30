@@ -1,0 +1,32 @@
+# typechecker test program 17 (stage 9)
+
+interface Building
+{
+	fun getAddress() : String;
+	fun getName() : String;
+}
+
+interface Asset
+{
+	fun getValue() : Integer;
+	fun getManagerName() : String;
+}
+
+class Branch(address : String, name : String, value : Integer, managerName : String) extends Building & Asset
+{
+	super();
+	fun getAddress() : String = address;
+	fun getName() : String = name;
+	fun getValue() : Integer = value;
+	fun getManagerName() : String = managerName;
+}
+
+fun concat(s1 : String, s2: String) : String = string(s1 ++ " " ++ s2);
+
+fun getBuildingData(b : Building) : String = concat(b.getAddress(),b.getName());
+
+fun getAssetData(a : Asset) : String = a.getManagerName();
+
+branch := Branch("1 Main Road", "Main Branch", 9001, "Chuck Norris");
+
+return [concat(getBuildingData(branch),getAssetData(branch))];

@@ -1,0 +1,10 @@
+class Aa (param : Integer)
+{
+	fun plus(param1 : Integer) : Integer = param + param1;
+}
+
+a := Aa(3);
+b := Aa(4);
+c := a+b;
+
+return ["accept"];

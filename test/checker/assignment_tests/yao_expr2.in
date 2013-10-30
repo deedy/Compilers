@@ -1,0 +1,20 @@
+class Aa<T>()
+{
+	a := 0;
+}
+
+class Bb<P>()
+{
+	b := 1;
+}
+
+fun ff<T, P>(param1 : Aa<T>, param2 : Bb<P>) : Integer
+{
+	return 0;
+}
+
+aaa := Aa<Integer>();
+bbb := Bb<String>();
+result := ff<Integer, String>(aaa, bbb) + 3;
+
+return ["accept"];

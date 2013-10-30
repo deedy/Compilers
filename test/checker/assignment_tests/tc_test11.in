@@ -1,0 +1,42 @@
+# typechecker test program 11 (stage 3)
+
+fun first<T> (l : Iterable<T>) : Iterable<T>
+{
+	ret := [];
+	for(e in l)
+	{
+		return [e];
+	}
+	return ret;
+}
+
+fun rest<T> (l : Iterable<T>) : Iterable<T>
+{
+	ret := [];
+	seenOne := false;
+	for(e in l)
+	{
+		if(seenOne)
+		{
+			ret := ret ++ [e];
+		}
+		else
+		{
+			seenOne:=true;
+		}
+	}
+	return ret;
+}
+
+fun merge<T> (l1 : Iterable<T>, l2 : Iterable<T>) : Iterable<T>
+{
+	ret := [];
+	for(e in l1)
+	{
+		ret := ret ++ [e] ++ first<T>(l2);
+		l2 := rest<T>(l2);
+	}
+	return ret ++ l2;
+}
+
+return [string(merge<Character>("HloWrd","el ol!"))];

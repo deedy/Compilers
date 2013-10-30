@@ -1,0 +1,19 @@
+interface List<T>
+{
+	fun getFirst() : Iterable<T>;
+	fun getRest() : List<T>;
+	fun getIterable() : Iterable<T>;
+	fun append(l:List<T>) : List<T>;
+	fun reverse() : List<T>;
+}
+
+class Nil<T>() extends List<T>
+{
+	super();
+	fun getFirst() : Iterable<T> = [];
+	fun getIterable() : Iterable<T> = [];
+	fun append(l:List<T>) : List<T> = l;
+	fun reverse() : List<T> = Nil<T>();
+}
+
+return ["reject"];

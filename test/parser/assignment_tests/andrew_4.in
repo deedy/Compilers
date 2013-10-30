@@ -1,0 +1,7 @@
+interface GoodStudent
+{
+	fun doHomework() : GoodGrade;
+	fun askQuestion() : Knowledge;
+}
+fun stuff() : Integer = 3;
+return "hello world";

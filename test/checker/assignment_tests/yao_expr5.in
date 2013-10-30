@@ -1,0 +1,12 @@
+class test(a : Iterable<Integer>)
+{
+	super();
+}
+
+i1 := [1, 2, 3, 4];
+i2 := [5, 6, 7, 8];
+i3 := i1 ++ i2;
+
+a := test(i3);
+
+return ["accept"];

@@ -1,0 +1,25 @@
+class Aa<T>()
+{
+	a := 0;
+}
+
+class Bb<P>()
+{
+	b := 1;
+}
+
+class Cc()
+{
+	super();
+	fun ff<T, P>(param1 : Aa<T>, param2 : Bb<P>) : Integer
+	{
+		return 0;
+	}
+}
+
+aaa := Aa<Integer>();
+bbb := Bb<String>();
+ccc := Cc();
+result := ccc.ff<Integer, String>(aaa, bbb) + 3;
+
+return ["accept"];

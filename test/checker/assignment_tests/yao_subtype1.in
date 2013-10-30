@@ -1,0 +1,27 @@
+class Aa(s : String)
+{
+	super();
+	fun getString() : String = s;
+}
+
+class Bb() extends Aa
+{
+	super("Hello World!");
+}
+
+class Cc() extends Aa
+{
+	super("Hello Hell!");
+}
+
+class Dd() extends Bb & Cc
+{
+	super("Hello Hell World!");
+}
+
+dd := Dd();
+aa := Aa("please");
+tt := Thing();
+aa := dd;
+aa := tt;
+return ["accept"];

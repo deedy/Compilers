@@ -1,0 +1,8 @@
+class Yao1<T>(xi:Integer) extends Thing
+{
+	z:=a-b;
+	fun hello(): Hello
+	{ me:=1;}
+}
+
+return 0;

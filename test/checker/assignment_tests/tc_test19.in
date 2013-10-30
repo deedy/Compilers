@@ -1,0 +1,13 @@
+# typechecker test program 19
+
+class Aa()
+{
+	super();
+}
+
+interface Bb extends Aa
+{
+	fun tastic() : String;
+}
+
+return ["Nope"];

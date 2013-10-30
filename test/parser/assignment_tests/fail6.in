@@ -1,0 +1,7 @@
+`Out of order statements'
+class Bad2<>(param:Integer) extends List{
+    super();
+    yolo := 5;
+}
+y:= 2;
+

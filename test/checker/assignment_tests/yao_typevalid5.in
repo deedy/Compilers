@@ -1,0 +1,11 @@
+fun safeModulo(l : Integer, r : Integer, d : Int) : Integer
+{
+	m := l%r;
+	for(i in m)
+	{
+		return i;
+	}
+	return d;
+}
+
+return ["accept"];

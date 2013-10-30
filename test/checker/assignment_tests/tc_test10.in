@@ -1,0 +1,50 @@
+# type-checker test program 10 (stage 2)
+
+fun safeModulo(l : Integer, r : Integer, d : Integer) : Integer
+{
+	m := l%r;
+	for(i in m)
+	{
+		return i;
+	}
+	return d;
+}
+
+fun safeDiv(l : Integer, r: Integer, d: Integer) : Integer
+{
+	m := l/r;
+	for(i in m)
+	{
+		return i;
+	}
+	return d;
+}
+
+fun intToStr(i : Integer) : String
+{
+	pref := "";
+	if (i<0)
+	{
+		pref := "-";
+		i := i * -1;
+	}
+	ret := [character(48+safeModulo(i,10,0))];
+	while(i>0)
+	{
+		i := safeDiv(i,10,0); # we know this always works
+		ret := [character(48+safeModulo(i,10,0))] ++ ret;
+	}
+	return string(pref ++ ret);
+}
+
+fun sum (list : Iterable<Integer>) : Integer
+{
+	ret := 0;
+	for(i in list)
+	{
+		ret := ret + i;
+	}
+	return ret;
+}
+
+return [intToStr(sum(1..4))];

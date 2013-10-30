@@ -1,0 +1,6 @@
+a := 3;
+b := (a == 2);
+a := "hello";
+b := (a == "hi");
+
+return ["accept"];

@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 abstract class HNode {
     
@@ -38,6 +39,22 @@ class HClass extends HNode {
         HClass.classes.put(name, this);
         for (HFunction f : funs) {
             functions.put(f.name, f);
+        }
+    }
+
+    // Get all the functions of this class
+    public void getFunctions(Map<String, HFunction> funs) {
+
+        for (Map.Entry<String, HFunction> e : functions.entrySet()) {
+            // Don't add the function if it's already in the map
+            if (funs.get(e.getKey()) != null) {
+                funs.put(e.getKey(), e.getValue());
+            }
+        }
+
+        if (superclass != null) {
+            HClass classObj = HClass.classes.get(superclass);
+            classObj.getFunctions(funs);
         }
     }
 }
@@ -109,13 +126,90 @@ class HAssign extends HStatement {
 
 
 
-class HFunction extends HExpression {
+class HFunction {
     String name;
-    HReturn body;
+    HStatement body;
 
-    public HFunction(String name, HReturn body) {
+    public HFunction(String name, HStatement body) {
         this.name = name;
         this.body = body;
     }
 
+}
+
+class HFunctionCall extends HExpression {
+
+    String name;
+    List<HExpression> args;
+
+    public HFunctionCall(String name, List<HExpression> args) {
+        this.name = name;
+        this.args = args;
+    }
+}
+
+class HMethodCall extends HExpression {
+    HExpression expr;
+    String name;
+    List<HExpression> args;
+
+    public HMethodCall(HExpression expr, String name, List<HExpression> args) {
+        this.name = name;
+        this.args = args;
+        this.expr = expr;
+    }
+}
+
+class HAppend extends HExpression {
+    HExpression left;
+    HExpression right;
+
+    public HAppend(HExpression left, HExpression right) {
+        this.left = left;
+        this.right = right;
+    }
+}
+
+class HIterable extends HExpression {
+    List<HExpression> elems;
+
+    public HIterable(List<HExpression> elems) {
+        this.elems = elems;
+    }
+}
+
+class HBoolean extends HExpression {
+
+    String val;
+
+    public HBoolean(String val) {
+        this.val = val;
+    } 
+}
+
+class HInt extends HExpression {
+
+    int val;
+
+    public HInt(int val) {
+        this.val = val;
+    }
+}
+
+class HString extends HExpression {
+
+    String val;
+
+    public HString(String val) {
+        this.val = val;
+    }
+}
+
+class HVar extends HExpression {
+    
+    String var;
+
+    public HVar(String var) {
+        this.var = var;
+    }
 }

@@ -1,0 +1,17 @@
+class Aa(s : String)
+{
+	super();
+	fun getString() : String = s;
+}
+
+class Bb() extends Aa
+{
+	super("Hello World!");
+}
+
+if (true)
+	a := Aa("hello");
+else
+	a := Bb();
+
+return [a.getString()];

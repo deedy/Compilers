@@ -1,0 +1,32 @@
+# binary ops
+e := x + y;
+e := x - y;
+e := x * y;
+e := x / y;
+e := x % y;
+
+# unary ops
+e := !x;
+e := -x;
+
+# range ops
+e := x .. y;
+e := x .< y;
+e := x <. y;
+e := x << y;
+e := x <..;
+e := x ...;
+
+# equational ops
+e := x == y;
+e := x != y;
+
+# inequality ops
+e := x >= y;
+e := x <= y;
+e := x >  y;
+e := x <  y;
+
+# boolean ops
+e := x & y;
+e := x | y;

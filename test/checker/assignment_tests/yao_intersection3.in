@@ -1,0 +1,18 @@
+class Building()
+{
+	fun getAddress() : String = "hello";
+	fun getName() : String = "hi";
+}
+
+class Asset()
+{
+	fun getValue() : Integer = 3;
+	fun getManagerName() : String = "hey";
+}
+
+class Branch(address : String, name : String, value : Integer, managerName : String) extends Building & Asset
+{
+	super();
+}
+
+return ["accept"];

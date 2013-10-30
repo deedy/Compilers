@@ -1,0 +1,10 @@
+# type-checker test program 6 (stage 1)
+
+a := 5;
+b := 3;
+while(b>0)
+{
+	a:=a+b;
+	b:=b-1;
+}
+return ["Yippee"];

@@ -1,0 +1,1 @@
+interface GoodStudent < > extends Thing { fun doHomework < > ( ) : GoodGrade < > ; fun askQuestion < > ( ) : Knowledge < > ; } fun stuff < > ( ) : Integer < > return 3 ; return "hello world" ;

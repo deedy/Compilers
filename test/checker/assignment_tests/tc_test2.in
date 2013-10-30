@@ -1,0 +1,7 @@
+# parser test program 2
+interface GoodStudent extends Student
+{
+	fun doHomework() : GoodGrade;
+	fun askQuestion() : Knowledge;
+}
+return ["hello world"];

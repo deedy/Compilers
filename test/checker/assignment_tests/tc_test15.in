@@ -1,0 +1,49 @@
+# typechecker test program 15 (stage 7)
+
+interface List<T>
+{
+	fun getFirst() : Iterable<T> = [];
+	fun getRest() : List<T>;
+	fun getIterable() : Iterable<T> = [];
+	fun append(l: List<T>) : List<T>;
+	fun reverse() : List<T>;
+}
+
+class Nil<T>() extends List<T>
+{
+	super();
+	fun getRest() : List<T> = Nil<T>();
+	fun reverse() : List<T> = Nil<T>();
+	fun append(l:List<T>) : List<T> = l;
+}
+
+class Cons<T>(elem : T,rest : List<T>) extends List<T>
+{
+	super();
+	fun getFirst() : Iterable<T> = [elem];
+	fun getRest() : List<T> = rest;
+	fun getIterable() : Iterable<T>
+	{
+		return [elem] ++ rest.getIterable();
+	}
+	fun append(l:List<T>) : List<T>
+	{
+		return Cons<T>(elem,rest.append(l));
+	}
+	fun reverse() : List<T>
+	{
+		return rest.reverse().append(Cons<T>(elem,Nil<T>()));
+	}
+}
+
+fun strToCons<T>(iter : Iterable<T> ) : List<T>
+{
+	ret := Nil<T>().reverse();
+	for(c in iter)
+	{
+		ret := Cons<T>(c,ret);
+	}
+	return ret.reverse();
+}
+
+return [string(strToCons<Character>("Hello World!").getIterable())];

@@ -1,0 +1,7 @@
+a := ("hello" == "hi");
+if (a)
+	b := "hello";
+else
+	b := 3;
+
+return ["accept"];

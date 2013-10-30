@@ -1,0 +1,9 @@
+class Yao1<T>(xi:Integer)
+{
+	z:=a-b;
+	super(a, b);
+	fun hello(): Hello
+	{ me:=1;}
+}
+
+return 0;

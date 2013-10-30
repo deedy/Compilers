@@ -83,7 +83,13 @@ class CubexFunctionCall extends CubexExpression {
     }
 
     public HExpression createHIR() {
-        return null;
+
+        List<HExpression> args = new ArrayList<HExpression>();
+        for(CubexExpression e : exprList) {
+            args.add(e.createHIR());
+        }
+
+        return new HFunctionCall(name.name, args);
     }
 }
 
@@ -111,7 +117,7 @@ class CubexVar extends CubexExpression {
     }
 
     public HExpression createHIR() {
-        return null;
+        return new HVar(name.name);
     }
 }
 
@@ -313,7 +319,12 @@ class CubexMethodCall extends CubexExpression {
     }
 
     public HExpression createHIR() {
-        return null;
+        List<HExpression> args = new ArrayList<HExpression>();
+        args.add(expr.createHIR());
+        for (CubexExpression e : exprList) {
+            args.add(e.createHIR());
+        }
+        return new HFunctionCall(name.name, args);
     }
 }
 
@@ -367,7 +378,7 @@ class CubexAppend extends CubexExpression {
     }
 
     public HExpression createHIR() {
-        return null;
+        return new HAppend(left.createHIR(), right.createHIR());
     }
 }
 
@@ -409,7 +420,11 @@ class CubexIterable extends CubexExpression {
     }
 
     public HExpression createHIR() {
-        return null;
+        List<HExpression> elems = new ArrayList<HExpression>();
+        for (CubexExpression e : mElements) {
+            elems.add(e.createHIR());
+        }
+        return new HIterable(elems);
     }
 }
 
@@ -435,7 +450,7 @@ class CubexBoolean extends CubexExpression {
     }
 
     public HExpression createHIR() {
-        return null;
+        return new HBoolean(bool);
     }
 }
 
@@ -461,7 +476,7 @@ class CubexInt extends CubexExpression {
     }
 
     public HExpression createHIR() {
-        return null;
+        return new HInt(num);
     }
 }
 
@@ -487,7 +502,7 @@ class CubexString extends CubexExpression {
     }
 
     public HExpression createHIR() {
-        return null;
+        return new HString(str);
     }
 }
 

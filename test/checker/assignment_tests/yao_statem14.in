@@ -1,0 +1,6 @@
+e := true;
+while (e)
+	d := 0;
+	return ["accept"];
+
+return ["reject"];

@@ -1,0 +1,10 @@
+class Int extends Integer
+{
+	yao := 3;
+	super();
+}
+
+andrew := Int();
+derek := andrew +3;
+
+return ["accept"];

@@ -1,0 +1,13 @@
+class Aa(s : String)
+{
+	super();
+	fun getString() : String = s;
+}
+
+class Aa() 
+{
+	super();
+	fun getString() : String = "dd";
+}
+
+return ["reject"];

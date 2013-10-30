@@ -1,0 +1,56 @@
+# typechecker test program 13 (stage 5)
+
+class Cons<T>(elem : T,rest : Iterable<Cons<T>> )
+{
+	super();
+	fun getFirst() : T = elem;
+	fun getRest() : Iterable<Cons<T>> = rest;
+	fun getIterable() : Iterable<T>
+	{
+		for(r in rest)
+		{
+			return [elem] ++ r.getIterable();
+		}
+		return [elem];
+	}
+	fun append(list : Cons<T>) : Cons<T>
+	{
+		nrest := [list];
+		for(r in rest)
+		{
+			nrest := [r.append(list)];
+		}
+		return Cons<T>(elem,nrest);
+	}
+	fun reverse() : Cons<T>
+	{
+		ret := Cons<T>(elem,[]);
+		for(r in rest)
+		{
+			ret := r.reverse().append(ret);
+		}
+		return ret;
+	}
+}
+
+fun strToCons<T>(iter : Iterable<T>) : Iterable<Cons<T>>
+{
+	ret := [];
+	for(c in iter)
+	{
+		ret := [Cons<T>(c,ret)];
+	}
+	for(r in ret)
+	{
+	    return [r.reverse()];
+	}
+	return [];
+}
+
+hw := strToCons<Character>("Hello World!");
+ret := "";
+for(c in hw)
+{
+	ret:=string(c.getIterable());
+}
+return [ret];

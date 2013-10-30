@@ -1,0 +1,3 @@
+# type-checker test program 8 (stage 1)
+
+return a;

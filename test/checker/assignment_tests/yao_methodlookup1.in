@@ -1,0 +1,9 @@
+class Yao<T> ( paraA : T)
+{
+	super();
+	fun getFirst(paraB : T) : T = paraB;
+}
+
+yao := Yao<Integer>(3);
+a := yao.getFirst(5)+3;
+return ["accept"];

@@ -1,0 +1,1 @@
+fun foo < > ( y : Integer < > ) : Integer < > return y . times < > ( 2 ) ; a := 640802120 ;

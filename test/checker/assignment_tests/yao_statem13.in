@@ -1,0 +1,8 @@
+b := true;
+
+if (b)
+	return ["accept"];
+else
+	e := 1;
+
+return ["accept"];

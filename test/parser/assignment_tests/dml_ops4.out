@@ -1,0 +1,1 @@
+x := true . plus < > ( false ) ; y := 3 . or < > ( 5 ) ; z := "hello" . lessThan < > ( "goodbye" , true ) ;

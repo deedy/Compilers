@@ -1,0 +1,6 @@
+class Aa() extends Nothing
+{
+	fun getgg() : String = "Hello!";
+}
+
+return ["reject"];

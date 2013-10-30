@@ -1,0 +1,15 @@
+# typechecker test program 20
+
+fun concat(s1 : String, s2: String) : String = string(s1 ++ " " ++ s2);
+
+fun concatAll(strings : Iterable<String>) : String
+{
+	ret := "";
+	for(s in strings)
+	{
+		ret := concat(ret,s);
+	}
+	return ret;
+}
+
+return [concatAll(input)];

@@ -1,0 +1,4 @@
+fun foo<X>() : Boolean<> = true;
+if (true)
+   bar := foo<T>();
+return [];

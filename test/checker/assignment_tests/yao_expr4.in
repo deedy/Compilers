@@ -1,0 +1,11 @@
+class Aa()
+{
+	a := 0;
+}
+
+a1 := Aa();
+a2 := Aa();
+a3 := Aa();
+haha := [a1, a2, a3];
+
+return ["accept"];

@@ -1,0 +1,6 @@
+e := [1, 2, 3, 4];
+for (i in e)
+	k := i + 1;
+	return ["accept"];
+
+return ["reject"];

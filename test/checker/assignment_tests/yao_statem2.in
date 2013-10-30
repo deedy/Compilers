@@ -1,0 +1,22 @@
+fun aa() : Integer
+{
+	a := 3;
+	c := a + 1;
+	b := 5;
+	c := b + 1;
+	
+	return 0;
+}
+
+fun bb() : Integer
+{
+	a := 3;
+	b := 5;
+
+	c := a+1;
+	c := b+1;
+	
+	return 0;
+}
+
+return ["accept"];

@@ -1,0 +1,14 @@
+# typechecker test program 16 (stage 8)
+
+class Aa(s : String)
+{
+	super();
+	fun getString() : String = s;
+}
+
+class Bb() extends Aa
+{
+	super("Hello World!");
+}
+
+return [Bb().getString()];

@@ -1,0 +1,5 @@
+a := character(3);
+b := [a, a, a];
+c := [b, b, b];
+
+return c;

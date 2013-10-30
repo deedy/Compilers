@@ -1,0 +1,9 @@
+class Yao ( paraA : String)
+{
+	super();
+	fun getString(paraB : String) : String = paraB;
+}
+
+yao := Yao("Hello World");
+a := yao.getString("Hi").equals("Hi");
+return ["accept"];

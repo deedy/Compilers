@@ -1,0 +1,14 @@
+a := true;
+b := false;
+
+c := (a == b);
+
+d := 3;
+e := 5;
+f := d + e;
+
+h := "big";
+i := "small";
+j := (h == i);
+
+return ["accept"];

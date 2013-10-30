@@ -1,0 +1,15 @@
+class Aa(s : String)
+{
+	super();
+	fun getString() : String = s;
+}
+
+class Bb() extends Aa
+{
+	super("Hello World!");
+}
+
+ia = Iterable<Aa>();
+ib = Iterable<Bb>();
+ia = ib;
+return ["accept"];

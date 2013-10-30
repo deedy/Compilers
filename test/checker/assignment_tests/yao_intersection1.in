@@ -1,0 +1,20 @@
+class Building(address : String, name : String)
+{
+	fun getAddress() : String = address;
+	fun getName() : String = name;
+}
+
+interface Asset
+{
+	fun getValue() : Integer;
+	fun getManagerName() : String;
+}
+
+class Branch(address : String, name : String, value : Integer, managerName : String) extends Building & Asset
+{
+	super(address, name);
+	fun getValue() : Integer = value;
+	fun getManagerName() : String = managerName;
+}
+
+return ["accept"];

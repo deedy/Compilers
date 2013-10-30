@@ -1,0 +1,8 @@
+e := [1, 2, 3, 4];
+for (i in e)
+	if (i == 1)
+		k := i + 1;
+	else
+		k := "hello";
+
+return ["reject"];
