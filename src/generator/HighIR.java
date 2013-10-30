@@ -213,3 +213,35 @@ class HVar extends HExpression {
         this.var = var;
     }
 }
+
+class HProg {
+    HProg prog;
+}
+
+class HStatementProg extends HProg {
+    List<HStatement> stmts;
+
+    public HStatementProg(List<HStatement> stmts) {
+        this.stmts = stmts;
+    }
+}
+
+class HClassProg extends HProg {
+
+    HClass cls;
+
+    public HClassProg(HClass cls, HProg prog) {
+        this.cls = cls;
+        this.prog = prog;
+    }
+}
+
+class HFunProg extends HProg {
+
+    List<HFunction> funs;
+
+    public HFunProg(List<HFunction> funs, HProg prog) {
+        this.funs = funs;
+        this.prog = prog;
+    }
+}

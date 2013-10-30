@@ -6,6 +6,7 @@ abstract class CubexProg extends CubexNode {
 	public CubexProg prog;
 	public abstract boolean typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st);
 	public abstract HNode accept(HVisitor v);
+    public abstract HProg createHIR();
 }
 
 class CubexStatementProg extends CubexProg {
@@ -43,8 +44,10 @@ class CubexStatementProg extends CubexProg {
         return v.visit(this);
     }
 
-    public HNode createHIR() {
-        return null;
+    public HProg createHIR() {
+        List<HStatement> s = new ArrayList<HStatement>();
+        s.add(stmt.createHIR());
+        return new HStatementProg(s);
     }
 }
 
@@ -79,6 +82,15 @@ class CubexStatementsProg extends CubexProg {
 	public HNode accept(HVisitor v) {
         return v.visit(this);
     }
+
+    public HProg createHIR() {
+        List<HStatement> statements = new ArrayList<HStatement>();
+        for (CubexStatement s : stmts) {
+            statements.add(s.createHIR());
+        }
+        return new HStatementProg(statements);
+    }
+
 }
 
 class CubexFuncsProg extends CubexProg {
@@ -143,6 +155,14 @@ class CubexFuncsProg extends CubexProg {
 	public HNode accept(HVisitor v) {
         return v.visit(this);
     }
+
+    public HProg createHIR() {
+        List<HFunction> functions = new ArrayList<HFunction>();
+        for (CubexFunction f : funcs) {
+            functions.add(f.createHIR());
+        }
+        return new HFunProg(functions, prog.createHIR());
+    }
 }
 
 class CubexInterfaceProg extends CubexProg {
@@ -164,6 +184,10 @@ class CubexInterfaceProg extends CubexProg {
 	public HNode accept(HVisitor v) {
         return v.visit(this);
     }
+
+    public HProg createHIR() {
+        return new HClassProg(intf.createHIR(), prog.createHIR());
+    }
 }
 
 class CubexClassProg extends CubexProg {
@@ -182,7 +206,12 @@ class CubexClassProg extends CubexProg {
 		Pair<CubexClassContext, CubexFunctionContext> imm = cls.typeCheck(cc, fc, st);
 		return prog.typeCheck(cc.merge(imm.getLeft()), fc.merge(imm.getRight()), st);
 	}
+
 	public HNode accept(HVisitor v) {
         return v.visit(this);
+    }
+
+    public HProg createHIR() {
+        return new HClassProg(cls.createHIR(), prog.createHIR());
     }
 }
