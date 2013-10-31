@@ -1,4 +1,4 @@
- import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import java.lang.StringBuilder;
 import java.util.BitSet;
@@ -34,12 +34,12 @@ public class CubexCheckerProg {
             else return "reject";
 
         } catch (CubexTC.TypeCheckException tc) {
-            // System.out.println(tc.getMessage());
-            // tc.printStackTrace();
+            System.out.println(tc.getMessage());
+             tc.printStackTrace();
             return "reject";
         } catch(Exception e){
-            // System.out.println(e);
-            // e.printStackTrace();
+            System.out.println(e);
+            //e.printStackTrace();
             // parser.reset();
             // viewTree(parser);
             return "reject";
