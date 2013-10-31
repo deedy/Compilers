@@ -93,6 +93,7 @@ Boolean Boolean_or(Boolean a, Boolean b) {
 }
 
 int common_iterable_next(Iterable i) {
+	i->curr = NULL;
 	return 0;
 }
 
@@ -247,4 +248,102 @@ Boolean Integer_lessThan(Integer a, Integer b, Boolean strict) {
 
 Boolean Integer_equals(Integer a, Integer b) {
 	return Boolean_construct(a->value == b->value);
+}
+
+
+struct Character_t {
+	char value;
+};
+
+typedef struct Character_t* Character;
+
+Character Character_construct(char c) {
+	Character a = x3malloc(sizeof(struct Character_t));
+	a->value = c;
+	return a;
+}
+
+Integer Character_unicode(Character c) {
+	return Integer_construct(charuni(c->value));
+}
+
+Boolean Character_equals(Character a, Character b) {
+	return Boolean_construct(a->value == b->value);
+}
+
+struct String_t {
+	object curr;
+	int (*next)(struct Iterable_t*);
+	struct Iterable_t* nextIter;
+};
+
+typedef struct String_t* String;
+
+String String_construct(char* s) {
+	if (!s) {
+		return NULL;
+	} else {
+		if (!(*s)) {
+			return NULL;
+		} else {
+			String i = (String) Iterable_construct(Character_construct(*s));
+			i->next = common_iterable_next;
+			String prev = i;
+			s++;
+			while(*s) {
+				Iterable j = Iterable_construct(Character_construct(*s));
+				j->next = common_iterable_next;
+				prev->nextIter = j;
+				prev = j;
+				s++;
+			}
+			return i;
+		}
+	}
+}
+
+int Iterable_length(Iterable i) {
+	int len;
+	Iterable _a = copy(i);
+	while(_a && _a->curr) {
+		len += 1;
+		next(_a);
+	}
+	return len;
+}
+
+int strcmp(const char *s1, const char *s2) {
+  int ret = 0;
+  while (!(ret = *(unsigned char *) s1 - *(unsigned char *) s2) && *s2) ++s1, ++s2;
+  if (ret < 0)
+    ret = -1;
+  else if (ret > 0)
+    ret = 1 ;
+  return ret;
+}
+
+
+char* String_buffer(String s, int *len) {
+	*len = Iterable_length((Iterable) s);
+	char* buff = x3malloc(sizeof(char) * *len);
+	int iter = 0;
+	Iterable _a = copy((Iterable) s);
+	while(_a && _a->curr) {
+		buff[iter++] = ((Character) _a->curr)->value;
+		next(_a);
+	}
+	return buff;
+}
+
+Boolean String_equals(String a, String b) {
+	int len1, len2;
+	char* buff_a = String_buffer(a, &len1);
+	char* buff_b = String_buffer(b, &len2);
+	return Boolean_construct(strcmp(buff_a, buff_b));
+}
+
+void print(String s) {
+	int len;
+	char* buff = String_buffer(s, &len);
+	print_line(buff, len);
 }
