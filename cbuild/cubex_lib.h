@@ -1,52 +1,42 @@
-#include "stdio.h"
+#define NULL 0
+
+typedef void* object;
 
 struct Object_t {
-	int id;  		/* object type */
-	struct Object_t *parent;
-	int ref_count; 	/* reference count */
-	int field_count;/* number of fields */
-	struct Object_t **fields;	/* array of field objects */
-	/* 	all objects must have these fields
-		at the top of the struct. This allows
-		referencing base classes both as 
-		regular and special objects
-	*/
+	int id;
+	object parent;
+	int ref_count;
+	int field_count;
+	object *fields;
 };
 
 typedef struct Object_t* Object;
 
-struct Iterable_t;
-
 struct _IterNode_t {
-	Object curr; /* current value of the iterator */
-	/* 	feed in this pointer and it will return:
-		this pointer: in place update
-		another pointer: the next pointer in the appends chain
-			should free this pointer
-	*/
+	object curr;
 	struct _IterNode_t* (*next)(struct _IterNode_t*);
-	struct Iterable_t* nextIter; /* the next iterable in the append chain */
+	object nextIter;
 };
 
 typedef struct _IterNode_t* _IterNode;
 
 struct Iterable_t {
 	int id;
-	Object parent;
+	object parent;
 	int ref_count;
 	int field_count;
-	Object *fields; /* [first, nextIter] */
-	_IterNode (*next)(_IterNode);	/* function to update iterator */
+	object *fields;
+	_IterNode (*next)(_IterNode);
 };
 
 typedef struct Iterable_t* Iterable;
 
 struct Integer_t {
 	int id;
-	Object parent;
+	object parent;
 	int ref_count;
 	int field_count;
-	Object *fields;
+	object *fields;
 	int value;
 };
 
@@ -54,10 +44,10 @@ typedef struct Integer_t* Integer;
 
 struct Boolean_t {
 	int id;
-	Object parent;
+	object parent;
 	int ref_count;
 	int field_count;
-	Object *fields;
+	object *fields;
 	int value;
 };
 
@@ -65,10 +55,10 @@ typedef struct Boolean_t* Boolean;
 
 struct Character_t {
 	int id;
-	Object parent;
+	object parent;
 	int ref_count;
 	int field_count;
-	Object *fields;
+	object *fields;
 	char value;
 };
 
@@ -76,18 +66,17 @@ typedef struct Character_t* Character;
 
 struct String_t {
 	int id;
-	Object parent;
+	object parent;
 	int ref_count;
 	int field_count;
-	Object *fields;
+	object *fields;
 	_IterNode (*next)(_IterNode);
 	char* value;
 };
 
 typedef struct String_t* String;
 
-Object allocate(int id, int field_count) {
-	// call to base class constructor
+object _allocate(int id, int field_count) {
 	Object o;
 	if (id < 5) {
 		switch (id) {
@@ -115,34 +104,33 @@ Object allocate(int id, int field_count) {
 	o->id = id;
 	o->parent = NULL;
 	o->ref_count = 0;
+	o->field_count = field_count;
 	o->fields = x3malloc(sizeof(Object) * field_count);
 	int i;
 	for (i = 0; i < field_count; i++) {
 		o->fields[i] = NULL;
 	}
-	o->field_count = field_count;
+	return o;
 }
 
-/* 	Assert that some variable is pointing at o */
-void incr(void *ptr) {
+void _incr(object ptr) {
 	Object o = ptr;
 	if(o) {
 		o->ref_count += 1;
 	}
 }
 
-/* 	Assert that a reference to o is lost */
-void decr(void *ptr) {
+void _decr(object ptr) {
 	Object o = ptr;
 	if(o) {
 		o->ref_count -= 1;
 		if (o->ref_count <= 0) {
 			int i;
 			for (i = 0; i < o->field_count; i++) {
-				decr(o->fields[i]);
+				_decr(o->fields[i]);
 			}
 			x3free(o->fields);
-			decr(o->parent);
+			_decr(o->parent);
 			if(o->id == 4) {
 				x3free(((String) o)->value);
 			}
@@ -151,7 +139,8 @@ void decr(void *ptr) {
 	}
 }
 
-_IterNode iterator(Iterable i) {
+_IterNode _iterator(object o) {
+	Iterable i = o;
 	if (!i) {
 		return NULL;
 	}
@@ -162,27 +151,27 @@ _IterNode iterator(Iterable i) {
 	return n;
 }
 
-_IterNode common_next(_IterNode node) {
+_IterNode _common_next(_IterNode node) {
 	if (!node) {
 		return NULL;
 	} else {
-		_IterNode ret = iterator(node->nextIter);
+		_IterNode ret = _iterator(node->nextIter);
 		x3free(node);
 		return ret;
 	}
 }
 
-Iterable Iterable_construct(void *ptr) {
+object Iterable_construct(object ptr) {
 	Object o = ptr;
-	Iterable a = (Iterable) allocate(0, 2);
-	incr(o);
+	Iterable a = _allocate(0, 2);
+	_incr(o);
 	a->fields[0] = o;
 	a->fields[1] = NULL;
-	a->next = common_next;
+	a->next = _common_next;
 	return a;
 }
 
-Iterable copy(Iterable a) {
+Iterable _copy(Iterable a) {
 	if(!a) {
 		return NULL;
 	}
@@ -191,52 +180,63 @@ Iterable copy(Iterable a) {
 	return b;
 }
 
-Iterable append(Iterable a, Iterable b) {
+Iterable _append(object o1, object o2) {
+	Iterable a = o1;
+	Iterable b = o2;
 	if(!a) {
 		return b;
 	}
-	Iterable c = copy(a);
-	c->fields[1] = (Object) append((Iterable) a->fields[1], b);
-	incr(c->fields[1]);
+	Iterable c = _copy(a);
+	c->fields[1] = _append(a->fields[1], b);
+	_incr(c->fields[1]);
 	return c;
 }
 
-Boolean Boolean_construct(int b) {
-	Boolean a = (Boolean) allocate(2, 0);
+object Boolean_construct(int b) {
+	Boolean a = _allocate(2, 0);
 	a->value = b;
 	return a;
 }
 
-Boolean Boolean_negate(Boolean b) {
-	incr(b);
+object Boolean_negate(object o) {
+	Boolean b = o;
+	_incr(b);
 	Boolean _ret = Boolean_construct(!b->value);
-	decr(b);
+	_decr(b);
 	return _ret;
 }
 
-Boolean Boolean_and(Boolean a, Boolean b) {
-	incr(a);
-	incr(b);
+object Boolean_and(object o1, object o2) {
+	Boolean a = o1;
+	Boolean b = o2;
+	_incr(a);
+	_incr(b);
 	Boolean _ret = Boolean_construct(a->value && b->value);
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
-Boolean Boolean_or(Boolean a, Boolean b) {
-	incr(a);
-	incr(b);
+object Boolean_or(object o1, object o2) {
+	Boolean a = o1;
+	Boolean b = o2;
+	_incr(a);
+	_incr(b);
 	Boolean _ret = Boolean_construct(a->value || b->value);
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
-Iterable Boolean_through(Boolean lower, Boolean upper, Boolean includeLower, Boolean includeUpper) {
-	incr(lower);
-	incr(upper);
-	incr(includeLower);
-	incr(includeUpper);
+object Boolean_through(object o1, object o2, object o3, object o4) {
+	Boolean lower = o1;
+	Boolean upper = o2;
+	Boolean includeLower = o3;
+	Boolean includeUpper = o4;
+	_incr(lower);
+	_incr(upper);
+	_incr(includeLower);
+	_incr(includeUpper);
 
 	int _lower = lower->value;
 	int _upper = upper->value;
@@ -252,31 +252,36 @@ Iterable Boolean_through(Boolean lower, Boolean upper, Boolean includeLower, Boo
 	} else {
 		Iterable i = Iterable_construct(lower);
 		Iterable j = Boolean_through(Boolean_construct(low + 1), upper, includeLower, includeUpper);
-		_ret = append(i, j);
+		_ret = _append(i, j);
 	}
 
-	decr(lower);
-	decr(upper);
-	decr(includeLower);
-	decr(includeUpper);
+	_decr(lower);
+	_decr(upper);
+	_decr(includeLower);
+	_decr(includeUpper);
 
 	return _ret;
 }
 
-Iterable Boolean_onward(Boolean a, Boolean inclusive) {
-	incr(a);
-	incr(inclusive);
+object Boolean_onward(object o1, object o2) {
+	Boolean a = o1;
+	Boolean inclusive = o2;
+	_incr(a);
+	_incr(inclusive);
 	Iterable _ret = Boolean_through(a, inclusive, Boolean_construct(1), Boolean_construct(1));
-	decr(a);
-	decr(inclusive);
+	_decr(a);
+	_decr(inclusive);
 	return _ret;
 }
 
-Boolean Boolean_lessThan(Boolean a, Boolean b, Boolean strict) {
+object Boolean_lessThan(object o1, object o2, object o3) {
+	Boolean a = o1;
+	Boolean b = o2;
+	Boolean strict = o3;
 	Boolean _ret;
-	incr(a);
-	incr(b);
-	incr(strict);
+	_incr(a);
+	_incr(b);
+	_incr(strict);
 
 	if (strict->value) {
 		_ret = Boolean_construct(a->value < b->value);
@@ -284,103 +289,120 @@ Boolean Boolean_lessThan(Boolean a, Boolean b, Boolean strict) {
 		_ret = Boolean_construct(a->value <= b->value);
 	}
 
-	decr(a);
-	decr(b);
-	decr(strict);
+	_decr(a);
+	_decr(b);
+	_decr(strict);
 
 	return _ret;
 }
 
-Boolean Boolean_equals(Boolean a, Boolean b) {
+object Boolean_equals(object o1, object o2) {
+	Boolean a = o1;
+	Boolean b = o2;
 	Boolean _ret;
-	incr(a);
-	incr(b);
+	_incr(a);
+	_incr(b);
 
 	_ret = Boolean_construct(a->value == b->value);
 
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
-Integer Integer_construct(int n) {
-	Integer a = (Integer) allocate(1, 0);
+object Integer_construct(int n) {
+	Integer a = _allocate(1, 0);
 	a->value = n;
 	return a;
 }
 
-Integer Integer_negative(Integer a) {
+object Integer_negative(object o) {
+	Integer a = o;
 	Integer _ret;
-	incr(a);
+	_incr(a);
 	_ret = Integer_construct(-(a->value));
-	decr(a);
+	_decr(a);
 	return _ret;
 }
 
-Integer Integer_times(Integer a, Integer b) {
+object Integer_times(object o1, object o2) {
+	Integer a = o1;
+	Integer b = o2;
 	Integer _ret;
-	incr(a);
-	incr(b);
+	_incr(a);
+	_incr(b);
 	_ret = Integer_construct(a->value * b->value);
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 }
 
-Iterable Integer_divide(Integer a, Integer b) {
+object Integer_divide(object o1, object o2) {
+	Integer a = o1;
+	Integer b = o2;
 	Iterable _ret;
-	incr(a);
-	incr(b);
+	_incr(a);
+	_incr(b);
 	if (b->value == 0) {
 		_ret = NULL;
 	} else {
 		Iterable i = Iterable_construct(Integer_construct(a->value / b->value));
 		_ret = i;
 	}
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
-Iterable Integer_modulo(Integer a, Integer b) {
+object Integer_modulo(object o1, object o2) {
+	Integer a = o1;
+	Integer b = o2;
 	Iterable _ret;
-	incr(a);
-	incr(b);
+	_incr(a);
+	_incr(b);
 	if (b->value == 0) {
 		_ret = NULL;
 	} else {
 		Iterable i = Iterable_construct(Integer_construct(a->value % b->value));
 		_ret = i;
 	}
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
-Integer Integer_plus(Integer a, Integer b) {
+object Integer_plus(object o1, object o2) {
+	Integer a = o1;
+	Integer b = o2;
 	Integer _ret;
-	incr(a);
-	incr(b);
+	_incr(a);
+	_incr(b);
 	_ret = Integer_construct(a->value + b->value);
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
-Integer Integer_minus(Integer a, Integer b) {
+object Integer_minus(object o1, object o2) {
+	Integer a = o1;
+	Integer b = o2;
 	Integer _ret;
-	incr(a);
-	incr(b);
+	_incr(a);
+	_incr(b);
 	_ret = Integer_construct(a->value - b->value);
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
-Iterable Integer_through(Integer lower, Integer upper, Boolean includeLower, Boolean includeUpper) {
-	incr(lower);
-	incr(upper);
-	incr(includeLower);
-	incr(includeUpper);
+object Integer_through(object o1, object o2, object o3, object o4) {
+	Integer lower = o1;
+	Integer upper = o2;
+	Boolean includeLower = o3;
+	Boolean includeUpper = o4;
+	_incr(lower);
+	_incr(upper);
+	_incr(includeLower);
+	_incr(includeUpper);
 
 	int _lower = lower->value;
 	int _upper = upper->value;
@@ -395,37 +417,43 @@ Iterable Integer_through(Integer lower, Integer upper, Boolean includeLower, Boo
 		_ret = NULL;
 	} else {
 		Iterable i = Iterable_construct(lower);
-		Iterable j = Integer_through(Integer_construct(low + 1), upper, includeLower, includeUpper);
-		_ret = append(i, j);
+		Iterable j = Integer_through(Integer_construct(low + 1), upper, Boolean_construct(1), includeUpper);
+		_ret = _append(i, j);
 	}
 
-	decr(lower);
-	decr(upper);
-	decr(includeLower);
-	decr(includeUpper);
+	_decr(lower);
+	_decr(upper);
+	_decr(includeLower);
+	_decr(includeUpper);
 
 	return _ret;
 }
 
 _IterNode Integer_onwards_next(_IterNode i) {
 	int val = ((Integer) i->curr)->value;
-	decr(i->curr);
-	i->curr = (Object) Integer_construct(val + 1);
+	_decr(i->curr);
+	i->curr = Integer_construct(val + 1);
 	return i;
 }
 
-Iterable Integer_onwards(Integer a, Boolean inclusive) {
+object Integer_onwards(object o1, object o2) {
+	Integer a = o1;
+	Boolean inclusive = o2;
 	int start = a->value + !(inclusive->value);
 	Iterable i = Iterable_construct(Integer_construct(start));
 	i->next = Integer_onwards_next;
 	return i;
 }
 
-Boolean Integer_lessThan(Integer a, Integer b, Boolean strict) {
+
+object Integer_lessThan(object o1, object o2, object o3) {
+	Integer a = o1;
+	Integer b = o2;
+	Boolean strict = o3;
 	Boolean _ret;
-	incr(a);
-	incr(b);
-	incr(strict);
+	_incr(a);
+	_incr(b);
+	_incr(strict);
 
 	if (strict->value) {
 		_ret = Boolean_construct(a->value < b->value);
@@ -433,48 +461,54 @@ Boolean Integer_lessThan(Integer a, Integer b, Boolean strict) {
 		_ret = Boolean_construct(a->value <= b->value);
 	}
 
-	decr(a);
-	decr(b);
-	decr(strict);
+	_decr(a);
+	_decr(b);
+	_decr(strict);
 
 	return _ret;
 }
 
-Boolean Integer_equals(Integer a, Integer b) {
+object Integer_equals(object o1, object o2) {
+	Integer a = o1;
+	Integer b = o2;
 	Boolean _ret;
-	incr(a);
-	incr(b);
+	_incr(a);
+	_incr(b);
 
 	_ret = Boolean_construct(a->value == b->value);
 
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
-Character Character_construct(char c) {
-	Character a = (Character) allocate(3, 0);
+
+object Character_construct(char c) {
+	Character a = _allocate(3, 0);
 	a->value = c;
 	return a;
 }
 
-Integer Character_unicode(Character c) {
+object Character_unicode(object o) {
+	Character c = o;
 	Integer _ret;
-	incr(c);
+	_incr(c);
 	_ret = Integer_construct(charuni(c->value));
-	decr(c);
+	_decr(c);
 	return _ret;
 }
 
-Boolean Character_equals(Character a, Character b) {
+object Character_equals(object o1, object o2) {
+	Boolean a = o1;
+	Boolean b = o2;
 	Boolean _ret;
-	incr(a);
-	incr(b);
+	_incr(a);
+	_incr(b);
 
 	_ret = Boolean_construct(a->value == b->value);
 
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
@@ -499,20 +533,20 @@ int strLen(const char *s) {
     return s - start;
 }
 
-Iterable strIter(const char *s) {
+object strIter(const char *s) {
 	if(!*s) {
 		return NULL;
 	} else {
 		Iterable i = Iterable_construct(Character_construct(*s));
-		return append(i, strIter(s + 1));
+		return _append(i, strIter(s + 1));
 	}
 }
 
-String String_construct(const char* s) {
+object String_construct(const char* s) {
 	if (!s) {
 		return NULL;
 	} else {
-		String str = (String) allocate(5, 0);
+		String str = _allocate(5, 0);
 		str->value = x3malloc(sizeof(char) * strLen(s));
 		strCpy(s, str->value);
 		Iterable i = strIter(s);
@@ -523,29 +557,32 @@ String String_construct(const char* s) {
 	}
 }
 
-Boolean String_equals(String a, String b) {
+object String_equals(object o1, object o2) {
+	String a = o1;
+	String b = o2;
 	Boolean _ret;
-	incr(a);
-	incr(b);
+	_incr(a);
+	_incr(b);
 	_ret = Boolean_construct(strCmp(a->value, b->value));
-	decr(a);
-	decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
-void print(Object o) {
-	String s = (String) o;
+void _print(object o) {
+	String s = o;
 	print_line(s->value, strLen(s->value));
 }
 
-Character character(Integer unicode) {
+object character(object o) {
+	Integer unicode = o;
 	Character _ret;
-	incr(unicode);
+	_incr(unicode);
 	_ret = Character_construct((char) unicode->value);
-	decr(unicode);
+	_decr(unicode);
 	return _ret;
 }
 
-String string(Iterable characters) {
-	return (String) characters;
+object string(object o) {
+	return o;
 }
