@@ -586,3 +586,21 @@ _object character(_object o) {
 _object string(_object o) {
 	return o;
 }
+
+_object input = NULL;
+
+void __init() {
+	while (1) {
+		int next_input_len = next_line_len();
+		if (next_input_len) {
+			char *buff = x3malloc(sizeof(char) * next_input_len);
+			read_line(buff);
+			String line = String_construct(buff);
+			x3free(buff);
+			Iterable i = Iterable_construct(line);
+			input = _append(input, i);
+		} else {
+			break;
+		}
+	}
+}
