@@ -1,4 +1,4 @@
-#define NULL 0
+#include "stdio.h"
 
 struct Object_t {
 	int id;  		/* object type */
@@ -116,6 +116,10 @@ Object allocate(int id, int field_count) {
 	o->parent = NULL;
 	o->ref_count = 0;
 	o->fields = x3malloc(sizeof(Object) * field_count);
+	int i;
+	for (i = 0; i < field_count; i++) {
+		o->fields[i] = NULL;
+	}
 	o->field_count = field_count;
 }
 
@@ -142,8 +146,8 @@ void decr(void *ptr) {
 			if(o->id == 4) {
 				x3free(((String) o)->value);
 			}
+			x3free(o);
 		}
-		x3free(o);
 	}
 }
 
@@ -154,6 +158,7 @@ _IterNode iterator(Iterable i) {
 	_IterNode n = x3malloc(sizeof(struct _IterNode_t));
 	n->curr = i->fields[0];
 	n->nextIter = (Iterable) i->fields[1];
+	n->next = i->next;
 	return n;
 }
 
@@ -188,11 +193,11 @@ Iterable copy(Iterable a) {
 
 Iterable append(Iterable a, Iterable b) {
 	if(!a) {
-		incr(b);
 		return b;
 	}
 	Iterable c = copy(a);
-	c->fields[1] = (Object) append((Iterable) c->fields[1], b);
+	c->fields[1] = (Object) append((Iterable) a->fields[1], b);
+	incr(c->fields[1]);
 	return c;
 }
 
@@ -382,8 +387,8 @@ Iterable Integer_through(Integer lower, Integer upper, Boolean includeLower, Boo
 	int _iL = includeLower->value;
 	int _iU = includeUpper->value;
 
-	int low = _lower || (!_iL);
-	int high =_upper && (!_iU);
+	int low = _lower + (!_iL);
+	int high =_upper - (!_iU);
 
 	Iterable _ret;
 	if (low > high) {
@@ -408,7 +413,6 @@ _IterNode Integer_onwards_next(_IterNode i) {
 	i->curr = (Object) Integer_construct(val + 1);
 	return i;
 }
-
 
 Iterable Integer_onwards(Integer a, Boolean inclusive) {
 	int start = a->value + !(inclusive->value);
@@ -529,7 +533,8 @@ Boolean String_equals(String a, String b) {
 	return _ret;
 }
 
-void print(String s) {
+void print(Object o) {
+	String s = (String) o;
 	print_line(s->value, strLen(s->value));
 }
 
