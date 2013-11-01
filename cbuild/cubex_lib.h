@@ -1,31 +1,31 @@
 #define NULL 0
 
-typedef void* object;
+typedef void* _object;
 
 struct Object_t {
 	int id;
-	object parent;
+	_object parent;
 	int ref_count;
 	int field_count;
-	object *fields;
+	_object *fields;
 };
 
 typedef struct Object_t* Object;
 
 struct _IterNode_t {
-	object curr;
+	_object curr;
 	struct _IterNode_t* (*next)(struct _IterNode_t*);
-	object nextIter;
+	_object nextIter;
 };
 
 typedef struct _IterNode_t* _IterNode;
 
 struct Iterable_t {
 	int id;
-	object parent;
+	_object parent;
 	int ref_count;
 	int field_count;
-	object *fields;
+	_object *fields;
 	_IterNode (*next)(_IterNode);
 };
 
@@ -33,10 +33,10 @@ typedef struct Iterable_t* Iterable;
 
 struct Integer_t {
 	int id;
-	object parent;
+	_object parent;
 	int ref_count;
 	int field_count;
-	object *fields;
+	_object *fields;
 	int value;
 };
 
@@ -44,10 +44,10 @@ typedef struct Integer_t* Integer;
 
 struct Boolean_t {
 	int id;
-	object parent;
+	_object parent;
 	int ref_count;
 	int field_count;
-	object *fields;
+	_object *fields;
 	int value;
 };
 
@@ -55,10 +55,10 @@ typedef struct Boolean_t* Boolean;
 
 struct Character_t {
 	int id;
-	object parent;
+	_object parent;
 	int ref_count;
 	int field_count;
-	object *fields;
+	_object *fields;
 	char value;
 };
 
@@ -66,17 +66,17 @@ typedef struct Character_t* Character;
 
 struct String_t {
 	int id;
-	object parent;
+	_object parent;
 	int ref_count;
 	int field_count;
-	object *fields;
+	_object *fields;
 	_IterNode (*next)(_IterNode);
 	char* value;
 };
 
 typedef struct String_t* String;
 
-object _allocate(int id, int field_count) {
+_object _allocate(int id, int field_count) {
 	Object o;
 	if (id < 5) {
 		switch (id) {
@@ -113,14 +113,14 @@ object _allocate(int id, int field_count) {
 	return o;
 }
 
-void _incr(object ptr) {
+void _incr(_object ptr) {
 	Object o = ptr;
 	if(o) {
 		o->ref_count += 1;
 	}
 }
 
-void _decr(object ptr) {
+void _decr(_object ptr) {
 	Object o = ptr;
 	if(o) {
 		o->ref_count -= 1;
@@ -139,7 +139,7 @@ void _decr(object ptr) {
 	}
 }
 
-_IterNode _iterator(object o) {
+_IterNode _iterator(_object o) {
 	Iterable i = o;
 	if (!i) {
 		return NULL;
@@ -161,7 +161,7 @@ _IterNode _common_next(_IterNode node) {
 	}
 }
 
-object Iterable_construct(object ptr) {
+_object Iterable_construct(_object ptr) {
 	Object o = ptr;
 	Iterable a = _allocate(0, 2);
 	_incr(o);
@@ -180,7 +180,7 @@ Iterable _copy(Iterable a) {
 	return b;
 }
 
-Iterable _append(object o1, object o2) {
+Iterable _append(_object o1, _object o2) {
 	Iterable a = o1;
 	Iterable b = o2;
 	if(!a) {
@@ -192,13 +192,13 @@ Iterable _append(object o1, object o2) {
 	return c;
 }
 
-object Boolean_construct(int b) {
+_object Boolean_construct(int b) {
 	Boolean a = _allocate(2, 0);
 	a->value = b;
 	return a;
 }
 
-object Boolean_negate(object o) {
+_object Boolean_negate(_object o) {
 	Boolean b = o;
 	_incr(b);
 	Boolean _ret = Boolean_construct(!b->value);
@@ -206,7 +206,7 @@ object Boolean_negate(object o) {
 	return _ret;
 }
 
-object Boolean_and(object o1, object o2) {
+_object Boolean_and(_object o1, _object o2) {
 	Boolean a = o1;
 	Boolean b = o2;
 	_incr(a);
@@ -217,7 +217,7 @@ object Boolean_and(object o1, object o2) {
 	return _ret;
 }
 
-object Boolean_or(object o1, object o2) {
+_object Boolean_or(_object o1, _object o2) {
 	Boolean a = o1;
 	Boolean b = o2;
 	_incr(a);
@@ -228,7 +228,7 @@ object Boolean_or(object o1, object o2) {
 	return _ret;
 }
 
-object Boolean_through(object o1, object o2, object o3, object o4) {
+_object Boolean_through(_object o1, _object o2, _object o3, _object o4) {
 	Boolean lower = o1;
 	Boolean upper = o2;
 	Boolean includeLower = o3;
@@ -263,7 +263,7 @@ object Boolean_through(object o1, object o2, object o3, object o4) {
 	return _ret;
 }
 
-object Boolean_onward(object o1, object o2) {
+_object Boolean_onward(_object o1, _object o2) {
 	Boolean a = o1;
 	Boolean inclusive = o2;
 	_incr(a);
@@ -274,7 +274,7 @@ object Boolean_onward(object o1, object o2) {
 	return _ret;
 }
 
-object Boolean_lessThan(object o1, object o2, object o3) {
+_object Boolean_lessThan(_object o1, _object o2, _object o3) {
 	Boolean a = o1;
 	Boolean b = o2;
 	Boolean strict = o3;
@@ -296,7 +296,7 @@ object Boolean_lessThan(object o1, object o2, object o3) {
 	return _ret;
 }
 
-object Boolean_equals(object o1, object o2) {
+_object Boolean_equals(_object o1, _object o2) {
 	Boolean a = o1;
 	Boolean b = o2;
 	Boolean _ret;
@@ -310,13 +310,13 @@ object Boolean_equals(object o1, object o2) {
 	return _ret;
 }
 
-object Integer_construct(int n) {
+_object Integer_construct(int n) {
 	Integer a = _allocate(1, 0);
 	a->value = n;
 	return a;
 }
 
-object Integer_negative(object o) {
+_object Integer_negative(_object o) {
 	Integer a = o;
 	Integer _ret;
 	_incr(a);
@@ -325,7 +325,7 @@ object Integer_negative(object o) {
 	return _ret;
 }
 
-object Integer_times(object o1, object o2) {
+_object Integer_times(_object o1, _object o2) {
 	Integer a = o1;
 	Integer b = o2;
 	Integer _ret;
@@ -336,7 +336,7 @@ object Integer_times(object o1, object o2) {
 	_decr(b);
 }
 
-object Integer_divide(object o1, object o2) {
+_object Integer_divide(_object o1, _object o2) {
 	Integer a = o1;
 	Integer b = o2;
 	Iterable _ret;
@@ -353,7 +353,7 @@ object Integer_divide(object o1, object o2) {
 	return _ret;
 }
 
-object Integer_modulo(object o1, object o2) {
+_object Integer_modulo(_object o1, _object o2) {
 	Integer a = o1;
 	Integer b = o2;
 	Iterable _ret;
@@ -370,7 +370,7 @@ object Integer_modulo(object o1, object o2) {
 	return _ret;
 }
 
-object Integer_plus(object o1, object o2) {
+_object Integer_plus(_object o1, _object o2) {
 	Integer a = o1;
 	Integer b = o2;
 	Integer _ret;
@@ -382,7 +382,7 @@ object Integer_plus(object o1, object o2) {
 	return _ret;
 }
 
-object Integer_minus(object o1, object o2) {
+_object Integer_minus(_object o1, _object o2) {
 	Integer a = o1;
 	Integer b = o2;
 	Integer _ret;
@@ -394,7 +394,7 @@ object Integer_minus(object o1, object o2) {
 	return _ret;
 }
 
-object Integer_through(object o1, object o2, object o3, object o4) {
+_object Integer_through(_object o1, _object o2, _object o3, _object o4) {
 	Integer lower = o1;
 	Integer upper = o2;
 	Boolean includeLower = o3;
@@ -436,7 +436,7 @@ _IterNode Integer_onwards_next(_IterNode i) {
 	return i;
 }
 
-object Integer_onwards(object o1, object o2) {
+_object Integer_onwards(_object o1, _object o2) {
 	Integer a = o1;
 	Boolean inclusive = o2;
 	int start = a->value + !(inclusive->value);
@@ -446,7 +446,7 @@ object Integer_onwards(object o1, object o2) {
 }
 
 
-object Integer_lessThan(object o1, object o2, object o3) {
+_object Integer_lessThan(_object o1, _object o2, _object o3) {
 	Integer a = o1;
 	Integer b = o2;
 	Boolean strict = o3;
@@ -468,7 +468,7 @@ object Integer_lessThan(object o1, object o2, object o3) {
 	return _ret;
 }
 
-object Integer_equals(object o1, object o2) {
+_object Integer_equals(_object o1, _object o2) {
 	Integer a = o1;
 	Integer b = o2;
 	Boolean _ret;
@@ -483,13 +483,13 @@ object Integer_equals(object o1, object o2) {
 }
 
 
-object Character_construct(char c) {
+_object Character_construct(char c) {
 	Character a = _allocate(3, 0);
 	a->value = c;
 	return a;
 }
 
-object Character_unicode(object o) {
+_object Character_unicode(_object o) {
 	Character c = o;
 	Integer _ret;
 	_incr(c);
@@ -498,7 +498,7 @@ object Character_unicode(object o) {
 	return _ret;
 }
 
-object Character_equals(object o1, object o2) {
+_object Character_equals(_object o1, _object o2) {
 	Boolean a = o1;
 	Boolean b = o2;
 	Boolean _ret;
@@ -533,7 +533,7 @@ int strLen(const char *s) {
     return s - start;
 }
 
-object strIter(const char *s) {
+_object strIter(const char *s) {
 	if(!*s) {
 		return NULL;
 	} else {
@@ -542,7 +542,7 @@ object strIter(const char *s) {
 	}
 }
 
-object String_construct(const char* s) {
+_object String_construct(const char* s) {
 	if (!s) {
 		return NULL;
 	} else {
@@ -557,7 +557,7 @@ object String_construct(const char* s) {
 	}
 }
 
-object String_equals(object o1, object o2) {
+_object String_equals(_object o1, _object o2) {
 	String a = o1;
 	String b = o2;
 	Boolean _ret;
@@ -569,12 +569,12 @@ object String_equals(object o1, object o2) {
 	return _ret;
 }
 
-void _print(object o) {
+void _print(_object o) {
 	String s = o;
 	print_line(s->value, strLen(s->value));
 }
 
-object character(object o) {
+_object character(_object o) {
 	Integer unicode = o;
 	Character _ret;
 	_incr(unicode);
@@ -583,6 +583,6 @@ object character(object o) {
 	return _ret;
 }
 
-object string(object o) {
+_object string(_object o) {
 	return o;
 }
