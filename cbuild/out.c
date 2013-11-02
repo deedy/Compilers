@@ -8,6 +8,5 @@ void cubex_main() {
 		_print(_i_iter->curr);
 		_i_iter = _i_iter->next(_i_iter);
 	}
-	x3free(_i_iter);
-	
+	x3free(_i_iter);	
 }

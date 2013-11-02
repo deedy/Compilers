@@ -46,6 +46,21 @@ class LName extends LExp {
 	}
 }
 
+class LFieldAccess extends LName {
+	LName obj;
+	int field;
+
+	public LFieldAccess(LName n, int f) {
+		super(n.name);
+		obj = n;
+		field = f;
+	}
+
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
+}
+
 /* Integer literal */
 class LNum extends LExp {
 	int value;
@@ -201,22 +216,6 @@ class LReturn extends LStmt {
 	}
 }
 
-/* define an object type */
-class LObj extends LNode {
-	LName name;
-	List<LName> fields;
-
-	public LObj(LName n, List<LName> f) {
-		name = n;
-		fields = f;
-	}
-
-	public String accept(LVisitor v) {
-		return v.visit(this);
-	}
-}
-
-
 /* define a function by id, list  */
 class LFunc extends LNode {
 	LName name;
@@ -234,16 +233,23 @@ class LFunc extends LNode {
 	}
 }
 
-/* memory management */
-class LAlloc {
+/* only garbage collect args, not locals */
+class LConstructor extends LNode {
+	LName name;
+	List<LName> args;
+	LStmt stmts;
+	int id;
+	int fields;
 
-}
+	public LConstructor(LName n, List<LName> a, int i, int f, LStmt s) {
+		name = n;
+		args = a;
+		stmts = s;
+		id = i;
+		fields = f;
+	}
 
-/* increment the reference count of an object */
-class LRetain {
-
-}
-
-class LFree {
-
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
 }
