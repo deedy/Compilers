@@ -81,6 +81,7 @@ public class CGenerator implements LVisitor {
 	public String visit(LConstructor f) {
 		String name = f.name.accept(this);
 		String stmts = f.stmts.accept(this);
+		String parent = f.parent.accept(this);
 
 		List<String> params = new ArrayList<String>();
 		for(int i = 0; i < f.args.size(); i++) {
@@ -101,10 +102,6 @@ public class CGenerator implements LVisitor {
 
 		localVars = null;
 		return String.format("_object %s ( %s ) {\n%s\n%s\n}", name, args, locals, stmts);
-	}
-
-	public String visit(LAlloc a) {
-		return String.format("_allocate(%d, %d)", a.id, a.num_fields);
 	}
 
 	public String visit(LNum n) {

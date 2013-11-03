@@ -233,20 +233,21 @@ class LFunc extends LNode {
 	}
 }
 
-/* only garbage collect args, not locals */
 class LConstructor extends LNode {
 	LName name;
 	List<LName> args;
 	LStmt stmts;
 	int id;
 	int fields;
+	LExp parent;
 
-	public LConstructor(LName n, List<LName> a, int i, int f, LStmt s) {
+	public LConstructor(LName n, List<LName> a, int i, int f, LExp p, LStmt s) {
 		name = n;
 		args = a;
 		stmts = s;
 		id = i;
 		fields = f;
+		parent = p;
 	}
 
 	public String accept(LVisitor v) {
