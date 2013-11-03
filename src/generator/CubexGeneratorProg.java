@@ -55,7 +55,6 @@ public class CubexGeneratorProg {
                 + "#include \"cubex_external_functions.h\"\n"
                 + "#include \"cubex_lib.h\"\n"
                 + "void cubex_main() {\n"
-                    + "_IterNode _i_iter = _iterator(input);\n"
                     + "_print(\"reject\");\n"
                 + "}\n";
     }

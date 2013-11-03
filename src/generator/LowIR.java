@@ -233,7 +233,7 @@ class LFunc extends LNode {
 	}
 }
 
-class LConstructor extends LNode {
+class LConstructor extends LFunc {
 	LName name;
 	List<LName> args;
 	LStmt stmts;
@@ -242,12 +242,26 @@ class LConstructor extends LNode {
 	LExp parent;
 
 	public LConstructor(LName n, List<LName> a, int i, int f, LExp p, LStmt s) {
-		name = n;
-		args = a;
-		stmts = s;
+		super(n, a, s);
 		id = i;
 		fields = f;
 		parent = p;
+	}
+
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
+}
+
+class LProg extends LNode {
+	List<LName> globals;
+	List<? extends LFunc> funcs;
+	List<? extends LStmt> stmts;
+
+	public LProg(List<LName> g, List<? extends LFunc> f, List<? extends LStmt> s) {
+		globals = g;
+		funcs = f;
+		stmts = s;
 	}
 
 	public String accept(LVisitor v) {

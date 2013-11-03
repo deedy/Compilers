@@ -190,4 +190,31 @@ public class CGenerator implements LVisitor {
 		}
 		return String.format("_ret = %s; %s return _ret;", ret, decrs);
 	}
+
+	public String visit(LProg p) {
+		List<String> globals = visitAll(p.globals);
+		List<String> funcs = visitAll(p.funcs);
+		List<String> stmts = visitAll(p.stmts);
+		List<String> globDecs = new ArrayList<String>();
+		for(String s : globals){
+			globDecs.add("_object " + s + ";\n");
+		}
+		String baseProg = "#include \"cubex_main.h\"\n"
+                + "#include \"cubex_external_functions.h\"\n"
+                + "#include \"cubex_lib.h\"\n"
+                + "%s\n"
+                + "%s\n"
+                + "_object _prog_main() {\n %s \n}\n"
+                + "void cubex_main() {\n"
+                	+ "__init();\n"
+              		+ "_object _i = _prog_main();\n"
+                    + "_IterNode _i_iter = _iterator(i);\n"
+                    + "while(_i_iter) {\n"
+                    	+ "_print(_i_iter->curr);\n"
+                    	+ "_i_iter = _i_iter->next(_i_iter);\n"
+                    + "}\n"
+                    + "x3free(_i_iter);\n"
+                + "}\n";
+    return String.format(baseProg, globals, funcs, stmts);
+	}
 }
