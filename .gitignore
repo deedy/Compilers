@@ -15,3 +15,8 @@ src/parser/CubexParserListener.java
 
 # built things
 build/*
+
+# made things
+*.o
+*.out
+*.so
