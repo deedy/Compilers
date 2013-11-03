@@ -4,13 +4,13 @@ import java.util.ArrayList;
 public abstract class CubexStatement extends CubexNode {
     public abstract Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt);
-    public abstract HNode accept(HVisitor v);
+    public abstract HStatement accept(HVisitor v);
 
     public abstract HStatement createHIR();
 }
 
 class CubexBlock extends CubexStatement {
-    private List<CubexStatement> stmts;
+    List<CubexStatement> stmts;
     public CubexBlock(List<CubexStatement> s) {
         stmts = s;
     }
@@ -38,7 +38,7 @@ class CubexBlock extends CubexStatement {
         return String.format("{ %s}", ListPrinter.nullify(s));
     }
 
-    public HNode accept(HVisitor v) {
+    public HStatement accept(HVisitor v) {
         return v.visit(this);
     }
 
@@ -52,8 +52,8 @@ class CubexBlock extends CubexStatement {
 }
 
 class CubexAssign extends CubexStatement {
-    private CubexVName name;
-    private CubexExpression expr;
+    CubexVName name;
+    CubexExpression expr;
     public CubexAssign(CubexVName n, CubexExpression e) {
         name = n;
         expr = e;
@@ -84,19 +84,20 @@ class CubexAssign extends CubexStatement {
         return String.format("%s := %s ;", n, e);
     }
 
-    public HNode accept(HVisitor v) {
+    public HStatement accept(HVisitor v) {
         return v.visit(this);
     }
 
     public HStatement createHIR() {
-        return new HAssign(expr.createHIR(), name.createHIR());
+        return null;
+        //return new HAssign(expr.createHIR(), name.createHIR());
     }
 }
 
 class CubexConditional extends CubexStatement {
-    private CubexExpression expr;
-    private CubexStatement stmt1;
-    private CubexStatement stmt2;
+    CubexExpression expr;
+    CubexStatement stmt1;
+    CubexStatement stmt2;
     public CubexConditional(CubexExpression e, CubexStatement  s1, CubexStatement s2) {
         expr = e;
         stmt1 = s1;
@@ -140,7 +141,7 @@ class CubexConditional extends CubexStatement {
         return String.format("if ( %s ) %s else %s", e, s1, s2);
     }
 
-    public HNode accept(HVisitor v) {
+    public HStatement accept(HVisitor v) {
         return v.visit(this);
     }
 
@@ -150,8 +151,8 @@ class CubexConditional extends CubexStatement {
 }
 
 class CubexWhileLoop extends CubexStatement {
-    private CubexExpression expr;
-    private CubexStatement stmt;
+    CubexExpression expr;
+    CubexStatement stmt;
     public CubexWhileLoop(CubexExpression e, CubexStatement s) {
         expr = e;
         stmt = s;
@@ -182,7 +183,7 @@ class CubexWhileLoop extends CubexStatement {
         return String.format("while ( %s ) %s", e, s);
     }
 
-    public HNode accept(HVisitor v) {
+    public HStatement accept(HVisitor v) {
         return v.visit(this);
     }
 
@@ -192,9 +193,9 @@ class CubexWhileLoop extends CubexStatement {
 }
 
 class CubexForLoop extends CubexStatement {
-    private CubexVName name;
-    private CubexExpression expr;
-    private CubexStatement stmt;
+    CubexVName name;
+    CubexExpression expr;
+    CubexStatement stmt;
     public CubexForLoop(CubexVName n, CubexExpression e, CubexStatement  s) {
         name = n;
         expr = e;
@@ -234,17 +235,18 @@ class CubexForLoop extends CubexStatement {
         return String.format("for ( %s in %s ) %s", n, e, s);   
     }
 
-    public HNode accept(HVisitor v) {
+    public HStatement accept(HVisitor v) {
         return v.visit(this);
     }
 
     public HStatement createHIR() {
-        return new HForLoop(expr.createHIR(), stmt.createHIR());
+        //return new HForLoop(expr.createHIR(), stmt.createHIR());
+        return null;
     }
 }
 
 class CubexReturn extends CubexStatement {
-    private CubexExpression expr;
+    CubexExpression expr;
     public CubexReturn(CubexExpression e) {
         expr = e;
     }
@@ -261,7 +263,7 @@ class CubexReturn extends CubexStatement {
         return String.format("return %s ;", e);   
     }
 
-    public HNode accept(HVisitor v) {
+    public HStatement accept(HVisitor v) {
         return v.visit(this);
     }
 

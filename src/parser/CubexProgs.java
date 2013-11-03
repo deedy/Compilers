@@ -5,7 +5,7 @@ import java.util.ArrayList;
 abstract class CubexProg extends CubexNode {
 	public CubexProg prog;
 	public abstract boolean typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st);
-	public abstract HNode accept(HVisitor v);
+	public abstract HProg accept(HVisitor v);
     public abstract HProg createHIR();
 }
 
@@ -40,14 +40,15 @@ class CubexStatementProg extends CubexProg {
 		}
 		return true;
 	}
-	public HNode accept(HVisitor v) {
+	public HProg accept(HVisitor v) {
         return v.visit(this);
     }
 
     public HProg createHIR() {
-        List<HStatement> s = new ArrayList<HStatement>();
-        s.add(stmt.createHIR());
-        return new HStatementProg(s);
+        // List<HStatement> s = new ArrayList<HStatement>();
+        // s.add(stmt.createHIR());
+        // return new HStatementProg(s);
+        return null;
     }
 }
 
@@ -79,16 +80,17 @@ class CubexStatementsProg extends CubexProg {
 		}
 		return prog.typeCheck(cc, fc, st.merge(imm.getLeft()));	
 	}
-	public HNode accept(HVisitor v) {
+	public HProg accept(HVisitor v) {
         return v.visit(this);
     }
 
     public HProg createHIR() {
-        List<HStatement> statements = new ArrayList<HStatement>();
-        for (CubexStatement s : stmts) {
-            statements.add(s.createHIR());
-        }
-        return new HStatementProg(statements);
+        // List<HStatement> statements = new ArrayList<HStatement>();
+        // for (CubexStatement s : stmts) {
+        //     statements.add(s.createHIR());
+        // }
+        // return new HStatementProg(statements);
+        return null;
     }
 
 }
@@ -152,16 +154,17 @@ class CubexFuncsProg extends CubexProg {
 		}
 		return prog.typeCheck(cc, fold, st);	
 	}
-	public HNode accept(HVisitor v) {
+	public HProg accept(HVisitor v) {
         return v.visit(this);
     }
 
     public HProg createHIR() {
-        List<HFunction> functions = new ArrayList<HFunction>();
-        for (CubexFunction f : funcs) {
-            functions.add(f.createHIR());
-        }
-        return new HFunProg(functions, prog.createHIR());
+        return null;
+        // List<HFunction> functions = new ArrayList<HFunction>();
+        // for (CubexFunction f : funcs) {
+        //     functions.add(f.createHIR());
+        // }
+        // return new HFunProg(functions, prog.createHIR());
     }
 }
 
@@ -181,7 +184,7 @@ class CubexInterfaceProg extends CubexProg {
 		Pair<CubexClassContext, CubexFunctionContext> imm = intf.typeCheck(cc, fc, st);
 		return prog.typeCheck(cc.merge(imm.getLeft()), fc, st);
 	}
-	public HNode accept(HVisitor v) {
+	public HProg accept(HVisitor v) {
         return v.visit(this);
     }
 
@@ -207,7 +210,7 @@ class CubexClassProg extends CubexProg {
 		return prog.typeCheck(cc.merge(imm.getLeft()), fc.merge(imm.getRight()), st);
 	}
 
-	public HNode accept(HVisitor v) {
+	public HProg accept(HVisitor v) {
         return v.visit(this);
     }
 

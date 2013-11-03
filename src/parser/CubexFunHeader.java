@@ -16,7 +16,7 @@ public class CubexFunHeader extends CubexNode {
         return (name.equals(f.name)) && (scheme.equals(f.scheme));
     }
 
-    public HNode accept(HVisitor v) {
+    public HFunction accept(HVisitor v) {
         return null;
     }
 
@@ -47,13 +47,13 @@ class CubexFunction extends CubexFunHeader{
     	return String.format("fun %s %s %s", n, s, b);
     }
 
-    public HNode accept(HVisitor v) {
+    public HFunction accept(HVisitor v) {
         
         return null; //new HFunction(name.name, body.createHIR());
 
     }
 
     public HFunction createHIR() {
-        return new HFunction("global_" + name.name, body.createHIR());
+        return new HFunction(name.name, body.createHIR());
     }
 }

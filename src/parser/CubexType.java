@@ -30,9 +30,13 @@ public abstract class CubexType extends CubexNode {
   		return CubexTC.subType(cc, kc, this, new CubexCType(new CubexCName("Iterable"), p));
   	}
 
-  	public abstract HNode accept(HVisitor v);
+  	public HNode accept(HVisitor v) {
+        return null;
+    };
     
     public abstract String createHIR();
+
+    public abstract List<String> getNames();
 }
 
 class Nothing extends CubexType {
@@ -51,12 +55,18 @@ class Nothing extends CubexType {
 		return new ArrayList<CubexType>();
 	}
 
-	public HNode accept(HVisitor v) {
-        return v.visit(this);
-    }
+	// public HNode accept(HVisitor v) {
+ //        return v.visit(this);
+ //    }
 
     public String createHIR() {
         return toString();
+    }
+
+    public List<String> getNames() {
+        List<String> names = new ArrayList<String>();
+        names.add("Nothing");
+        return names;
     }
 }
 
@@ -76,12 +86,18 @@ class Thing extends CubexType {
 		return new ArrayList<CubexType>();
 	}
 
-	public HNode accept(HVisitor v) {
-        return v.visit(this);
-    }
+	// public HNode accept(HVisitor v) {
+ //        return v.visit(this);
+ //    }
 
     public String createHIR() {
         return toString();
+    }
+
+    public List<String> getNames() {
+        List<String> names = new ArrayList<String>();
+        names.add("Thing");
+        return names;
     }
 }
 class CubexPType extends CubexType{
@@ -103,12 +119,18 @@ class CubexPType extends CubexType{
 		return new ArrayList<CubexType>();
 	}
 
-	public HNode accept(HVisitor v) {
-        return v.visit(this);
-    }
+	// public HNode accept(HVisitor v) {
+ //        return v.visit(this);
+ //    }
 
     public String createHIR() {
         return toString();
+    }
+
+    public List<String> getNames() {
+        List<String> names = new ArrayList<String>();
+        names.add(name.name);
+        return names;
     }
 }
 
@@ -149,12 +171,18 @@ class CubexCType extends CubexType{
 		return super.isIterable(cc, kc);
 	}
 
-	public HNode accept(HVisitor v) {
-        return v.visit(this);
-    }
+	// public HNode accept(HVisitor v) {
+ //        return v.visit(this);
+ //    }
 
     public String createHIR() {
         return toString();
+    }
+
+    public List<String> getNames() {
+        List<String> names = new ArrayList<String>();
+        names.add(name.name);
+        return names;
     }
 }
 
@@ -181,11 +209,17 @@ class CubexIType extends CubexType{
 		return new ArrayList<CubexType>(Arrays.asList(a, b));
 	}
 
-	public HNode accept(HVisitor v) {
-        return v.visit(this);
-    }
+	// public HNode accept(HVisitor v) {
+ //        return v.visit(this);
+ //    }
 
     public String createHIR() {
         return toString();
+    }
+
+    public List<String> getNames() {
+        List<String> names = a.getNames();
+        names.addAll(b.getNames());
+        return names;
     }
 }
