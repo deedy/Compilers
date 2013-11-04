@@ -92,45 +92,13 @@ class HInterface extends HNode {
 
 class HClass extends HInterface {
 
+    List<String> fields;
+
     public HClass(int id, String name, List<HExpression> exprs, 
-        List<HStatement> stmts, HashMap<String,HFunction> funs, List<String> parents) {
+        List<HStatement> stmts, HashMap<String,HFunction> funs, List<String> parents, List<String> fields) {
         super(id, name, exprs, stmts, funs, parents);
+        this.fields = fields;
     }
-    
-
-    // public HClass(String name, String superclass, List<HFunction> funs, 
-    //     List<String> paramNames, CubexTypeContext typeContext, List<HStatement> stmts, List<HExpression> exprs) {
-    //     this(name, superclass, funs, paramNames);
-    //     this.typeContext = typeContext;
-    //     this.stmts = stmts;
-    //     this.exprs = exprs;
-    // }
-
-    // public HClass(String name, String superclass, List<HFunction> funs, 
-    //     List<String> paramNames) {
-    //     this.name = name;
-    //     this.superclass = superclass;
-    //     HClass.classes.put(name, this);
-    //     for (HFunction f : funs) {
-    //         functions.put(f.name, f);
-    //     }
-    // }
-
-    // Get all the functions of this class
-    // public void getFunctions(Map<String, HFunction> funs) {
-
-    //     for (Map.Entry<String, HFunction> e : functions.entrySet()) {
-    //         // Don't add the function if it's already in the map
-    //         if (funs.get(e.getKey()) != null) {
-    //             funs.put(e.getKey(), e.getValue());
-    //         }
-    //     }
-
-    //     if (superclass != null) {
-    //         HClass classObj = HClass.classes.get(superclass);
-    //         classObj.getFunctions(funs);
-    //     }
-    // }
 }
 
 class HConditional extends HStatement {

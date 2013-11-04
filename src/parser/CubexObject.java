@@ -112,6 +112,7 @@ class CubexClass extends CubexObject {
     CubexTypeContext tCont; 
     List<CubexStatement> stmts;
     List<CubexExpression> exprs;
+    SymbolTable fields;
 
     public Pair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st) {
         // make a new kind context
@@ -161,6 +162,7 @@ class CubexClass extends CubexObject {
             }
             currOutgoing = imm.getLeft();
         }
+        fields = currOutgoing;
         SymbolTable merged = st.merge(currOutgoing);
 
         // type check the super call

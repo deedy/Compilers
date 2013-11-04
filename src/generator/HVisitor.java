@@ -14,38 +14,38 @@ public class HVisitor {
         return new HFunctionCall(n.name.name, args);
     }
 
-    HNode visit(CubexVar n) {
+    HExpression visit(CubexVar n) {
         return new HVar(n.name.name);
     }
 
-    HNode visit(CubexMethodCall n) {
+    HExpression visit(CubexMethodCall n) {
         List<HExpression> args = visitExpressions(n.exprList);
         args.add(n.expr.accept(this));
 
         return new HFunctionCall(((CubexCType)n.expr.type).name + "_" + n.name, args);
     }
 
-    HNode visit(CubexName n) {
-        return null;
-    }
-
-    HNode visit(CubexAppend n) {
+    HExpression visit(CubexAppend n) {
         return new HAppend(n.left.accept(this), n.right.accept(this));
     }
 
-    HNode visit(CubexIterable n) {
-        return null;
+    HExpression visit(CubexIterable n) {
+        List<HExpression> exprs = new ArrayList<HExpression>();
+        for (CubexExpression e : n.mElements) {
+            exprs.add(e.accept(this));
+        }
+        return new HIterable(exprs);
     }
 
-    HNode visit(CubexBoolean n) {
+    HExpression visit(CubexBoolean n) {
         return new HBoolean(n.bool);
     }
 
-    HNode visit(CubexInt n) {
+    HExpression visit(CubexInt n) {
         return new HInt(n.num);
     }
 
-    HNode visit(CubexString n) {
+    HExpression visit(CubexString n) {
         return new HString(n.str);
     }
     
@@ -107,6 +107,7 @@ public class HVisitor {
         HashMap<String, HFunction> funs = new HashMap<String, HFunction>();
         List<HStatement> stmts = visitStatements(n.stmts);
         List<HExpression> exprs = visitExpressions(n.exprs);
+        List<String> fields = new ArrayList<String>();
 
         for (CubexFunction f : n.funList) {
             HFunction fu = f.accept(this);
@@ -115,9 +116,12 @@ public class HVisitor {
             funs.put(fu.name, fu);
             fu.declassedName = n.name.name + "_" + fu.name;
         }
+        for (CubexName na : n.fields.keys()) {
+            fields.add(na.name);
+        }
         int id = curId;
         curId++;
-        HClass c = new HClass(id, n.name.name, exprs, stmts, funs, n.type.getNames());
+        HClass c = new HClass(id, n.name.name, exprs, stmts, funs, n.type.getNames(), fields);
         classes.put(n.name.name, c);
         return c;
     }
@@ -149,7 +153,7 @@ public class HVisitor {
     HProg visit(CubexStatementProg n) {
         List<HStatement> s = new ArrayList<HStatement>();
         s.add(n.stmt.accept(this));
-        return new HStatementProg(s, n.prog.accept(this));
+        return new HStatementProg(s, null);
     }
     
     HProg visit(CubexStatementsProg n) {
