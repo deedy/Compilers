@@ -26,6 +26,7 @@
         <javac srcdir="src"
             destdir="build/classes"
             deprecation="Yes"
+            debug="Yes"
             listfiles="No"
             includeantruntime="false">
             <classpath>
@@ -41,6 +42,7 @@
         <mkdir dir="build/classes"/>
         <javac srcdir="src"
             destdir="build/classes"
+            dbug="Yes"
             deprecation="Yes"
             listfiles="No"
             includeantruntime="false">
@@ -81,6 +83,19 @@
         <jar destfile="build/jar/Cubex.jar">
             <manifest>
                 <attribute name="Main-Class" value="CubexCheckerProg"/>
+                <attribute name="Class-Path" value="${mf.classpath}"/>
+            </manifest>
+            <fileset dir="build/classes" includes="**/*.class" />
+            <fileset dir="src" includes="**/*.java **/*.g4 **/*.cx" />
+            <zipgroupfileset dir="lib" includes="**/*.jar" />
+        </jar>
+    </target>
+
+    <target name="jar_generator">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/Cubex.jar">
+            <manifest>
+                <attribute name="Main-Class" value="CubexGeneratorProg"/>
                 <attribute name="Class-Path" value="${mf.classpath}"/>
             </manifest>
             <fileset dir="build/classes" includes="**/*.class" />

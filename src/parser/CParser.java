@@ -8,7 +8,6 @@ public class CParser {
 	        CubexParser par = new CubexParser(tokens);
 	        par.removeErrorListeners();
 	        par.setBuildParseTree(true);
-	        CubexProg prog = par.prog().cu;
 	        return par;
 	    } catch (Exception e) {
 	    	System.out.println("Parser error");

@@ -21,7 +21,7 @@ public class CubexGeneratorProg {
                 writeOut(reject());
             } else {
                 // check it
-                CubexNode root = CChecker.check(parser);
+                CubexProg root = CChecker.check(parser);
                 if (root == null) {
                     writeOut(reject());
                 } else {
@@ -32,8 +32,13 @@ public class CubexGeneratorProg {
         }
     }
 
-    public static String generate(CubexNode node) {
-        return "";
+    public static String generate(CubexProg node) {
+        HVisitor hVisitor = new HVisitor();
+        HNode hRoot = node.accept(hVisitor);
+        HighLow hl = new HighLow();
+        LNode lRoot = hRoot.accept(hl);
+        CGenerator cc = new CGenerator();
+        return lRoot.accept(cc);
     }
 
     public static void writeOut(String s) {

@@ -30,13 +30,8 @@ public class CubexCheckerProg {
         try {
             CubexProg prog = parser.prog().cu;
             Triple<CubexClassContext, CubexFunctionContext, SymbolTable> trip = buildBase();
-            // System.out.println(prog);
+            System.out.println(prog);
             if(prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())) {
-                HVisitor v = new HVisitor();
-                prog.accept(v);
-                for (Map.Entry<String, HInterface> f : v.classes.entrySet()) {
-                    System.out.println(f.getValue());
-                }
                 return "accept";
             }
             else return "reject";

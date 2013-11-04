@@ -8,9 +8,10 @@ import java.io.InputStreamReader;
 
 public class CChecker {
 	
-	public static CubexNode check(CubexParser par) {
+	public static CubexProg check(CubexParser par) {
 		try {
             CubexProg prog = par.prog().cu;
+            // System.out.println(prog);
             Triple<CubexClassContext, CubexFunctionContext, SymbolTable> trip = buildBase();
             if(prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())) {
             	return prog;
