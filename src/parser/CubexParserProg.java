@@ -3,9 +3,10 @@ import org.antlr.v4.runtime.tree.*;
 import java.lang.StringBuilder;
 import java.util.BitSet;
 import java.util.List;
+import java.util.Map;
 
 
-public class CubexParserProg extends CubexNode  {
+public class CubexParserProg {
     public static void main(String[] args) throws Exception {
         // lex the file
         CubexLexer lex = new CubexLexer(new ANTLRFileStream(args[0]));
@@ -22,6 +23,15 @@ public class CubexParserProg extends CubexNode  {
         parser.setBuildParseTree(true);
         try {
             CubexProg prog = parser.prog().cu;
+
+            // HProg h = prog.createHIR();
+            // for (Map.Entry<String, HClass> e : HClass.classes.entrySet()) {
+            //     System.out.println(e.getKey() + "\n");
+            //     for(Map.Entry<String, HFunction> fun : e.getValue().functions.entrySet()) {
+            //         System.out.println(fun.getKey());
+            //     }
+            //     System.out.println();
+            // }
             return prog.toString();
         } catch(Exception e){
             // e.printStackTrace();
@@ -54,9 +64,5 @@ public class CubexParserProg extends CubexNode  {
         }
         lex.reset();
         return false;
-    }
-
-    public HNode accept(HVisitor v) {
-        return v.visit(this);
     }
 }

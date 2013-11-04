@@ -7,13 +7,15 @@ import org.antlr.v4.runtime.*;
 
 public abstract class CubexExpression extends CubexNode {
 
+    CubexType type;
+
     /**
         Returns the type of this class expression or throws an error
     */
     public abstract CubexType getType(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st);
 
-    public abstract HNode accept(HVisitor v);
+    public abstract HExpression accept(HVisitor v);
 
     public abstract HExpression createHIR();
 }
@@ -57,7 +59,10 @@ class CubexFunctionCall extends CubexExpression {
             }
         }
         //check the validity of the return type
-        if(CubexTC.isValid(cc, kc, swapped.type)) return swapped.type;
+        if(CubexTC.isValid(cc, kc, swapped.type)) {
+            this.type = swapped.type;
+            return this.type;
+        }
         throw new CubexTC.TypeCheckException(
             String.format("%s IS NOT A VALID TYPE IN FUNCTION CALL %s", 
                 swapped.type, toString())
@@ -79,17 +84,20 @@ class CubexFunctionCall extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
 
-        List<HExpression> args = new ArrayList<HExpression>();
-        for(CubexExpression e : exprList) {
-            args.add(e.createHIR());
-        }
+        // List<HExpression> args = new ArrayList<HExpression>();
+        // for(CubexExpression e : exprList) {
+        //     args.add(e.createHIR());
+        // }
 
-        return new HFunctionCall(name.name, args);
+
+
+        // return new HFunctionCall(name.name, args);
+        return null;
     }
 }
 
@@ -106,14 +114,17 @@ class CubexVar extends CubexExpression {
     public CubexType getType(CubexClassContext cc, 
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         // simply return the type from the symbol table
-        if(st.contains(name)) return st.get(name);
+        if(st.contains(name)) {
+            this.type = st.get(name);
+            return this.type;
+        }
         throw new CubexTC.TypeCheckException(
             String.format("%s IS NOT IN SYMBOL TABLE", name.toString())
         );
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -159,7 +170,10 @@ class CubexMethodCall extends CubexExpression {
             }
         }
         //check the validity of the return type
-        if(CubexTC.isValid(cc, kc, swapped.type)) return swapped.type;
+        if(CubexTC.isValid(cc, kc, swapped.type)) {
+            this.type = swapped.type;
+            return this.type; 
+        }
         throw new CubexTC.TypeCheckException(
             String.format("%s IS NOT A VALID TYPE IN METHOD CALL %s", 
                 swapped.type, toString())
@@ -315,7 +329,7 @@ class CubexMethodCall extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -356,7 +370,10 @@ class CubexAppend extends CubexExpression {
         }
         // check for validity
         // System.out.printf("%s : %s ++ %s : %s -> %s\n", left, lt, right, rt, commonType);
-        if(CubexTC.isValid(cc, kc, commonType)) return out;
+        if(CubexTC.isValid(cc, kc, commonType)) {
+            this.type = out;
+            return this.type;
+        };
         throw new CubexTC.TypeCheckException(
             String.format("TYPE %s IS NOT VALID IN %s", out.toString(), toString())
             );
@@ -374,7 +391,7 @@ class CubexAppend extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -400,7 +417,10 @@ class CubexIterable extends CubexExpression {
         List<CubexType> params = new ArrayList<CubexType>();
         params.add(commonType);
         CubexType out = new CubexCType(new CubexCName("Iterable"), params);
-        if(CubexTC.isValid(cc, kc, out)) return out;
+        if(CubexTC.isValid(cc, kc, out)) {
+            this.type = out;
+            return this.type;
+        }
         throw new CubexTC.TypeCheckException(
             String.format("TYPE %s IS NOT VALID IN %s", out.toString(), toString())
             );
@@ -416,7 +436,7 @@ class CubexIterable extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -433,7 +453,8 @@ class CubexBoolean extends CubexExpression {
 
     public CubexType getType(CubexClassContext cc, 
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
-        return new CubexCType("Boolean");
+        this.type = new CubexCType("Boolean");
+        return this.type;
     }
 
 
@@ -446,7 +467,7 @@ class CubexBoolean extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -459,7 +480,8 @@ class CubexInt extends CubexExpression {
 
     public CubexType getType(CubexClassContext cc, 
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
-        return new CubexCType("Integer");
+        this.type = new CubexCType("Integer");
+        return this.type;
     }
 
 
@@ -472,7 +494,7 @@ class CubexInt extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -485,7 +507,8 @@ class CubexString extends CubexExpression {
 
     public CubexType getType(CubexClassContext cc, 
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
-        return new CubexCType("String");
+        this.type = new CubexCType("String");
+        return this.type;
     }
 
 
@@ -498,7 +521,7 @@ class CubexString extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {

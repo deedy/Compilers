@@ -1,0 +1,44 @@
+# Cubex Compiler Test 5 - Stage 6
+
+interface Printer
+{
+	fun print() : Iterable<String>;
+}
+
+class ConstantPrinter() extends Printer
+{
+	fun print() : Iterable<String>
+	{
+		return ["Constant"];
+	}
+}
+
+class Doubler(s : String) extends Printer
+{
+	fun print() : Iterable<String>
+	{
+		return [s] ++ [s];
+	}
+}
+
+ps := [];
+c := 0;
+for(i in input)
+{
+	if(c==0)
+	{
+		ps := ps ++ [ConstantPrinter()];
+		c := 1;
+	}
+	else
+	{
+		ps := ps ++ [Doubler(i)];
+		c := 0;
+	}
+}
+out := [];
+for(p in ps)
+{
+	out := out ++ p.print();
+}
+return out;

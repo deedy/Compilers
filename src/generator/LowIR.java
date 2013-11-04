@@ -1,5 +1,6 @@
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
 
 abstract class LNode {
 	public abstract String accept(LVisitor v);
@@ -39,6 +40,21 @@ class LName extends LExp {
 
 	public LName(String s) {
 		name = s;
+	}
+
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
+}
+
+class LFieldAccess extends LName {
+	LName obj;
+	int field;
+
+	public LFieldAccess(LName n, int f) {
+		super(n.name);
+		obj = n;
+		field = f;
 	}
 
 	public String accept(LVisitor v) {
@@ -97,6 +113,33 @@ class LFunCall extends LExp {
 	public String accept(LVisitor v) {
 		return v.visit(this);
 	}
+}
+
+class LIter extends LExp {
+	List<LExp> items;
+
+	public LIter(List<LExp> i) {
+		items = i;
+	}
+
+	public LIter(LExp e) {
+		items = new ArrayList<LExp>();
+		items.add(e);
+	}
+
+	public LIter(LExps e) {
+		items = new ArrayList<LExp>();
+		items.addAll(e.exps);
+	}
+
+	public LIter() {
+		items = new ArrayList<LExp>();
+	}
+
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
+
 }
 
 class LAppend extends LExp {
@@ -201,22 +244,6 @@ class LReturn extends LStmt {
 	}
 }
 
-/* define an object type */
-class LObj extends LNode {
-	LName name;
-	List<LName> fields;
-
-	public LObj(LName n, List<LName> f) {
-		name = n;
-		fields = f;
-	}
-
-	public String accept(LVisitor v) {
-		return v.visit(this);
-	}
-}
-
-
 /* define a function by id, list  */
 class LFunc extends LNode {
 	LName name;
@@ -234,16 +261,38 @@ class LFunc extends LNode {
 	}
 }
 
-/* memory management */
-class LAlloc {
+class LConstructor extends LFunc {
+	LName name;
+	List<LName> args;
+	LStmt stmts;
+	int id;
+	int fields;
+	LExp parent;
 
+	public LConstructor(LName n, List<LName> a, int i, int f, LExp p, LStmt s) {
+		super(n, a, s);
+		id = i;
+		fields = f;
+		parent = p;
+	}
+
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
 }
 
-/* increment the reference count of an object */
-class LRetain {
+class LProg extends LNode {
+	List<LName> globals;
+	List<LFunc> funcs;
+	LStmt stmts;
 
-}
+	public LProg(List<LName> g, List<LFunc> f, LStmt s) {
+		globals = g;
+		funcs = f;
+		stmts = s;
+	}
 
-class LFree {
-
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
 }

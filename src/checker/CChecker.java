@@ -1,57 +1,32 @@
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
-import java.lang.StringBuilder;
-import java.util.BitSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.StringBuffer;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Map;
 
-
-public class CubexCheckerProg {
-    public static void main(String[] args) throws Exception {
-        // lex the file
-        CubexLexer lex = new CubexLexer(new ANTLRFileStream(args[0]));
-        lex.removeErrorListeners();
-        CommonTokenStream tokens = new CommonTokenStream(lex);
-        CubexParser par = new CubexParser(tokens);
-        par.removeErrorListeners();
-        System.out.print(assignment3(lex, par));
-    }
-
-    public static String assignment3(CubexLexer lex, CubexParser parser) {
-        if (hasLexerError(lex)) {
-            return "reject";
-        }
-        StringBuilder output = new StringBuilder();
-        parser.setBuildParseTree(true);
-        try {
-            CubexProg prog = parser.prog().cu;
-            System.out.println(prog);
+public class CChecker {
+	
+	public static CubexProg check(CubexParser par) {
+		try {
+            CubexProg prog = par.prog().cu;
+            // System.out.println(prog);
             Triple<CubexClassContext, CubexFunctionContext, SymbolTable> trip = buildBase();
-            System.out.println(prog);
             if(prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())) {
-                return "accept";
+            	return prog;
+            } else {
+            	System.out.println("Checker Error");
+            	return null;
             }
-            else return "reject";
-
-        } catch (CubexTC.TypeCheckException tc) {
-            System.out.println(tc.getMessage());
-             tc.printStackTrace();
-            return "reject";
         } catch(Exception e){
-            System.out.println(e);
+            System.out.println("Checker Error");
             e.printStackTrace();
-            //e.printStackTrace();
-            // parser.reset();
-            // viewTree(parser);
-            return "reject";
-        }
-    }
+            return null;
+        }		
+	}
 
-    public static Triple<CubexClassContext, CubexFunctionContext, SymbolTable> buildBase() {
+	public static Triple<CubexClassContext, CubexFunctionContext, SymbolTable> buildBase() {
         try {
             StringBuffer sb = new StringBuffer();
 
@@ -94,27 +69,5 @@ public class CubexCheckerProg {
                 e.printStackTrace();
                 return null;
             }
-    }
-
-    public static void viewTree(CubexParser parser) {
-        ParserRuleContext tree = parser.prog();
-        tree.inspect(parser);
-        parser.reset();
-    }
-
-
-    public static boolean hasLexerError(CubexLexer lex) {
-         for (Token token = lex.nextToken();
-             token.getType() != Token.EOF;
-             token = lex.nextToken()){
-            int type = token.getType();
-            String rule = lex.ruleNames[token.getType()-1];
-            if (rule.equals("ERRORCHAR")) {
-                lex.reset();
-                return true;
-            }
-        }
-        lex.reset();
-        return false;
     }
 }

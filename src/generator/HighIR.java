@@ -2,9 +2,10 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.ArrayList;
 
 abstract class HNode {
-    
+  public abstract LNode accept(HLVisitor v);  
 }
 
 abstract class HExpression extends HNode {
@@ -15,47 +16,91 @@ abstract class HStatement extends HNode {
 
 }
 
-class HClass extends HNode {
-    static HashMap<String, HClass> classes = new HashMap<String, HClass>(); // a set of all the classes
+class HInterface extends HNode {
+    static HashMap<String, HInterface> classes = new HashMap<String, HInterface>(); // a set of all the classes
     String name;
-    String superclass; // the name of the superclass
-    HashMap<String, HFunction> functions = new HashMap<String, HFunction>();
-    CubexTypeContext typeContext;
     List<HStatement> stmts;
     List<HExpression> exprs;
+    HashMap<String, HFunction> funs;
+    List<String> parents;
+    int id;
+    List<String> superInterfaces;
 
-    public HClass(String name, String superclass, List<HFunction> funs, 
-        List<String> paramNames, CubexTypeContext typeContext, List<HStatement> stmts, List<HExpression> exprs) {
-        this(name, superclass, funs, paramNames);
-        this.typeContext = typeContext;
-        this.stmts = stmts;
-        this.exprs = exprs;
-    }
-
-    public HClass(String name, String superclass, List<HFunction> funs, 
-        List<String> paramNames) {
+    public HInterface(int id, String name, List<HExpression> exprs, 
+        List<HStatement> stmts, HashMap<String,HFunction> funs, List<String> parents) {
+        this.id = id;
         this.name = name;
-        this.superclass = superclass;
-        HClass.classes.put(name, this);
-        for (HFunction f : funs) {
-            functions.put(f.name, f);
-        }
+        this.exprs = exprs;
+        this.stmts = stmts;
+        this.funs = funs;
+        this.parents = parents;
     }
 
-    // Get all the functions of this class
-    public void getFunctions(Map<String, HFunction> funs) {
-
-        for (Map.Entry<String, HFunction> e : functions.entrySet()) {
-            // Don't add the function if it's already in the map
-            if (funs.get(e.getKey()) != null) {
-                funs.put(e.getKey(), e.getValue());
+    List<String> getSuperInterfaces() {
+        // no more super classes
+        if (parents.size() == 1 && parents.contains("Thing")) {
+            return null;
+        }
+        if (superInterfaces != null) {
+            return superInterfaces;
+        }
+        List<String> superInterfaces = new ArrayList<String>();
+        for (String s : parents) {
+            HInterface i = classes.get(s);
+            if (!(i instanceof HClass)) {
+                superInterfaces.add(s);
+            }
+            HInterface superInterface = classes.get(s);
+            if (superInterface != null) {
+                superInterfaces.addAll(superInterface.getSuperInterfaces());
             }
         }
+        this.superInterfaces = superInterfaces;
+        return superInterfaces;
+    }
 
-        if (superclass != null) {
-            HClass classObj = HClass.classes.get(superclass);
-            classObj.getFunctions(funs);
+    void implementSuperInterfaces(HashMap<String, HInterface> classes) {
+        for (String s : getSuperInterfaces()) {
+            HInterface i = classes.get(s);
+            if (i != null) {
+                for (Map.Entry<String,HFunction> f : funs.entrySet()) {
+                    i.addImplementation(id, f.getValue());
+                }
+            }
         }
+    }
+
+    void addImplementation(Integer id, HFunction f) {
+        HFunction fun = funs.get(f.name);
+        if (fun != null) {
+            fun.addDef(id, f);
+        }
+    }
+
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Map.Entry<String, HFunction> f : funs.entrySet()) {
+            s.append(f.getValue().toString() + "\n");
+        }
+        return s.toString();
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
+}
+
+class HClass extends HInterface {
+
+    List<String> fields;
+
+    public HClass(int id, String name, List<HExpression> exprs, 
+        List<HStatement> stmts, HashMap<String,HFunction> funs, List<String> parents, List<String> fields) {
+        super(id, name, exprs, stmts, funs, parents);
+        this.fields = fields;
+    }
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -70,16 +115,25 @@ class HConditional extends HStatement {
         this.stmt1 = stmt1;
         this.stmt2 = stmt2;
     }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
 }
 
 class HForLoop extends HStatement {
-
+    String name;
     HExpression expr;
     HStatement stmt;
 
-    public HForLoop(HExpression expr, HStatement stmt) {
+    public HForLoop(String name, HExpression expr, HStatement stmt) {
+        this.name = name;
         this.expr = expr;
         this.stmt = stmt;
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -92,6 +146,10 @@ class HWhileLoop extends HStatement {
         this.expr = expr;
         this.stmt = stmt;
     }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
 }
 
 class HReturn extends HStatement {
@@ -101,15 +159,22 @@ class HReturn extends HStatement {
     public HReturn(HExpression expr) {
         this.expr = expr;
     }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
 }
 
-/// NO CUBEX... T.T
 class HBlock extends HStatement {
 
     List<HStatement> stmts;
 
     public HBlock(List<HStatement> stmts) {
         this.stmts = stmts;
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -118,16 +183,19 @@ class HAssign extends HStatement {
     HExpression expr;
     String name;
 
-    public HAssign(HExpression expr, String name) {
+    public HAssign(String name, HExpression expr) {
         this.expr = expr;
         this.name = name;
     }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
 }
-
-
 
 class HFunction {
     String name;
+    String declassedName;
     HStatement body;
 
     public HFunction(String name, HStatement body) {
@@ -135,6 +203,38 @@ class HFunction {
         this.body = body;
     }
 
+    void addDef(Integer id, HFunction f) {
+        return;
+    }
+
+    public String toString() {
+        return declassedName;
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
+}
+
+class HUndefFunction extends HFunction {
+    HashMap<Integer, HFunction> defs = new HashMap<Integer, HFunction>();
+
+    public HUndefFunction(String name) {
+        super(name, null);
+        this.name = name;
+    }
+
+    void addDef(Integer id, HFunction f) {
+        defs.put(id, f);
+    }
+
+    public String toString() {
+        return declassedName + "\n" + defs.toString();
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
 }
 
 class HFunctionCall extends HExpression {
@@ -146,17 +246,9 @@ class HFunctionCall extends HExpression {
         this.name = name;
         this.args = args;
     }
-}
 
-class HMethodCall extends HExpression {
-    HExpression expr;
-    String name;
-    List<HExpression> args;
-
-    public HMethodCall(HExpression expr, String name, List<HExpression> args) {
-        this.name = name;
-        this.args = args;
-        this.expr = expr;
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -168,6 +260,10 @@ class HAppend extends HExpression {
         this.left = left;
         this.right = right;
     }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
 }
 
 class HIterable extends HExpression {
@@ -175,6 +271,10 @@ class HIterable extends HExpression {
 
     public HIterable(List<HExpression> elems) {
         this.elems = elems;
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -185,6 +285,10 @@ class HBoolean extends HExpression {
     public HBoolean(String val) {
         this.val = val;
     } 
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
 }
 
 class HInt extends HExpression {
@@ -193,6 +297,10 @@ class HInt extends HExpression {
 
     public HInt(int val) {
         this.val = val;
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -203,6 +311,10 @@ class HString extends HExpression {
     public HString(String val) {
         this.val = val;
     }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
 }
 
 class HVar extends HExpression {
@@ -212,27 +324,40 @@ class HVar extends HExpression {
     public HVar(String var) {
         this.var = var;
     }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
 }
 
-class HProg {
+abstract class HProg extends HNode {
     HProg prog;
 }
 
 class HStatementProg extends HProg {
     List<HStatement> stmts;
 
-    public HStatementProg(List<HStatement> stmts) {
+    public HStatementProg(List<HStatement> stmts, HProg prog) {
         this.stmts = stmts;
+        this.prog = prog;
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
     }
 }
 
 class HClassProg extends HProg {
 
-    HClass cls;
+    HInterface cls;
 
-    public HClassProg(HClass cls, HProg prog) {
+    public HClassProg(HInterface cls, HProg prog) {
         this.cls = cls;
         this.prog = prog;
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
     }
 }
 
@@ -243,5 +368,9 @@ class HFunProg extends HProg {
     public HFunProg(List<HFunction> funs, HProg prog) {
         this.funs = funs;
         this.prog = prog;
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
     }
 }

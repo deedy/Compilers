@@ -1,0 +1,37 @@
+# Cubex Compiler Test 3 - Stage 3
+
+fun rest<T>(l : Iterable<T>) : Iterable<T>
+{
+	ret := [];
+	passed := false;
+	for(e in l)
+	{
+		if(passed)
+		{
+			ret := ret ++ [e];
+		}
+		passed := true;
+	}
+	return ret;
+}
+
+fun last<T>(l : Iterable<T>, default : T) : T
+{
+	for(e in l)
+	{
+		return last<T>(rest<T>(l),e);
+	}
+	return default;
+}
+
+fun length(l : Iterable<Thing>) : Integer
+{
+	ret := 0;
+	for(e in l)
+	{
+		ret := ret + 1;
+	}
+	return ret;
+}
+
+return [last<String>(input,"")]++[string([character(last<Integer>(5..length(input),3)+30)])];
