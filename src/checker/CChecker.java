@@ -20,6 +20,7 @@ public class CChecker {
             	return null;
             }
         } catch(Exception e){
+            System.out.println("Checker Error");
             e.printStackTrace();
             return null;
         }		

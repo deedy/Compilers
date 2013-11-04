@@ -12,7 +12,7 @@ public class CubexParserProg {
         CubexLexer lex = new CubexLexer(new ANTLRFileStream(args[0]));
         CommonTokenStream tokens = new CommonTokenStream(lex);
         CubexParser par = new CubexParser(tokens);
-        assignment2(lex, par);
+        System.out.print(assignment2(lex, par));
     }
 
     public static String assignment2(CubexLexer lex, CubexParser parser) {

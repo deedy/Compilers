@@ -84,7 +84,7 @@ class CubexFunctionCall extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -124,7 +124,7 @@ class CubexVar extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -329,7 +329,7 @@ class CubexMethodCall extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -391,7 +391,7 @@ class CubexAppend extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -436,7 +436,7 @@ class CubexIterable extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -467,7 +467,7 @@ class CubexBoolean extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -494,7 +494,7 @@ class CubexInt extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {
@@ -521,7 +521,7 @@ class CubexString extends CubexExpression {
     }
 
     public HExpression accept(HVisitor v) {
-        return null;
+        return v.visit(this);
     }
 
     public HExpression createHIR() {

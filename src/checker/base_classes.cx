@@ -41,4 +41,4 @@ fun character<>(unicode : Integer<>) : Character<> {}
 
 fun string<>(characters : Iterable<Character>) : String<> {}
 
-input := [""];
+input := [ "" , "" ];

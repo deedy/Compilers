@@ -42,7 +42,7 @@
         <mkdir dir="build/classes"/>
         <javac srcdir="src"
             destdir="build/classes"
-            dbug="Yes"
+            debug="Yes"
             deprecation="Yes"
             listfiles="No"
             includeantruntime="false">

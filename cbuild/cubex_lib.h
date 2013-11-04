@@ -334,6 +334,7 @@ _object Integer_times(_object o1, _object o2) {
 	_ret = Integer_construct(a->value * b->value);
 	_decr(a);
 	_decr(b);
+	return _ret;
 }
 
 _object Integer_divide(_object o1, _object o2) {
@@ -530,7 +531,7 @@ int strLen(const char *s) {
     const char *start;
     start = s;
     while(*++s);
-    return s - start;
+    return s - start + 1;
 }
 
 _object strIter(const char *s) {
@@ -584,7 +585,29 @@ _object character(_object o) {
 }
 
 _object string(_object o) {
-	return o;
+	Iterable i = o;
+	int totalLen = 0;
+	_IterNode iter = _iterator(i);
+	while (iter) {
+		totalLen += 1;
+		iter = iter->next(iter);
+	} x3free(iter);
+
+	char *buff = x3malloc(sizeof(char) * (totalLen + 1));
+	int j;
+	for(j = 0; j < totalLen + 1; j++) {
+		buff[j] = 0;
+	}
+	int index = 0;
+	iter = _iterator(i);
+	while (iter) {
+		Character c = iter->curr;
+		buff[index++] = c->value;
+		iter = iter->next(iter);
+	} x3free(iter);
+	String ret = String_construct(buff);
+	x3free(buff);
+	return ret;
 }
 
 _object input = NULL;

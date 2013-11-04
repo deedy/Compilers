@@ -221,6 +221,7 @@ class CubexForLoop extends CubexStatement {
         // System.out.println(expr);
         // System.out.println(exprType);
         CubexCType foundIter = (CubexCType) CubexTC.join(cc, kc, testIter, exprType);
+        // System.out.println(foundIter);
         SymbolTable tmp = mutableSt.set(name, foundIter.params.get(0));
 
         Triple<SymbolTable, Boolean, CubexType> ret = stmt.typeCheck(cc, kc, fc, st, tmp);

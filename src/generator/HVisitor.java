@@ -8,7 +8,7 @@ public class HVisitor {
     HashMap<String, HInterface> classes = new HashMap<String, HInterface>();
     int curId = 5;
 
-    HNode visit(CubexFunctionCall n) {
+    HExpression visit(CubexFunctionCall n) {
         List<HExpression> args = visitExpressions(n.exprList);
 
         return new HFunctionCall(n.name.name, args);
@@ -20,7 +20,7 @@ public class HVisitor {
 
     HExpression visit(CubexMethodCall n) {
         List<HExpression> args = visitExpressions(n.exprList);
-        args.add(n.expr.accept(this));
+        args.add(0, n.expr.accept(this));
 
         return new HFunctionCall(((CubexCType)n.expr.type).name + "_" + n.name, args);
     }

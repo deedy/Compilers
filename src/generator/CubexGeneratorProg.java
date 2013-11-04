@@ -22,11 +22,14 @@ public class CubexGeneratorProg {
             } else {
                 // check it
                 CubexProg root = CChecker.check(parser);
+                System.out.println(root);
                 if (root == null) {
                     writeOut(reject());
                 } else {
                     // work it
-                    writeOut(generate(root));
+                    String out = generate(root);
+                    // System.out.println(out);
+                    writeOut(out);
                 }
             }
         }

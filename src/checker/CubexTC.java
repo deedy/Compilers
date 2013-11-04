@@ -93,6 +93,10 @@ public class CubexTC {
 						lowest = test;
 					}
 				}
+			} else {
+				if (containsNothing(lowest)) {
+					lowest = test;
+				}
 			}
 		}
 		// System.out.printf("And the join is %s\n", lowest);

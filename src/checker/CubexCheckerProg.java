@@ -29,6 +29,7 @@ public class CubexCheckerProg {
         parser.setBuildParseTree(true);
         try {
             CubexProg prog = parser.prog().cu;
+            System.out.println(prog);
             Triple<CubexClassContext, CubexFunctionContext, SymbolTable> trip = buildBase();
             System.out.println(prog);
             if(prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())) {
