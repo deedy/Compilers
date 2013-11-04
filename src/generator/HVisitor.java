@@ -112,7 +112,6 @@ public class HVisitor {
         for (CubexFunction f : n.funList) {
             HFunction fu = f.accept(this);
             // we append the class name to the method name
-            System.out.println(fu.name);
             funs.put(fu.name, fu);
             fu.declassedName = n.name.name + "_" + fu.name;
         }

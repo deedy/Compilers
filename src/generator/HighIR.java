@@ -80,7 +80,7 @@ class HInterface extends HNode {
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (Map.Entry<String, HFunction> f : funs.entrySet()) {
-            s.append(f.toString());
+            s.append(f.getValue().toString() + "\n");
         }
         return s.toString();
     }
@@ -208,7 +208,7 @@ class HFunction {
     }
 
     public String toString() {
-        return name;
+        return declassedName;
     }
 
     public LNode accept(HLVisitor v) {
@@ -217,7 +217,6 @@ class HFunction {
 }
 
 class HUndefFunction extends HFunction {
-    String name;
     HashMap<Integer, HFunction> defs = new HashMap<Integer, HFunction>();
 
     public HUndefFunction(String name) {
@@ -230,7 +229,7 @@ class HUndefFunction extends HFunction {
     }
 
     public String toString() {
-        return name;
+        return declassedName + "\n" + defs.toString();
     }
 
     public LNode accept(HLVisitor v) {
