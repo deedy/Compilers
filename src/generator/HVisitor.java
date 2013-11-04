@@ -126,11 +126,20 @@ public class HVisitor {
     }
     
     HFunction visit(CubexFunction n) {
-        return new HFunction(n.name.name, n.body.accept(this));
+        // get the arg list
+        List<String> args = new ArrayList<String>();
+        for(CubexName arg : n.scheme.tCont.names) {
+            args.add(arg.name);
+        }
+        return new HFunction(n.name.name, n.body.accept(this), args);
     }
 
     HFunction visit(CubexFunHeader n) {
-        return new HUndefFunction(n.name.name);
+        List<String> args = new ArrayList<String>();
+        for(CubexName arg : n.scheme.tCont.names) {
+            args.add(arg.name);
+        }
+        return new HUndefFunction(n.name.name, args);
     }
     
     HProg visit(CubexClassProg n) {

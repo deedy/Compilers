@@ -20,11 +20,6 @@ public class CubexFunHeader extends CubexNode {
         return v.visit(this);
     }
 
-    public HFunction createHIR() {
-        
-        return new HFunction(name.name, null);
-
-    }
 }
 
 class CubexFunction extends CubexFunHeader{
@@ -53,7 +48,4 @@ class CubexFunction extends CubexFunHeader{
 
     }
 
-    public HFunction createHIR() {
-        return new HFunction(name.name, body.createHIR());
-    }
 }

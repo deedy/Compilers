@@ -86,28 +86,35 @@ public class CGenerator implements LVisitor {
 		String name = f.name.accept(this);
 		String stmts = f.stmts.accept(this);
 
+		int argCount = 0;
 		List<String> params = new ArrayList<String>();
 		for(int i = 0; i < f.args.size(); i++) {
-			params.add("_object o");
+			params.add("_object o" + argCount);
+			argCount += 1;
 		}
 		String args = join(params, ", ");
 
 		int count = 0;
 		List<String> varDefs = new ArrayList<String>();
-		for(String arg : visitAll(f.args)) {
-			varDefs.add(String.format("Object %s = o%d; _incr(%s);",
+		List<String> vArgs = visitAll(f.args);
+		for(String arg : vArgs) {
+			varDefs.add(String.format("Object %s = o%d;\n_incr(%s);\n",
 				arg, count, arg));
+			count += 1;
 		}
 		for(String varName : localVars) {
-			varDefs.add(String.format("Object %s = NULL;", varName));
+			if (vArgs.contains(varName)) {
+				continue;
+			}
+			varDefs.add(String.format("Object %s = NULL;\n", varName));
 		}
-		varDefs.add("Object _tmp = NULL;");
-		varDefs.add("Object _ret = NULL;");
+		varDefs.add("Object _tmp = NULL;\n");
+		varDefs.add("Object _ret = NULL;\n");
 
 		String locals = join(varDefs, "\n");
 
 		localVars = new HashSet<String>();
-		return String.format("_object %s ( %s ) {\n%s\n%s\n}", name, args, locals, stmts);
+		return String.format("_object %s(%s) {\n%s\n%s\n}\n", name, args, locals, stmts);
 	}
 
 	public String visit(LConstructor f) {
@@ -133,7 +140,7 @@ public class CGenerator implements LVisitor {
 		String locals = join(varDefs, "\n");
 
 		localVars = new HashSet<String>();
-		return String.format("_object %s ( %s ) {\n%s\n%s\n}", name, args, locals, stmts);
+		return String.format("_object %s(%s) {\n%s\n%s\n}\n", name, args, locals, stmts);
 	}
 
 	public String visit(LNum n) {
@@ -200,7 +207,7 @@ public class CGenerator implements LVisitor {
 		String stmt = f.stmt.accept(this);
 		// make a call to the built-in next function
 		return String.format(
-			"_IterNode %s = _iterator(%s);\nwhile (%s) {\n _object %s = %s->curr; \n%s \n%s = %s->next(%s);\n} x3free(%s);\n",
+			"_IterNode %s = _iterator(%s);\nwhile (%s) {\n_object %s = %s->curr;\n%s\n%s = %s->next(%s);\n} x3free(%s);",
 			iterName, iter, iterName, elem, iterName, stmt, iterName, iterName, iterName, iterName);
 
 	}
@@ -208,14 +215,14 @@ public class CGenerator implements LVisitor {
 	public String visit(LWhile w) {
 		String cond = w.cond.accept(this);
 		String stmts = w.stmt.accept(this);
-		return String.format("while (((Boolean) %s)->value) { %s }", cond, stmts);
+		return String.format("while (((Boolean) %s)->value) {\n%s\n}", cond, stmts);
 	}
 
 	public String visit(LCond c) {
 		String cond = c.cond.accept(this);
 		String ifBlock = c.ifBlock.accept(this);
 		String elseBlock = c.elseBlock.accept(this);
-		return String.format("if (((Boolean) %s)->value) { %s } else { %s }", cond, ifBlock, elseBlock);
+		return String.format("if (((Boolean) %s)->value) {\n%s\n} else {\n%s\n}", cond, ifBlock, elseBlock);
 	}
 
 	public String visit(LAssign a) {
@@ -226,7 +233,7 @@ public class CGenerator implements LVisitor {
 			localVars.add(name);
 		}
 
-		return String.format("_tmp = %s; %s = (Object) %s; _incr(%s); _decr(_tmp);", name, name, val, name);
+		return String.format("_tmp = %s;\n%s = (Object) %s;\n_incr(%s);\n_decr(_tmp);\n", name, name, val, name);
 	}
 
 	public String visit(LReturn r) {
@@ -235,7 +242,7 @@ public class CGenerator implements LVisitor {
 		for(String var : localVars) {
 			decrs.append(String.format("_decr(%s);", var));
 		}
-		return String.format("_ret = %s; _incr(_ret); %s return _ret;", ret, decrs);
+		return String.format("_ret = %s;\n_incr(_ret);\n%s\nreturn _ret;", ret, decrs);
 	}
 
 	public String visit(LProg p) {
@@ -268,5 +275,4 @@ public class CGenerator implements LVisitor {
                 + "}\n";
     return String.format(baseProg, globDecs, funDecs);
 	}
-
 }

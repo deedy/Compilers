@@ -210,7 +210,7 @@ class LCond extends LStmt {
 	public LCond(LExp c, LStmt i, LStmt e) {
 		cond = c;
 		ifBlock = i;
-
+		elseBlock = e;
 	}
 
 	public String accept(LVisitor v) {
