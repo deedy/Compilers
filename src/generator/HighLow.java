@@ -76,7 +76,13 @@ public class HighLow implements HLVisitor {
 	}
 
 	public LNode visit(HFunction f) {
-		return null;
+		LName name = new LName(f.name);
+		List<LName> args = new ArrayList<LName>();
+		for(String s : f.args) {
+			args.add(new LName(s));
+		}
+		LStmt body = (LStmt) f.body.accept(this);
+		return new LFunc(name, args, body);
 	}
 
 	public LNode visit(HUndefFunction f) {
@@ -145,6 +151,15 @@ public class HighLow implements HLVisitor {
 	}
 
 	public LNode visit(HFunProg f) {
-		return null;
+		List<LFunc> funs = new ArrayList<LFunc>();
+		for (HFunction fn : f.funs) {
+			funs.add((LFunc) fn.accept(this));
+		}
+		funcs.addAll(funs);
+		if(f.prog == null) {
+			return new LProg(globals, funcs, new LStmts(topLevels));
+		} else {
+			return f.prog.accept(this);
+		}
 	}
 }

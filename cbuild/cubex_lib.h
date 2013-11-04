@@ -105,11 +105,12 @@ _object _allocate(int id, int field_count) {
 	o->parent = NULL;
 	o->ref_count = 0;
 	o->field_count = field_count;
-	o->fields = x3malloc(sizeof(Object) * field_count);
+	_object *fields = x3malloc(sizeof(_object) * field_count);
 	int i;
 	for (i = 0; i < field_count; i++) {
-		o->fields[i] = NULL;
+		fields[i] = NULL;
 	}
+	o->fields = fields;
 	return o;
 }
 
@@ -145,6 +146,9 @@ _IterNode _iterator(_object o) {
 		return NULL;
 	}
 	_IterNode n = x3malloc(sizeof(struct _IterNode_t));
+	if(!(i->fields[0])) {
+		return NULL;
+	}
 	n->curr = i->fields[0];
 	n->nextIter = (Iterable) i->fields[1];
 	n->next = i->next;
@@ -547,13 +551,16 @@ _object String_construct(const char* s) {
 	if (!s) {
 		return NULL;
 	} else {
-		String str = _allocate(5, 0);
-		str->value = x3malloc(sizeof(char) * strLen(s));
-		strCpy(s, str->value);
+		String str = _allocate(5, 2);
+		char* buff = x3malloc(sizeof(char) * strLen(s));
+		strCpy(s, buff);
 		Iterable i = strIter(s);
-		str->fields = i->fields;
-		str->next = i->next;
-		x3free(i);
+		if(i) {
+			str->fields = i->fields;
+			str->next = i->next;
+			x3free(i);
+		}
+		str->value = buff;
 		return str;
 	}
 }
@@ -602,8 +609,9 @@ _object string(_object o) {
 	iter = _iterator(i);
 	while (iter) {
 		Character c = iter->curr;
-		buff[index++] = c->value;
+		buff[index] = c->value;
 		iter = iter->next(iter);
+		index += 1;
 	} x3free(iter);
 	String ret = String_construct(buff);
 	x3free(buff);
@@ -616,7 +624,7 @@ void __init() {
 	while (1) {
 		int next_input_len = next_line_len();
 		if (next_input_len) {
-			char *buff = x3malloc(sizeof(char) * next_input_len);
+			char *buff = x3malloc(sizeof(char) * (next_input_len + 1));
 			read_line(buff);
 			String line = String_construct(buff);
 			x3free(buff);
@@ -626,4 +634,5 @@ void __init() {
 			break;
 		}
 	}
+	_incr(input);
 }

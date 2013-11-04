@@ -196,11 +196,13 @@ class HAssign extends HStatement {
 class HFunction {
     String name;
     String declassedName;
+    List<String> args;
     HStatement body;
 
-    public HFunction(String name, HStatement body) {
+    public HFunction(String name, HStatement body, List<String> args) {
         this.name = name;
         this.body = body;
+        this.args = args;
     }
 
     void addDef(Integer id, HFunction f) {
@@ -219,9 +221,8 @@ class HFunction {
 class HUndefFunction extends HFunction {
     HashMap<Integer, HFunction> defs = new HashMap<Integer, HFunction>();
 
-    public HUndefFunction(String name) {
-        super(name, null);
-        this.name = name;
+    public HUndefFunction(String name, List<String> args) {
+        super(name, null, args);
     }
 
     void addDef(Integer id, HFunction f) {
