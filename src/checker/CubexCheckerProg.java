@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.lang.StringBuffer;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 
 public class CubexCheckerProg {
@@ -30,7 +31,14 @@ public class CubexCheckerProg {
             CubexProg prog = parser.prog().cu;
             Triple<CubexClassContext, CubexFunctionContext, SymbolTable> trip = buildBase();
             // System.out.println(prog);
-            if(prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())) return "accept";
+            if(prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())) {
+                HVisitor v = new HVisitor();
+                prog.accept(v);
+                for (Map.Entry<String, HInterface> f : v.classes.entrySet()) {
+                    System.out.println(f.getValue());
+                }
+                return "accept";
+            }
             else return "reject";
 
         } catch (CubexTC.TypeCheckException tc) {
@@ -39,6 +47,7 @@ public class CubexCheckerProg {
             return "reject";
         } catch(Exception e){
             System.out.println(e);
+            e.printStackTrace();
             //e.printStackTrace();
             // parser.reset();
             // viewTree(parser);

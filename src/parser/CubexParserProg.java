@@ -23,6 +23,7 @@ public class CubexParserProg {
         parser.setBuildParseTree(true);
         try {
             CubexProg prog = parser.prog().cu;
+
             // HProg h = prog.createHIR();
             // for (Map.Entry<String, HClass> e : HClass.classes.entrySet()) {
             //     System.out.println(e.getKey() + "\n");

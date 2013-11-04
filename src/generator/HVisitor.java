@@ -48,12 +48,6 @@ public class HVisitor {
     HNode visit(CubexString n) {
         return new HString(n.str);
     }
-
-    HFunction visit(CubexFunHeader n) {
-        HFunction f = new HFunction(n.name.name, null);
-        funHeaders.add(f);
-        return f;
-    }
     
     // HNode visit(CubexPType n) {
     //     return null;
@@ -100,7 +94,7 @@ public class HVisitor {
             HFunction fu = f.accept(this);
             // we append the class name to the method name
             funs.put(fu.name, fu);
-            fu.name = n.name.name + "_" + fu.name;
+            fu.declassedName = n.name.name + "_" + fu.name;
         }
         int id = curId;
         curId++;
@@ -117,8 +111,9 @@ public class HVisitor {
         for (CubexFunction f : n.funList) {
             HFunction fu = f.accept(this);
             // we append the class name to the method name
+            System.out.println(fu.name);
             funs.put(fu.name, fu);
-            fu.name = n.name.name + "_" + fu.name;
+            fu.declassedName = n.name.name + "_" + fu.name;
         }
         int id = curId;
         curId++;
@@ -129,6 +124,10 @@ public class HVisitor {
     
     HFunction visit(CubexFunction n) {
         return new HFunction(n.name.name, n.body.accept(this));
+    }
+
+    HFunction visit(CubexFunHeader n) {
+        return new HUndefFunction(n.name.name);
     }
     
     HProg visit(CubexClassProg n) {

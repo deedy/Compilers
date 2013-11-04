@@ -80,6 +80,14 @@ class HInterface extends HNode {
             fun.addDef(id, f);
         }
     }
+
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Map.Entry<String, HFunction> f : funs.entrySet()) {
+            s.append(f.toString());
+        }
+        return s.toString();
+    }
 }
 
 class HClass extends HInterface {
@@ -195,6 +203,7 @@ class HAssign extends HStatement {
 
 class HFunction {
     String name;
+    String declassedName;
     HStatement body;
 
     public HFunction(String name, HStatement body) {
@@ -204,6 +213,10 @@ class HFunction {
 
     void addDef(Integer id, HFunction f) {
         return;
+    }
+
+    public String toString() {
+        return name;
     }
 
 }
@@ -219,6 +232,10 @@ class HUndefFunction extends HFunction {
 
     void addDef(Integer id, HFunction f) {
         defs.put(id, f);
+    }
+
+    public String toString() {
+        return name;
     }
 }
 
