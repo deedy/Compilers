@@ -92,11 +92,13 @@ class HInterface extends HNode {
 
 class HClass extends HInterface {
 
-    public HClass(int id, String name, List<HExpression> exprs, 
-        List<HStatement> stmts, HashMap<String,HFunction> funs, List<String> parents) {
-        super(id, name, exprs, stmts, funs, parents);
-    }
+    List<String> fields;
 
+    public HClass(int id, String name, List<HExpression> exprs, 
+        List<HStatement> stmts, HashMap<String,HFunction> funs, List<String> parents, List<String> fields) {
+        super(id, name, exprs, stmts, funs, parents);
+        this.fields = fields;
+    }
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
