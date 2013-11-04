@@ -7,13 +7,50 @@ import java.util.Iterator;
 import java.util.HashSet;
 
 interface LVisitor {
-	public String visit(LNode n);
+
+	public String visit(LExps lst);
+
+	public String visit(LStmts lst);
+
+	public String visit(LFunc f);
+
+	public String visit(LConstructor f);
+
+	public String visit(LNum n);
+
+	public String visit(LString s);
+
+	public String visit(LBool b);
+
+	public String visit(LNull n);
+
+	public String visit(LName n);
+
+	public String visit(LIter n);
+
+	public String visit(LFunCall fc);
+
+	public String visit(LAppend app);
+
+	public String visit(LFieldAccess f);
+
+	public String visit(LFor f);
+
+	public String visit(LWhile w);
+
+	public String visit(LCond c);
+
+	public String visit(LAssign a);
+
+	public String visit(LReturn r);
+
+	public String visit(LProg p);
 }
 
 public class CGenerator implements LVisitor {
 
 	int iterCount = 0;
-	HashSet<String> localVars;
+	HashSet<String> localVars = new HashSet<String>();
 
 	/* helper functions */
 	String join(Collection<?> s, String delimiter) {
@@ -33,11 +70,6 @@ public class CGenerator implements LVisitor {
 			ret.add(n.accept(this));
 		}
 		return ret;
-	}
-
-	/* implements a visitor */
-	public String visit(LNode n) {
-		return null;
 	}
 
 	public String visit(LExps lst) {
@@ -74,7 +106,7 @@ public class CGenerator implements LVisitor {
 
 		String locals = join(varDefs, "\n");
 
-		localVars = null;
+		localVars = new HashSet<String>();
 		return String.format("_object %s ( %s ) {\n%s\n%s\n}", name, args, locals, stmts);
 	}
 
@@ -100,7 +132,7 @@ public class CGenerator implements LVisitor {
 
 		String locals = join(varDefs, "\n");
 
-		localVars = null;
+		localVars = new HashSet<String>();
 		return String.format("_object %s ( %s ) {\n%s\n%s\n}", name, args, locals, stmts);
 	}
 
@@ -112,7 +144,7 @@ public class CGenerator implements LVisitor {
 		return String.format("String_construct(%s)", s.value);
 	} 
 
-	String LBool(LBool b) {
+	public String visit(LBool b) {
 		return String.format("Boolean_construct(%d)", b.value ? 1 : 0);
 	}
 
@@ -122,6 +154,24 @@ public class CGenerator implements LVisitor {
 
 	public String visit(LName n) {
 		return n.name;
+	}
+
+	public String visit(LIter i) {
+		return chain(i.items, 0);
+	}
+
+	String chain(List<LExp> l, int index) {
+		if (index == l.size()) {
+			return "NULL";
+		} else if (index == l.size() - 1) {
+			String item = l.get(index).accept(this);
+			return String.format("Iterable_construct(%s)", item);
+		} else {
+			String item = l.get(index).accept(this);
+			String iter = String.format("Iterable_construct(%s)", item);
+			String next = chain(l, index + 1);
+			return String.format("_append(%s, %s)", iter, next);
+		}
 	}
 
 	public String visit(LFunCall fc) {
@@ -149,12 +199,11 @@ public class CGenerator implements LVisitor {
 		String elem = f.elem.accept(this);
 		String stmt = f.stmt.accept(this);
 
-		localVars.add(iterName);
 		localVars.add(elem);
 		// make a call to the built-in next function
 		return String.format(
-			"_IterNode %s = _iterator(%s); while (%s) { %s = %s->curr; %s %s = next(%s);}",
-			iterName, iter, iterName, elem, iterName, stmt, iterName, iterName);
+			"_IterNode %s = _iterator(%s);\nwhile (%s) {\n %s = %s->curr; \n%s \n%s = %s->next(%s);\n} x3free(%s);\n",
+			iterName, iter, iterName, elem, iterName, stmt, iterName, iterName, iterName, iterName);
 
 	}
 
@@ -179,7 +228,7 @@ public class CGenerator implements LVisitor {
 			localVars.add(name);
 		}
 
-		return String.format("_tmp = %s; %s = %s; _incr(%s); _decr(tmp);", name, name, val, name);
+		return String.format("_tmp = %s; %s = %s; _incr(%s); _decr(_tmp);", name, name, val, name);
 	}
 
 	public String visit(LReturn r) {
@@ -188,33 +237,38 @@ public class CGenerator implements LVisitor {
 		for(String var : localVars) {
 			decrs.append(String.format("_decr(%s);", var));
 		}
-		return String.format("_ret = %s; %s return _ret;", ret, decrs);
+		return String.format("_ret = %s; _incr(_ret); %s return _ret;", ret, decrs);
 	}
 
 	public String visit(LProg p) {
 		List<String> globals = visitAll(p.globals);
+		localVars = new HashSet<String>(globals);
+		LFunc prog_main = new LFunc(new LName("_prog_main"),
+									new ArrayList<LName>(), 
+									p.stmts);
+		p.funcs.add(prog_main);
 		List<String> funcs = visitAll(p.funcs);
-		List<String> stmts = visitAll(p.stmts);
-		List<String> globDecs = new ArrayList<String>();
+		StringBuilder globDecs = new StringBuilder();
 		for(String s : globals){
-			globDecs.add("_object " + s + ";\n");
+			globDecs.append("_object " + s + ";\n");
 		}
+		String funDecs = join(funcs, "\n");
 		String baseProg = "#include \"cubex_main.h\"\n"
                 + "#include \"cubex_external_functions.h\"\n"
                 + "#include \"cubex_lib.h\"\n"
                 + "%s\n"
                 + "%s\n"
-                + "_object _prog_main() {\n %s \n}\n"
                 + "void cubex_main() {\n"
                 	+ "__init();\n"
               		+ "_object _i = _prog_main();\n"
-                    + "_IterNode _i_iter = _iterator(i);\n"
+                    + "_IterNode _i_iter = _iterator(_i);\n"
                     + "while(_i_iter) {\n"
                     	+ "_print(_i_iter->curr);\n"
                     	+ "_i_iter = _i_iter->next(_i_iter);\n"
                     + "}\n"
                     + "x3free(_i_iter);\n"
                 + "}\n";
-    return String.format(baseProg, globals, funcs, stmts);
+    return String.format(baseProg, globDecs, funDecs);
 	}
+
 }

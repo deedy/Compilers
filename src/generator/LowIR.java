@@ -114,6 +114,19 @@ class LFunCall extends LExp {
 	}
 }
 
+class LIter extends LExp {
+	List<LExp> items;
+
+	public LIter(List<LExp> i) {
+		items = i;
+	}
+
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
+
+}
+
 class LAppend extends LExp {
 	LExp iter1;
 	LExp iter2;
@@ -255,10 +268,10 @@ class LConstructor extends LFunc {
 
 class LProg extends LNode {
 	List<LName> globals;
-	List<? extends LFunc> funcs;
-	List<? extends LStmt> stmts;
+	List<LFunc> funcs;
+	LStmt stmts;
 
-	public LProg(List<LName> g, List<? extends LFunc> f, List<? extends LStmt> s) {
+	public LProg(List<LName> g, List<LFunc> f, LStmt s) {
 		globals = g;
 		funcs = f;
 		stmts = s;

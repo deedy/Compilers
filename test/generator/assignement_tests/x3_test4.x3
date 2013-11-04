@@ -1,0 +1,30 @@
+# Cubex Compiler Test 4 - Stage 4
+
+class Multiplier(s : String, n : Integer)
+{
+	fun print() : Iterable<String>
+	{
+		ret := [];
+		v := n;
+		while(v>0)
+		{
+			v:=v-1;
+			ret := ret ++ [s];
+		}
+		return ret;
+	}
+}
+
+ds := [];
+c := 0;
+for(i in input)
+{
+	ds := ds ++ [Multiplier(i,c)];
+	c := c + 1;
+}
+out := [];
+for(d in ds)
+{
+	out := out ++ d.print();
+}
+return out;
