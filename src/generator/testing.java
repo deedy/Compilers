@@ -2,21 +2,17 @@ import java.util.*;
 
 class Testing {
 	public static void main(String[] args) {
-		LName ret = new LName("ret");
-		LName input = new LName("input");
 		LName i = new LName("i");
-		List<LExp> iL = new ArrayList<LExp>();
-		iL.add(i);
-		LIter iter = new LIter(iL);
-		LAppend a = new LAppend(ret, iter);
-		LAppend b = new LAppend(iter, a);
-		LAssign as = new LAssign(ret, b);
-		LFor f = new LFor(input, i, as);
-		LReturn ret2 = new LReturn(ret);
+		LName r = new LName("r");
+		LName input = new LName("input");
+		LIter ri = new LIter();
+		LStmt as = new LAssign(r, ri);
+		LStmt body = new LAssign(r, new LAppend(r, new LIter(i)));
+		LStmt f = new LFor(input, i, body);
 		List<LStmt> stmts = new ArrayList<LStmt>();
-		stmts.add(new LAssign(ret, new LNull()));
+		stmts.add(as);
 		stmts.add(f);
-		stmts.add(ret2);
+		stmts.add(new LReturn(r));
 		List<LName> names = new ArrayList<LName>();
 		List<LFunc> funcs = new ArrayList<LFunc>();
 		LNode n = new LProg(names, funcs, new LStmts(stmts));

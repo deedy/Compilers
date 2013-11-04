@@ -1,5 +1,6 @@
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
 
 abstract class LNode {
 	public abstract String accept(LVisitor v);
@@ -119,6 +120,20 @@ class LIter extends LExp {
 
 	public LIter(List<LExp> i) {
 		items = i;
+	}
+
+	public LIter(LExp e) {
+		items = new ArrayList<LExp>();
+		items.add(e);
+	}
+
+	public LIter(LExps e) {
+		items = new ArrayList<LExp>();
+		items.addAll(e.exps);
+	}
+
+	public LIter() {
+		items = new ArrayList<LExp>();
 	}
 
 	public String accept(LVisitor v) {

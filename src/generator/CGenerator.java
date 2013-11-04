@@ -198,11 +198,9 @@ public class CGenerator implements LVisitor {
 		iterCount += 1;
 		String elem = f.elem.accept(this);
 		String stmt = f.stmt.accept(this);
-
-		localVars.add(elem);
 		// make a call to the built-in next function
 		return String.format(
-			"_IterNode %s = _iterator(%s);\nwhile (%s) {\n %s = %s->curr; \n%s \n%s = %s->next(%s);\n} x3free(%s);\n",
+			"_IterNode %s = _iterator(%s);\nwhile (%s) {\n _object %s = %s->curr; \n%s \n%s = %s->next(%s);\n} x3free(%s);\n",
 			iterName, iter, iterName, elem, iterName, stmt, iterName, iterName, iterName, iterName);
 
 	}
@@ -228,7 +226,7 @@ public class CGenerator implements LVisitor {
 			localVars.add(name);
 		}
 
-		return String.format("_tmp = %s; %s = %s; _incr(%s); _decr(_tmp);", name, name, val, name);
+		return String.format("_tmp = %s; %s = (Object) %s; _incr(%s); _decr(_tmp);", name, name, val, name);
 	}
 
 	public String visit(LReturn r) {

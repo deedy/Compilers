@@ -3,21 +3,18 @@
 #include "cubex_lib.h"
 
 _object _prog_main (  ) {
-Object ret = NULL;
-Object i = NULL;
+Object r = NULL;
 Object _tmp = NULL;
 Object _ret = NULL;
-_tmp = ret; ret = NULL; _incr(ret); _decr(_tmp);
+_tmp = r; r = (Object) NULL; _incr(r); _decr(_tmp);
 _IterNode _iter0 = _iterator(input);
 while (_iter0) {
- i = _iter0->curr; 
-_tmp = ret; 
-ret = (Object)_append(Iterable_construct(i), _append(ret, Iterable_construct(i)));
- _incr(ret); _decr(_tmp); 
+ _object i = _iter0->curr; 
+_tmp = r; r = (Object) _append(Iterable_construct(i), r); _incr(r); _decr(_tmp); 
 _iter0 = _iter0->next(_iter0);
 } x3free(_iter0);
 
-_ret = ret; _incr(_ret); _decr(ret);_decr(i); return _ret;
+_ret = r; _incr(_ret); _decr(r); return _ret;
 }
 void cubex_main() {
 __init();
