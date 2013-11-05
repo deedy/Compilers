@@ -48,6 +48,14 @@ public class HighLow implements HLVisitor {
 			map.put(a.obj.name, a.field); 
 		}
 
+		// add all methods of the class to the global fun list
+		// convert functions to use field access
+		for (Map.Entry<String, HFunction> f : c.funs.entrySet()) {
+			LFunc lf = (LFunc)f.getValue().accept(this);
+			funcs.add(lf);
+			lf.convertFields(map);
+		}
+
 		// get the list of arguments
 		List<LName> args = new ArrayList<LName>();
 		for(CubexName n : c.tCont.names) {
@@ -55,10 +63,9 @@ public class HighLow implements HLVisitor {
 		}
 
 		// get the parent 
-		LExp parentCall = new LNull();
-		if(c.parent != null) {
-			parentCall = (LExp) c.parent.accept(this);
-		}
+		LFunCall parentCall = (LFunCall) c.parent.accept(this);
+
+		classID += 1;
 
 		// convert list of statements to use field accesses
 
@@ -68,20 +75,8 @@ public class HighLow implements HLVisitor {
 			stmts.add(st);
 			st.convertFields(map);
 		}
-		funcs.add(new LConstructor(new LName(c.name), args, classID - 1, 
-			fieldNum, parentCall, new LStmts(stmts)));
 
-		// add all methods of the class to the global fun list
-		// convert functions to use field access
-		for (Map.Entry<String, HFunction> f : c.funs.entrySet()) {
-			LFunc lf = (LFunc)f.getValue().accept(this);
-			funcs.add(lf);
-			lf.convertFields(map);
-		}
-
-		classID += 1;
-
-		return null;
+		return new LConstructor(new LName(c.name), args, classID - 1, fieldNum, parentCall, new LStmts(stmts));
 	}
 
 	public LNode visit(HConditional c) {
@@ -195,14 +190,7 @@ public class HighLow implements HLVisitor {
 
 	}
 	public LNode visit(HClassProg c) {
-		// this will add functions on its own
-		LNode this_is_null = c.cls.accept(this);
-		if(c.prog == null) {
-			return new LProg(globals, funcs, new LStmts(topLevels));
-		} else {
-			return c.prog.accept(this);
-		}
-
+		return null;
 	}
 
 	public LNode visit(HFunProg f) {

@@ -120,7 +120,6 @@ public class HVisitor {
         }
         int id = curId;
         curId += 1;
-
         HExpression parent = null;
         if (n.parent != null) {
             parent = n.parent.accept(this);
