@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 abstract class HNode {
   public abstract LNode accept(HLVisitor v);  
@@ -50,6 +51,7 @@ class HInterface extends HNode {
                 superInterfaces.addAll(superInterface.getSuperInterfaces());
             }
         }
+        System.out.println(superInterfaces);
         return superInterfaces;
     }
 
