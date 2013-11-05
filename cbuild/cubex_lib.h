@@ -539,11 +539,10 @@ void strCpy(const char *src, char *dest) {
 	while ((*dest++ = *src++)); 
 }
 
-int strLen(const char *s) {
-    const char *start;
-    start = s;
-    while(*++s);
-    return s - start + 1;
+int strLen(const char *str) {
+	register const char *s;
+	for (s = str; *s; ++s);
+	return(s - str);
 }
 
 _object strIter(const char *s) {
@@ -560,7 +559,7 @@ _object String_construct(const char* s) {
 		return NULL;
 	} else {
 		String str = _allocate(4, 2);
-		char* buff = x3malloc(sizeof(char) * strLen(s));
+		char* buff = x3malloc(sizeof(char) * strLen(s) + 1);
 		strCpy(s, buff);
 		Iterable i = strIter(s);
 		if(i) {
@@ -631,7 +630,11 @@ void __init() {
 	while (1) {
 		int next_input_len = next_line_len();
 		if (next_input_len) {
-			char *buff = x3malloc(sizeof(char) * (next_input_len + 1));
+			char *buff = x3malloc(sizeof(char) * (next_input_len));
+			int j;
+			for(j = 0; j <= next_input_len; j++) {
+				buff[j] = 0;
+			}
 			read_line(buff);
 			String line = String_construct(buff);
 			x3free(buff);
