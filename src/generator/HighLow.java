@@ -34,20 +34,15 @@ public class HighLow implements HLVisitor {
 	}
 
 	public LNode visit(HClass c) {
-		List<LFieldAccess> fa = new ArrayList<LFieldAccess>();
 		int fieldNum = 0;
-		for (String s : c.fields) {
-			LFieldAccess f = new LFieldAccess(new LName(s), fieldNum);
-			fa.add(f);
-			fieldNum++;
-		}
-
 		// Create the mapping from field name to field num
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
-		for (LFieldAccess a : fa) {
-			map.put(a.obj.name, a.field); 
+		for (String s : c.fields) {
+			map.put(s, fieldNum);
+			fieldNum += 1; 
 		}
 
+		System.out.println(map);
 		// get the list of arguments
 		List<LName> args = new ArrayList<LName>();
 		for(CubexName n : c.tCont.names) {
@@ -68,8 +63,7 @@ public class HighLow implements HLVisitor {
 		List<LStmt> stmts = new ArrayList<LStmt>();
 		for (HStatement s : c.stmts) {
 			LStmt st = (LStmt)s.accept(this);
-			stmts.add(st);
-			st.convertFields(map);
+			stmts.add(st.convertFields(map));
 		}
 
 		funcs.add(new LConstructor(new LName(c.name), args, classID - 1, fieldNum, parentCall, new LStmts(stmts)));
@@ -80,7 +74,7 @@ public class HighLow implements HLVisitor {
 			LFunc lf = (LFunc)f.getValue().accept(this);
 			lf.name.name = c.name + "_" + lf.name.name;
 			funcs.add(lf);
-			lf.convertFields(map);
+			lf.stmts = lf.stmts.convertFields(map);
 		}
 
 		classID += 1;

@@ -5,9 +5,14 @@
 _object Wut() {
 Object _tmp = NULL;
 Object _ret = NULL;
-_tmp = a;
-a = (Object) String_construct("who");
-_incr(a);
+_tmp = _obj->fields[0];
+_obj->fields[0] = (Object) String_construct("who");
+_incr(_obj->fields[0]);
+_decr(_tmp);
+
+_tmp = _obj->fields[1];
+_obj->fields[1] = (Object) Integer_construct(5);
+_incr(_obj->fields[1]);
 _decr(_tmp);
 
 }
@@ -17,7 +22,7 @@ Object _tmp = NULL;
 
 Object _ret = NULL;
 
-_ret = (Object) a;
+_ret = (Object) _obj->fields[0];
 _incr(_ret);
 
 return _ret;

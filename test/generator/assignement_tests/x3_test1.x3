@@ -2,6 +2,7 @@
 
 class Wut () {
 	a := "who";
+	b := 5;
 	fun print() : String {
 		return a;
 	}
