@@ -359,24 +359,19 @@ class CubexAppend extends CubexExpression {
                 String.format("%s OR %s ARE NOT ITERABLE", lt.toString(), rt.toString())
                 );
         }
-        CubexType out = new Nothing();
-        CubexType commonType = new Nothing();
-        try {
-            commonType = CubexTC.join(cc, kc, lt, rt);
-            
-        } catch(CubexTC.UnexpectedTypeHierarchyException e){
-            throw new CubexTC.TypeCheckException(
-                String.format("ERROR GETTING JOIN TYPE OF %s", toString())
-                );
+        CubexType commonType = CubexTC.join(cc, kc, lt, rt);
+        if (commonType.equals(new CubexCType("String"))) {
+            List<CubexType> param = new ArrayList<CubexType>();
+            param.add(new CubexCType("Character"));
+            commonType = new CubexCType(new CubexCName("Iterable"), param);
         }
         // check for validity
-        // System.out.printf("%s : %s ++ %s : %s -> %s\n", left, lt, right, rt, commonType);
         if(CubexTC.isValid(cc, kc, commonType)) {
             this.type = commonType;
             return this.type;
         };
         throw new CubexTC.TypeCheckException(
-            String.format("TYPE %s IS NOT VALID IN %s", out.toString(), toString())
+            String.format("TYPE %s IS NOT VALID IN %s", commonType.toString(), toString())
             );
     }
 

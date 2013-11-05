@@ -92,7 +92,7 @@ public class CGenerator implements LVisitor {
 		int argCount = 0;
 		List<String> params = new ArrayList<String>();
 		for(int i = 0; i < f.args.size(); i++) {
-			params.add("_object o" + argCount);
+			params.add("_object _o" + argCount);
 			argCount += 1;
 		}
 		String args = join(params, ", ");
@@ -101,7 +101,7 @@ public class CGenerator implements LVisitor {
 		List<String> varDefs = new ArrayList<String>();
 		List<String> vArgs = visitAll(f.args);
 		for(String arg : vArgs) {
-			varDefs.add(String.format("Object %s = o%d;\n_incr(%s);\n",
+			varDefs.add(String.format("Object %s = _o%d;\n_incr(%s);\n",
 				arg, count, arg));
 			count += 1;
 		}
@@ -128,7 +128,7 @@ public class CGenerator implements LVisitor {
 		List<String> params = new ArrayList<String>();
 		int argCount = 0;
 		for(int i = 0; i < f.args.size(); i++) {
-			params.add("_object o" + argCount);
+			params.add("_object _o" + argCount);
 			argCount += 1;
 		}
 		String args = join(params, ", ");
@@ -136,7 +136,7 @@ public class CGenerator implements LVisitor {
 		int count = 0;
 		List<String> varDefs = new ArrayList<String>();
 		for(String arg : visitAll(f.args)) {
-			varDefs.add("Object " + arg + " = o" + count + ";");
+			varDefs.add("Object " + arg + " = _o" + count + ";");
 			count += 1;
 		}
 

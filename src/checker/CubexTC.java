@@ -56,20 +56,20 @@ public class CubexTC {
 			return t2;
 		}
 		ArrayList<HashSet<CubexType>> levelPathToRootOne = findLevelPathToRoot(cc, kc, t1);
+		// System.out.printf("The supertypes of %s are %s\n", t1,levelPathToRootOne);
+
 		ArrayList<HashSet<CubexType>> levelPathToRootTwo = findLevelPathToRoot(cc, kc, t2);
+		// System.out.printf("The supertypes of %s are %s\n", t2,levelPathToRootTwo);
 		HashSet<CubexType> common = new HashSet<CubexType>();
 		// System.out.println(levelPathToRootOne);
 		// System.out.println(levelPathToRootTwo);
 		for(HashSet<CubexType> hs : levelPathToRootOne) {
 			for(CubexType a : hs) {
+				if(subType(cc, kc, t1, a) && subType(cc, kc, t2, a)) {
+					common.add(a);
+				}
 				for(HashSet<CubexType> hs2 : levelPathToRootTwo) {
 					for(CubexType b : hs2) {
-						if(subType(cc, kc, a, b)) {
-							common.add(b);
-						}
-						if(subType(cc, kc, a, b)) {
-							common.add(a);
-						}
 						if(!(a instanceof Thing) && !(b instanceof Thing)) {
 							if(isValid(cc, kc, new CubexIType(a,b))) {
 								common.add(new CubexIType(a,b));
@@ -79,6 +79,13 @@ public class CubexTC {
 							}
 						}
 					}
+				}
+			}
+		}
+		for(HashSet<CubexType> hs : levelPathToRootTwo) {
+			for(CubexType a : hs) {
+				if(subType(cc, kc, t1, a) && subType(cc, kc, t2, a)) {
+					common.add(a);
 				}
 			}
 		}

@@ -213,7 +213,7 @@ class CubexForLoop extends CubexStatement {
 
         if (!exprType.isIterable(cc, kc)) {
             throw new CubexTC.TypeCheckException(
-                String.format("%s IS NOT AN ITERABLE", expr.toString()));
+                String.format("%s OF TYPE %s IS NOT AN ITERABLE", expr.toString(), exprType));
         }
 
         // get the iterable type by joining with iterable<nothing>
