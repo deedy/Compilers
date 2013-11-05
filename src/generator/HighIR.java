@@ -19,19 +19,14 @@ abstract class HStatement extends HNode {
 class HInterface extends HNode {
     static HashMap<String, HInterface> classes = new HashMap<String, HInterface>(); // a set of all the classes
     String name;
-    List<HStatement> stmts;
-    List<HExpression> exprs;
     HashMap<String, HFunction> funs;
     List<String> parents;
     int id;
     List<String> superInterfaces;
 
-    public HInterface(int id, String name, List<HExpression> exprs, 
-        List<HStatement> stmts, HashMap<String,HFunction> funs, List<String> parents) {
+    public HInterface(int id, String name, HashMap<String,HFunction> funs, List<String> parents) {
         this.id = id;
         this.name = name;
-        this.exprs = exprs;
-        this.stmts = stmts;
         this.funs = funs;
         this.parents = parents;
     }
@@ -93,11 +88,20 @@ class HInterface extends HNode {
 class HClass extends HInterface {
 
     List<String> fields;
+    HExpression parent;
+    CubexTypeContext tCont;
+    List<HStatement> stmts;
+    List<HExpression> exprs;
 
     public HClass(int id, String name, List<HExpression> exprs, 
-        List<HStatement> stmts, HashMap<String,HFunction> funs, List<String> parents, List<String> fields) {
-        super(id, name, exprs, stmts, funs, parents);
+        List<HStatement> stmts, HashMap<String,HFunction> funs, List<String> parents, 
+        List<String> fields, HExpression parent, CubexTypeContext tCont) {
+        super(id, name, funs, parents);
+        this.stmts = stmts;
+        this.exprs = exprs;
         this.fields = fields;
+        this.parent = parent;
+        this.tCont = tCont;
     }
     public LNode accept(HLVisitor v) {
         return v.visit(this);

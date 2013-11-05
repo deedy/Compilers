@@ -98,7 +98,7 @@ public class HVisitor {
         }
         int id = curId;
         curId++;
-        HInterface i = new HInterface(id, n.name.name, null, null, funs, n.type.getNames());
+        HInterface i = new HInterface(id, n.name.name, funs, n.type.getNames());
         classes.put(n.name.name, i);
         return i;
     }
@@ -120,7 +120,7 @@ public class HVisitor {
         }
         int id = curId;
         curId++;
-        HClass c = new HClass(id, n.name.name, exprs, stmts, funs, n.type.getNames(), fields);
+        HClass c = new HClass(id, n.name.name, exprs, stmts, funs, n.type.getNames(), fields, n.parent.accept(this), n.tCont);
         classes.put(n.name.name, c);
         return c;
     }

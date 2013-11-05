@@ -27,13 +27,56 @@ public class HighLow implements HLVisitor {
 	List<LStmt> topLevels = new ArrayList<LStmt>();
 	List<LName> globals = new ArrayList<LName>();
 	List<LFunc> funcs = new ArrayList<LFunc>();
+	int classID = 5;
 
 	public LNode visit(HInterface i) {
 		return null;
 	}
 
 	public LNode visit(HClass c) {
-		return null;
+		List<LFieldAccess> fa = new ArrayList<LFieldAccess>();
+		int fieldNum = 0;
+		for (String s : c.fields) {
+			LFieldAccess f = new LFieldAccess(new LName(s), fieldNum);
+			fa.add(f);
+			fieldNum++;
+		}
+
+		// Create the mapping from field name to field num
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		for (LFieldAccess a : fa) {
+			map.put(a.obj.name, a.field); 
+		}
+
+		// add all methods of the class to the global fun list
+		// convert functions to use field access
+		for (Map.Entry<String, HFunction> f : c.funs.entrySet()) {
+			LFunc lf = (LFunc)f.getValue().accept(this);
+			funcs.add(lf);
+			lf.convertFields(map);
+		}
+
+		// get the list of arguments
+		List<LName> args = new ArrayList<LName>();
+		for(CubexName n : c.tCont.names) {
+			args.add(new LName(n.name));
+		}
+
+		// get the parent 
+		LFunCall parentCall = (LFunCall) c.parent.accept(this);
+
+		classID += 1;
+
+		// convert list of statements to use field accesses
+
+		List<LStmt> stmts = new ArrayList<LStmt>();
+		for (HStatement s : c.stmts) {
+			LStmt st = (LStmt)s.accept(this);
+			stmts.add(st);
+			st.convertFields(map);
+		}
+
+		return new LConstructor(new LName(c.name), args, classID - 1, fieldNum, parentCall, new LStmts(stmts));
 	}
 
 	public LNode visit(HConditional c) {

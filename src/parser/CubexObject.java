@@ -113,6 +113,7 @@ class CubexClass extends CubexObject {
     List<CubexStatement> stmts;
     List<CubexExpression> exprs;
     SymbolTable fields;
+    CubexExpression parent;
 
     public Pair<CubexClassContext, CubexFunctionContext> typeCheck(CubexClassContext cc, CubexFunctionContext fc, SymbolTable st) {
         // make a new kind context
@@ -185,6 +186,7 @@ class CubexClass extends CubexObject {
                         name.toString(), superRet.toString(), con.toString())
                     );   
             }
+            parent = superCall;
         }
 
         // put all functions in the current context
