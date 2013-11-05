@@ -3,6 +3,7 @@ import org.antlr.v4.runtime.tree.*;
 import java.lang.StringBuilder;
 import java.util.BitSet;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 import java.lang.StringBuffer;
 import java.io.*;
@@ -34,6 +35,17 @@ public class CubexGeneratorProg {
     public static String generate(CubexProg node) {
         HVisitor hVisitor = new HVisitor();
         HNode hRoot = node.accept(hVisitor);
+        // Implement unimplemented 
+        for (Map.Entry<String, HInterface> i : hVisitor.classes.entrySet()) {
+            i.getValue().implementSuperInterfaces(hVisitor.classes);
+        }
+        // for (Map.Entry<String, HInterface> i : hVisitor.classes.entrySet()) {
+        //     for (Map.Entry<String, HFunction> f : i.getValue().funs.entrySet()) {
+        //         if (f.getValue() instanceof HUndefFunction) {
+        //             System.out.println(((HUndefFunction)f.getValue()).defs);
+        //         }
+        //     }
+        // }
         HighLow hl = new HighLow();
         LNode lRoot = hRoot.accept(hl);
         CGenerator cc = new CGenerator();

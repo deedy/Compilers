@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 abstract class HNode {
   public abstract LNode accept(HLVisitor v);  
@@ -34,12 +35,12 @@ class HInterface extends HNode {
     List<String> getSuperInterfaces() {
         // no more super classes
         if (parents.size() == 1 && parents.contains("Thing")) {
-            return null;
+            return new ArrayList<String>();
         }
         if (superInterfaces != null) {
             return superInterfaces;
         }
-        List<String> superInterfaces = new ArrayList<String>();
+        superInterfaces = new ArrayList<String>();
         for (String s : parents) {
             HInterface i = classes.get(s);
             if (!(i instanceof HClass)) {
@@ -50,7 +51,7 @@ class HInterface extends HNode {
                 superInterfaces.addAll(superInterface.getSuperInterfaces());
             }
         }
-        this.superInterfaces = superInterfaces;
+        System.out.println(superInterfaces);
         return superInterfaces;
     }
 
