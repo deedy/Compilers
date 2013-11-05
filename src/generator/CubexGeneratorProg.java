@@ -11,28 +11,24 @@ public class CubexGeneratorProg {
 
     public static void main(String[] args) {
         // lex it
-        CubexLexer lex = CLexer.lex(args[0]);
-        if (lex == null) {
+        CubexLexer lex;
+        CubexProg prog;
+        if ((lex = CLexer.lex(args[0])) == null) {
             writeOut(reject());
-        } else {
-            // parse it
-            CubexParser parser = CParser.parse(lex);
-            if (parser == null) {
-                writeOut(reject());
-            } else {
-                // check it
-                CubexProg root = CChecker.check(parser);
-                System.out.println(root);
-                if (root == null) {
-                    writeOut(reject());
-                } else {
-                    // work it
-                    String out = generate(root);
-                    // System.out.println(out);
-                    writeOut(out);
-                }
-            }
+            return;
+        } 
+        if ((prog = CParser.parse(lex)) == null) {
+            writeOut(reject());
+            return;
         }
+        if (!CChecker.check(prog)) {
+            writeOut(reject());
+            return;
+        }
+        System.out.println(prog);
+        String out = generate(prog);
+        // System.out.println(out);
+        writeOut(out);
     }
 
     public static String generate(CubexProg node) {

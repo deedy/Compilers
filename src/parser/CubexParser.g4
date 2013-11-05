@@ -239,6 +239,7 @@ almostprog returns [CubexProg cu]
 	| s2=statement { $cu = new CubexStatementProg($s2.cu); };
 
 prog returns [CubexProg cu]
-  : p=almostprog EOF{ $cu = $p.cu; };
+  : p=almostprog EOF{ $cu = $p.cu; }
+  | errorchar { int n = 1 / 0; } ;
 
-errorchar : .*? { int n = 1 / 0; } | EOF;
+errorchar : .*?;
