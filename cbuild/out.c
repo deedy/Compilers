@@ -5,19 +5,40 @@
 _object Wut() {
 Object _tmp = NULL;
 Object _ret = NULL;
+Object _obj = _allocate(5, 2);
 _tmp = _obj->fields[0];
 _obj->fields[0] = (Object) String_construct("who");
 _incr(_obj->fields[0]);
 _decr(_tmp);
 
 _tmp = _obj->fields[1];
-_obj->fields[1] = (Object) Integer_construct(5);
+_obj->fields[1] = (Object) String_construct("wut");
 _incr(_obj->fields[1]);
 _decr(_tmp);
 
+return _obj;}
+
+_object Wut_print2(_object o0, _object o1) {
+Object _obj = o0;
+_incr(_obj);
+
+Object c = o1;
+_incr(c);
+
+Object _tmp = NULL;
+
+Object _ret = NULL;
+
+_ret = (Object) string(_append(c, _obj->fields[1]));
+_incr(_ret);
+
+return _ret;
 }
 
-_object Wut_print() {
+_object Wut_print(_object o0) {
+Object _obj = o0;
+_incr(_obj);
+
 Object _tmp = NULL;
 
 Object _ret = NULL;
@@ -40,7 +61,7 @@ a = (Object) Wut();
 _incr(a);
 _decr(_tmp);
 
-_ret = (Object) Iterable_construct(Wut_print(a));
+_ret = (Object) _append(Iterable_construct(Wut_print(a)), Iterable_construct(Wut_print2(a, String_construct("dafuq "))));
 _incr(_ret);
 _decr(a);
 

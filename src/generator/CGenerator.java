@@ -139,11 +139,12 @@ public class CGenerator implements LVisitor {
 
 		varDefs.add("Object _tmp = NULL;");
 		varDefs.add("Object _ret = NULL;");
+		varDefs.add(String.format("Object _obj = _allocate(%d, %d);", f.id, f.fields));
 
 		String locals = join(varDefs, "\n");
 
 		localVars = new HashSet<String>();
-		return String.format("_object %s(%s) {\n%s\n%s\n}\n", name, args, locals, stmts);
+		return String.format("_object %s(%s) {\n%s\n%s\nreturn _obj;}\n", name, args, locals, stmts);
 	}
 
 	public String visit(LNum n) {

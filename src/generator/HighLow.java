@@ -71,6 +71,7 @@ public class HighLow implements HLVisitor {
 		// add all methods of the class to the global fun list
 		// convert functions to use field access
 		for (Map.Entry<String, HFunction> f : c.funs.entrySet()) {
+			f.getValue().args.add(0, "_obj");
 			LFunc lf = (LFunc)f.getValue().accept(this);
 			lf.name.name = c.name + "_" + lf.name.name;
 			funcs.add(lf);
