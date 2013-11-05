@@ -1,0 +1,8 @@
+a := 0;
+b := "String";
+c := [];
+d := [b,b,b];
+e := True;
+f := Nothing;
+g := Thing;
+return (c ++ d);

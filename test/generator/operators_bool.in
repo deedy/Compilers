@@ -1,0 +1,9 @@
+a := True;  #t
+b := False; #f
+
+c := !True; #f
+d := !a;    #f
+e := a & b; #f
+f := a | b; #t
+
+return ["sup"];

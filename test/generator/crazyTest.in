@@ -13,7 +13,7 @@ Class Math(){
 }
 
 `
-# A very bad random number generator
+# A bad random number generator
 Class Random(seed : Integer<>){
 	super();
 
@@ -45,23 +45,43 @@ Class Random(seed : Integer<>){
 
 }
 
-# A very very bad random number generator
+# A very bad random number generator
 Class Random2(){
 	super();
 
 	a := 0;
 	b := False;
 
+	# returns in range of all integers with perfect balance
 	fun getRandInt() : Integer<>
 	{
 		a := a + 1;
 		return a;
 	}
 
+	# always returns True and False equally
 	fun getRandBool() : Boolean<>
 	{
 		b := !b;
 		return b;
+	}
+}
+
+# A very very bad random number generator
+Class Random3(){
+	super();
+
+	fun getRandInt() : Integer<>
+	{
+		# 4 chosen at random
+		# -> always returns a random number
+		return 4;
+	}
+
+	fun getRandBool() : Boolean<>
+	{
+		# False chosen at random
+		return False;
 	}
 }
 

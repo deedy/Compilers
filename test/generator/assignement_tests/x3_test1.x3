@@ -1,11 +1,7 @@
 # Cubex Compiler Test 1 - Stage 1
 
 fun rev<T>(lst:Iterable<T>):Iterable<T>{
-	 ret := [];
-	 for(i in lst) {
-	 	ret := [i] ++ ret;
-	 }
-	 return ret;
+	return [];
 }
 
 return rev<String>(input);

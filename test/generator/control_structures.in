@@ -1,0 +1,27 @@
+i = 5;
+s = "string";
+b = True;
+
+reverse_string := "";
+for(c in s){
+	reverse_string = c ++ reverse_string;
+}
+# reverse_string = "gnirts_esrever"
+
+l := [];
+while(b){
+	i := i - 1;
+	l := l ++ s;
+}
+# l = [string, string, string... 5x]
+
+if(b == True){
+	t := 5;
+}else if(b != True){
+	t := 6;
+}else{
+	# dead code
+	t := 7;
+}
+
+return [reverse_string];

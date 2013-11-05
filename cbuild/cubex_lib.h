@@ -536,7 +536,7 @@ int strCmp(const char *s1, const char *s2) {
 }
 
 void strCpy(const char *src, char *dest) {
-	while (*dest++ = *src++); 
+	while ((*dest++ = *src++)); 
 }
 
 int strLen(const char *s) {
