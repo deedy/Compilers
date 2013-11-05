@@ -29,12 +29,14 @@ _object i = _iter0->curr;
 _ret = i;
 _incr(_ret);
 _decr(m);
+
 return _ret;
 _iter0 = _iter0->next(_iter0);
 } x3free(_iter0);
 _ret = d;
 _incr(_ret);
 _decr(m);
+
 return _ret;
 }
 
@@ -65,12 +67,14 @@ _object i = _iter1->curr;
 _ret = i;
 _incr(_ret);
 _decr(m);
+
 return _ret;
 _iter1 = _iter1->next(_iter1);
 } x3free(_iter1);
 _ret = d;
 _incr(_ret);
 _decr(m);
+
 return _ret;
 }
 
@@ -132,6 +136,7 @@ _incr(_ret);
 _decr(ret);
 _decr(pref);
 _decr(i);
+
 return _ret;
 }
 

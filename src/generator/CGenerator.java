@@ -240,7 +240,7 @@ public class CGenerator implements LVisitor {
 		String ret = r.ret.accept(this);
 		StringBuilder decrs = new StringBuilder();
 		for(String var : localVars) {
-			decrs.append(String.format("_decr(%s);", var));
+			decrs.append(String.format("_decr(%s);\n", var));
 		}
 		return String.format("_ret = %s;\n_incr(_ret);\n%s\nreturn _ret;", ret, decrs);
 	}

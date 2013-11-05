@@ -145,14 +145,17 @@ _IterNode _iterator(_object o) {
 	if (!i) {
 		return NULL;
 	}
-	_IterNode n = x3malloc(sizeof(struct _IterNode_t));
-	if(!(i->fields[0])) {
+	if (!(i->fields[0]) && !(i->fields[1])) {
 		return NULL;
+	} else if (!(i->fields[0])) {
+		return _iterator(i->fields[1]);
+	} else {
+		_IterNode n = x3malloc(sizeof(struct _IterNode_t));
+		n->curr = i->fields[0];
+		n->nextIter = (Iterable) i->fields[1];
+		n->next = i->next;
+		return n;
 	}
-	n->curr = i->fields[0];
-	n->nextIter = (Iterable) i->fields[1];
-	n->next = i->next;
-	return n;
 }
 
 _IterNode _common_next(_IterNode node) {
@@ -187,12 +190,17 @@ Iterable _copy(Iterable a) {
 Iterable _append(_object o1, _object o2) {
 	Iterable a = o1;
 	Iterable b = o2;
-	if(!a) {
+	_incr(a);
+	_incr(b);
+	if(!a || !(a->fields[0])) {
+		_decr(a);
 		return b;
 	}
 	Iterable c = _copy(a);
 	c->fields[1] = _append(a->fields[1], b);
 	_incr(c->fields[1]);
+	_decr(a);
+	_decr(b);
 	return c;
 }
 
@@ -551,14 +559,13 @@ _object String_construct(const char* s) {
 	if (!s) {
 		return NULL;
 	} else {
-		String str = _allocate(5, 2);
+		String str = _allocate(4, 2);
 		char* buff = x3malloc(sizeof(char) * strLen(s));
 		strCpy(s, buff);
 		Iterable i = strIter(s);
 		if(i) {
 			str->fields = i->fields;
 			str->next = i->next;
-			x3free(i);
 		}
 		str->value = buff;
 		return str;
