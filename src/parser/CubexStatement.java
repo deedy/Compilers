@@ -230,13 +230,17 @@ class CubexForLoop extends CubexStatement {
         Triple<SymbolTable, Boolean, CubexType> ret = stmt.typeCheck(cc, kc, fc, st, tmp);
         // for returns same type as statement but not guarunteed to return
 
-        SymbolTable after = ret.getLeft();
+        SymbolTable after = before.merge(ret.getLeft());
         // for everything in before, update it if it is also in ret
+        // System.out.println("before: " + before.map.toString());
+        // System.out.println("after: " + after.map.toString());
+
         for (CubexVName v : before.map.keySet()) {
             if (after.contains(v)) {
                 before = before.set(v, after.get(v));
             }
         }
+        // System.out.println("before 2: " + before.map.toString());
         return new Triple<SymbolTable, Boolean, CubexType>(before, new Boolean(false), ret.getRight());
     }
 

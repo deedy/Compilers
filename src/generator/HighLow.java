@@ -37,16 +37,20 @@ public class HighLow implements HLVisitor {
 		int fieldNum = 0;
 		// Create the mapping from field name to field num
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		// System.out.println(c.fields);
 		for (String s : c.fields) {
 			map.put(s, fieldNum);
 			fieldNum += 1; 
 		}
 
-		System.out.println(map);
+		// System.out.println(map);
 		// get the list of arguments
+		List<LStmt> stmts = new ArrayList<LStmt>();
 		List<LName> args = new ArrayList<LName>();
+		int count = 1;
 		for(CubexName n : c.tCont.names) {
 			args.add(new LName(n.name));
+			stmts.add(new LAssign(new LFieldAccess(new LName("_obj"), c.fields.indexOf(n.name)), new LName(n.name)));
 		}
 
 		// get the parent 
@@ -59,8 +63,6 @@ public class HighLow implements HLVisitor {
 		classID += 1;
 
 		// convert list of statements to use field accesses
-
-		List<LStmt> stmts = new ArrayList<LStmt>();
 		for (HStatement s : c.stmts) {
 			LStmt st = (LStmt)s.accept(this);
 			stmts.add(st.convertFields(map));

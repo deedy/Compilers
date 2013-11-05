@@ -372,7 +372,7 @@ class CubexAppend extends CubexExpression {
         // check for validity
         // System.out.printf("%s : %s ++ %s : %s -> %s\n", left, lt, right, rt, commonType);
         if(CubexTC.isValid(cc, kc, commonType)) {
-            this.type = out;
+            this.type = commonType;
             return this.type;
         };
         throw new CubexTC.TypeCheckException(

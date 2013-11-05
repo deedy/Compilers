@@ -126,8 +126,10 @@ public class CGenerator implements LVisitor {
 		String parent = f.parent.accept(this);
 
 		List<String> params = new ArrayList<String>();
+		int argCount = 0;
 		for(int i = 0; i < f.args.size(); i++) {
-			params.add("_object o");
+			params.add("_object o" + argCount);
+			argCount += 1;
 		}
 		String args = join(params, ", ");
 
@@ -135,6 +137,7 @@ public class CGenerator implements LVisitor {
 		List<String> varDefs = new ArrayList<String>();
 		for(String arg : visitAll(f.args)) {
 			varDefs.add("Object " + arg + " = o" + count + ";");
+			count += 1;
 		}
 
 		varDefs.add("Object _tmp = NULL;");
