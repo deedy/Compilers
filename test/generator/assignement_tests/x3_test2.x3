@@ -38,4 +38,14 @@ fun intToStr(i : Integer) : String
 	return string(pref ++ ret);
 }
 
-return [intToStr(10)];
+mapped := [];
+for (i in 1..10){
+	mapped := mapped ++ [intToStr(i + 1)];
+}
+
+ret := [];
+for(m in mapped) {
+	ret := [m] ++ ret;
+}
+
+return ret;

@@ -82,7 +82,7 @@ public class CubexTC {
 				}
 			}
 		}
-		// System.out.printf("The common supertypes of %s and %s are %s\n", t1, t2, common);
+		System.out.printf("The common supertypes of %s and %s are %s\n", t1, t2, common);
 		CubexType lowest = new Thing();
 		for(CubexType test : common) {
 			if(subType(cc, kc, test, lowest)) {
@@ -99,7 +99,7 @@ public class CubexTC {
 				}
 			}
 		}
-		// System.out.printf("And the join is %s\n", lowest);
+		System.out.printf("And the join is %s\n", lowest);
 	 	return lowest;
 	}
 

@@ -2,27 +2,42 @@
 #include "cubex_external_functions.h"
 #include "cubex_lib.h"
 
-_object rev(_object o0) {
-Object lst = o0;
-_incr(lst);
+_object Wut() {
+Object _tmp = NULL;
+Object _ret = NULL;
+_tmp = a;
+a = (Object) String_construct("who");
+_incr(a);
+_decr(_tmp);
 
+}
+
+_object print() {
 Object _tmp = NULL;
 
 Object _ret = NULL;
 
-_ret = (Object) NULL;
+_ret = (Object) a;
 _incr(_ret);
 
 return _ret;
 }
 
 _object _prog_main() {
+Object a = NULL;
+
 Object _tmp = NULL;
 
 Object _ret = NULL;
 
-_ret = (Object) rev(input);
+_tmp = a;
+a = (Object) Wut();
+_incr(a);
+_decr(_tmp);
+
+_ret = (Object) Iterable_construct(Wut_print(a));
 _incr(_ret);
+_decr(a);
 
 return _ret;
 }
