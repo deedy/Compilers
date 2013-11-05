@@ -150,6 +150,7 @@ class LFunCall extends LExp {
 	}
 
 	public void convertFields(Map<String, Integer> map) {
+		name.convertFields(map);
 		args.convertFields(map);
 	}
 }
@@ -297,7 +298,8 @@ class LAssign extends LStmt {
 	}
 
 	public void convertFields(Map<String, Integer> map) {
-		
+		var.convertFields(map);
+		val.convertFields(map);
 	}
 }
 
@@ -313,7 +315,7 @@ class LReturn extends LStmt {
 	}
 
 	public void convertFields(Map<String, Integer> map) {
-		
+		ret.convertFields(map);
 	}
 }
 
