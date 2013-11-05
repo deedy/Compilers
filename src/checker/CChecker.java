@@ -8,21 +8,20 @@ import java.io.InputStreamReader;
 
 public class CChecker {
 	
-	public static CubexProg check(CubexParser par) {
+	public static boolean check(CubexProg prog) {
 		try {
-            CubexProg prog = par.prog().cu;
             // System.out.println(prog);
             Triple<CubexClassContext, CubexFunctionContext, SymbolTable> trip = buildBase();
             if(prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())) {
-            	return prog;
+            	return true;
             } else {
-            	System.out.println("Checker Error");
-            	return null;
+                System.out.println("Checker Error");
+            	return false;
             }
         } catch(Exception e){
             System.out.println("Checker Error");
             e.printStackTrace();
-            return null;
+            return false;
         }		
 	}
 
