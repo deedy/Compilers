@@ -12,7 +12,7 @@ _decr(_tmp);
 
 }
 
-_object print() {
+_object Wut_print() {
 Object _tmp = NULL;
 
 Object _ret = NULL;

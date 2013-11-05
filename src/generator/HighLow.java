@@ -75,6 +75,7 @@ public class HighLow implements HLVisitor {
 		// convert functions to use field access
 		for (Map.Entry<String, HFunction> f : c.funs.entrySet()) {
 			LFunc lf = (LFunc)f.getValue().accept(this);
+			lf.name.name = c.name + "_" + lf.name.name;
 			funcs.add(lf);
 			lf.convertFields(map);
 		}
