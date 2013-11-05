@@ -119,8 +119,14 @@ public class HVisitor {
             fields.add(na.name);
         }
         int id = curId;
-        curId++;
-        HClass c = new HClass(id, n.name.name, exprs, stmts, funs, n.type.getNames(), fields, n.parent.accept(this), n.tCont);
+        curId += 1;
+
+        HExpression parent = null;
+        if (n.parent != null) {
+            parent = n.parent.accept(this);
+        }
+        HClass c = new HClass(id, n.name.name, exprs, stmts, funs,
+            n.type.getNames(), fields, parent, n.tCont);
         classes.put(n.name.name, c);
         return c;
     }

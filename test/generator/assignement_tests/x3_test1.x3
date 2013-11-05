@@ -1,7 +1,11 @@
 # Cubex Compiler Test 1 - Stage 1
 
-fun rev<T>(lst:Iterable<T>):Iterable<T>{
-	return [];
+class Wut () {
+	a := "who";
+	fun print() : String {
+		return a;
+	}
 }
 
-return rev<String>(input);
+a := Wut();
+return [a.print()];

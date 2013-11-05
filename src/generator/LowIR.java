@@ -122,6 +122,20 @@ class LString extends LExp {
 	}
 }
 
+class LId extends LExp {
+	LName name;
+	int id;
+
+	public LId(LName n, int i) {
+		name = n;
+		id = i;
+	}
+
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
+}
+
 class LFunCall extends LExp {
 	LName name;
 	LExp args;
@@ -328,9 +342,6 @@ class LFunc extends LNode {
 }
 
 class LConstructor extends LFunc {
-	LName name;
-	List<LName> args;
-	LStmt stmts;
 	int id;
 	int fields;
 	LExp parent;

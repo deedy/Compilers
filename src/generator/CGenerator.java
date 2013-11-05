@@ -40,6 +40,8 @@ interface LVisitor {
 	public String visit(LReturn r);
 
 	public String visit(LProg p);
+
+	public String visit(LId i);
 }
 
 public class CGenerator implements LVisitor {
@@ -73,6 +75,12 @@ public class CGenerator implements LVisitor {
 
 	public String visit(LStmts lst) {
 		return join(visitAll(lst.stmts), "\n");
+	}
+
+	public String visit(LId i) {
+		String name = i.name.accept(this);
+		int id = i.id;
+		return String.format("((Object) %s)->fields[%d]", name, id);
 	}
 
 	public String visit(LFunc f) {
