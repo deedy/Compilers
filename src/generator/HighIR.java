@@ -34,7 +34,7 @@ class HInterface extends HNode {
     List<String> getSuperInterfaces() {
         // no more super classes
         if (parents.size() == 1 && parents.contains("Thing")) {
-            return null;
+            return new ArrayList<String>();
         }
         if (superInterfaces != null) {
             return superInterfaces;
@@ -50,7 +50,6 @@ class HInterface extends HNode {
                 superInterfaces.addAll(superInterface.getSuperInterfaces());
             }
         }
-        this.superInterfaces = superInterfaces;
         return superInterfaces;
     }
 
