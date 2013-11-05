@@ -2,15 +2,14 @@
 #include "cubex_external_functions.h"
 #include "cubex_lib.h"
 
-_object print() {
+_object Wut() {
 Object _tmp = NULL;
-
 Object _ret = NULL;
+_tmp = a;
+a = (Object) String_construct("who");
+_incr(a);
+_decr(_tmp);
 
-_ret = (Object) a;
-_incr(_ret);
-
-return _ret;
 }
 
 _object Wut_print() {
