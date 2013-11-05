@@ -1,9 +1,66 @@
-fun getInt<T>(i: Iterable<T>) : T
+# Cubex Compiler Test 2 - Stage 2
+
+fun safeDiv( l : Integer, r : Integer, d : Integer) : Integer
 {
-  for (e in i) {
-    a := 3;
-    return e;
-  }
-  return e;
+	m := l/r;
+	for(i in m)
+	{
+		return i;
+	}
+	return d;
 }
-return ["fick"];
+
+fun safeModulo(l : Integer, r : Integer, d : Integer) : Integer
+{
+	m := l%r;
+	for(i in m)
+	{
+		return i;
+	}
+	return d;
+}
+
+fun intToStr(i : Integer) : String
+{
+	pref := "";
+	if (i<0)
+	{
+		pref := "-";
+		i := i * -1;
+	}
+	ret := [character(48+safeModulo(i,10,0))];
+	i := safeDiv(i,10,0);
+	while(i>0)
+	{
+		ret := [character(48+safeModulo(i,10,0))] ++ ret;
+		i := safeDiv(i,10,0);
+	}
+	return string(pref ++ ret);
+}
+
+interface Option<T> {
+	fun hasVal() : Boolean;
+	fun getVal() : T;
+}
+
+class Some<T>(val : T) extends Option<T> {
+	fun hasVal() : Boolean {
+		return true;
+	}
+
+	fun getVal() : T {
+		return val;
+	}
+}
+
+class None<T>(fallback : T) extends Option<T> {
+	fun hasVal() : Boolean {
+		return false;
+	}
+
+	fun getVal() : T {
+		return fallback;
+	}
+}
+
+return [];

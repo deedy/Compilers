@@ -605,7 +605,6 @@ _object string(_object o) {
 		totalLen += 1;
 		iter = iter->next(iter);
 	} x3free(iter);
-
 	char *buff = x3malloc(sizeof(char) * (totalLen + 1));
 	int j;
 	for(j = 0; j < totalLen + 1; j++) {

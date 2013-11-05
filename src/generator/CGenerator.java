@@ -48,6 +48,7 @@ public class CGenerator implements LVisitor {
 
 	int iterCount = 0;
 	HashSet<String> localVars = new HashSet<String>();
+	List<String> funHeaders = new ArrayList<String>();
 
 	/* helper functions */
 	String join(Collection<?> s, String delimiter) {
@@ -80,7 +81,7 @@ public class CGenerator implements LVisitor {
 	public String visit(LId i) {
 		String name = i.name.accept(this);
 		int id = i.id;
-		return String.format("((Object) %s)->fields[%d]", name, id);
+		return String.format("Boolean_construct((Object) %s)->id == i)", name, id);
 	}
 
 	public String visit(LFunc f) {
@@ -117,6 +118,7 @@ public class CGenerator implements LVisitor {
 		String locals = join(varDefs, "\n");
 
 		localVars = new HashSet<String>();
+		funHeaders.add(String.format("_object %s(%s);", name, args));
 		return String.format("_object %s(%s) {\n%s\n%s\n}\n", name, args, locals, stmts);
 	}
 
@@ -271,10 +273,12 @@ public class CGenerator implements LVisitor {
 		for(String s : globals){
 			globDecs.append("_object " + s + ";\n");
 		}
+		String funHeads = join(funHeaders, "\n");
 		String funDecs = join(funcs, "\n");
 		String baseProg = "#include \"cubex_main.h\"\n"
                 + "#include \"cubex_external_functions.h\"\n"
                 + "#include \"cubex_lib.h\"\n"
+                + "%s\n"
                 + "%s\n"
                 + "%s\n"
                 + "void cubex_main() {\n"
@@ -287,6 +291,6 @@ public class CGenerator implements LVisitor {
                     + "}\n"
                     + "x3free(_i_iter);\n"
                 + "}\n";
-    return String.format(baseProg, globDecs, funDecs);
+    return String.format(baseProg, globDecs, funHeads, funDecs);
 	}
 }

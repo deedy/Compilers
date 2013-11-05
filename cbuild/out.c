@@ -2,122 +2,191 @@
 #include "cubex_external_functions.h"
 #include "cubex_lib.h"
 
-_object Multiplier(_object _o0, _object _o1) {
-Object s = _o0;
-Object n = _o1;
+_object safeDiv(_object _o0, _object _o1, _object _o2);
+_object safeModulo(_object _o0, _object _o1, _object _o2);
+_object intToStr(_object _o0);
+_object _prog_main();
+_object safeDiv(_object _o0, _object _o1, _object _o2) {
+Object l = _o0;
+_incr(l);
+
+Object r = _o1;
+_incr(r);
+
+Object d = _o2;
+_incr(d);
+
+Object m = NULL;
+
 Object _tmp = NULL;
+
 Object _ret = NULL;
-Object _obj = _allocate(5, 2);
-_tmp = _obj->fields[1];
-_obj->fields[1] = (Object) s;
-_incr(_obj->fields[1]);
+
+_tmp = m;
+m = (Object) Integer_divide(l, r);
+_incr(m);
 _decr(_tmp);
 
-_tmp = _obj->fields[0];
-_obj->fields[0] = (Object) n;
-_incr(_obj->fields[0]);
+_IterNode _iter0 = _iterator(m);
+while (_iter0) {
+_object i = _iter0->curr;
+_ret = (Object) i;
+_incr(_ret);
+_decr(m);
+
+return _ret;
+_iter0 = _iter0->next(_iter0);
+} x3free(_iter0);
+_ret = (Object) d;
+_incr(_ret);
+_decr(m);
+
+return _ret;
+}
+
+_object safeModulo(_object _o0, _object _o1, _object _o2) {
+Object l = _o0;
+_incr(l);
+
+Object r = _o1;
+_incr(r);
+
+Object d = _o2;
+_incr(d);
+
+Object m = NULL;
+
+Object _tmp = NULL;
+
+Object _ret = NULL;
+
+_tmp = m;
+m = (Object) Integer_modulo(l, r);
+_incr(m);
 _decr(_tmp);
 
-return _obj;}
+_IterNode _iter1 = _iterator(m);
+while (_iter1) {
+_object i = _iter1->curr;
+_ret = (Object) i;
+_incr(_ret);
+_decr(m);
 
-_object Multiplier_print(_object _o0) {
-Object _obj = _o0;
-_incr(_obj);
+return _ret;
+_iter1 = _iter1->next(_iter1);
+} x3free(_iter1);
+_ret = (Object) d;
+_incr(_ret);
+_decr(m);
+
+return _ret;
+}
+
+_object intToStr(_object _o0) {
+Object i = _o0;
+_incr(i);
 
 Object ret = NULL;
 
-Object v = NULL;
+Object pref = NULL;
 
 Object _tmp = NULL;
 
 Object _ret = NULL;
 
+_tmp = pref;
+pref = (Object) String_construct("");
+_incr(pref);
+_decr(_tmp);
+
+if (((Boolean) Integer_lessThan(i, Integer_construct(0), Boolean_construct(1)))->value) {
+_tmp = pref;
+pref = (Object) String_construct("-");
+_incr(pref);
+_decr(_tmp);
+
+_tmp = i;
+i = (Object) Integer_times(i, Integer_negative(Integer_construct(1)));
+_incr(i);
+_decr(_tmp);
+
+} else {
+
+}
 _tmp = ret;
-ret = (Object) NULL;
+ret = (Object) Iterable_construct(character(Integer_plus(Integer_construct(48), safeModulo(i, Integer_construct(10), Integer_construct(0)))));
 _incr(ret);
 _decr(_tmp);
 
-_tmp = v;
-v = (Object) _obj->fields[0];
-_incr(v);
+_tmp = i;
+i = (Object) safeDiv(i, Integer_construct(10), Integer_construct(0));
+_incr(i);
 _decr(_tmp);
 
-while (((Boolean) Integer_lessThan(Integer_construct(0), v, Boolean_construct(1)))->value) {
-_tmp = v;
-v = (Object) Integer_minus(v, Integer_construct(1));
-_incr(v);
-_decr(_tmp);
-
+while (((Boolean) Integer_lessThan(Integer_construct(0), i, Boolean_construct(1)))->value) {
 _tmp = ret;
-ret = (Object) _append(ret, Iterable_construct(_obj->fields[1]));
+ret = (Object) _append(Iterable_construct(character(Integer_plus(Integer_construct(48), safeModulo(i, Integer_construct(10), Integer_construct(0))))), ret);
 _incr(ret);
+_decr(_tmp);
+
+_tmp = i;
+i = (Object) safeDiv(i, Integer_construct(10), Integer_construct(0));
+_incr(i);
 _decr(_tmp);
 
 }
-_ret = (Object) ret;
+_ret = (Object) string(_append(pref, ret));
 _incr(_ret);
 _decr(ret);
-_decr(v);
+_decr(pref);
+_decr(i);
 
 return _ret;
 }
 
 _object _prog_main() {
-Object c = NULL;
+Object ret = NULL;
 
-Object ds = NULL;
-
-Object out = NULL;
+Object mapped = NULL;
 
 Object _tmp = NULL;
 
 Object _ret = NULL;
 
-_tmp = ds;
-ds = (Object) NULL;
-_incr(ds);
+_tmp = mapped;
+mapped = (Object) NULL;
+_incr(mapped);
 _decr(_tmp);
 
-_tmp = c;
-c = (Object) Integer_construct(0);
-_incr(c);
+_IterNode _iter2 = _iterator(Integer_through(Integer_construct(1), Integer_construct(10), Boolean_construct(1), Boolean_construct(1)));
+while (_iter2) {
+_object i = _iter2->curr;
+_tmp = mapped;
+mapped = (Object) _append(mapped, Iterable_construct(intToStr(Integer_plus(i, Integer_construct(1)))));
+_incr(mapped);
 _decr(_tmp);
 
-_IterNode _iter0 = _iterator(input);
-while (_iter0) {
-_object i = _iter0->curr;
-_tmp = ds;
-ds = (Object) _append(ds, Iterable_construct(Multiplier(i, c)));
-_incr(ds);
+_iter2 = _iter2->next(_iter2);
+} x3free(_iter2);
+_tmp = ret;
+ret = (Object) NULL;
+_incr(ret);
 _decr(_tmp);
 
-_tmp = c;
-c = (Object) Integer_plus(c, Integer_construct(1));
-_incr(c);
+_IterNode _iter3 = _iterator(mapped);
+while (_iter3) {
+_object m = _iter3->curr;
+_tmp = ret;
+ret = (Object) _append(Iterable_construct(m), ret);
+_incr(ret);
 _decr(_tmp);
 
-_iter0 = _iter0->next(_iter0);
-} x3free(_iter0);
-_tmp = out;
-out = (Object) NULL;
-_incr(out);
-_decr(_tmp);
-
-_IterNode _iter1 = _iterator(ds);
-while (_iter1) {
-_object d = _iter1->curr;
-_tmp = out;
-out = (Object) _append(out, Multiplier_print(d));
-_incr(out);
-_decr(_tmp);
-
-_iter1 = _iter1->next(_iter1);
-} x3free(_iter1);
-_ret = (Object) _append(input, out);
+_iter3 = _iter3->next(_iter3);
+} x3free(_iter3);
+_ret = (Object) ret;
 _incr(_ret);
-_decr(c);
-_decr(ds);
-_decr(out);
+_decr(ret);
+_decr(mapped);
 
 return _ret;
 }

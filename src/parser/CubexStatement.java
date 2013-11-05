@@ -163,6 +163,8 @@ class CubexWhileLoop extends CubexStatement {
     public Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
 
+        SymbolTable before = st.merge(mutableSt);
+
         CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
         boolean isBoolean = CubexTC.subType(cc, kc, exprType, new CubexCType("Boolean"));
 
@@ -175,6 +177,14 @@ class CubexWhileLoop extends CubexStatement {
         Triple<SymbolTable, Boolean, CubexType> imm = stmt.typeCheck(cc, kc, fc, st, mutableSt);
 
         // while returns same type as statement but not guarunteed to return
+        SymbolTable after = before.merge(imm.getLeft());
+        // for everything in before, update it if it is also in ret
+
+        for (CubexVName v : before.map.keySet()) {
+            if (after.contains(v)) {
+                before = before.set(v, after.get(v));
+            }
+        }
         return new Triple<SymbolTable, Boolean, CubexType>(mutableSt.intersection(imm.getLeft(), cc, kc), new Boolean(false), imm.getRight());
     }
 
@@ -209,7 +219,6 @@ class CubexForLoop extends CubexStatement {
         SymbolTable before = st.merge(mutableSt);
 
         CubexType exprType = expr.getType(cc, kc, fc, before);
-        // System.out.println(exprType);
 
         if (!exprType.isIterable(cc, kc)) {
             throw new CubexTC.TypeCheckException(
@@ -221,8 +230,6 @@ class CubexForLoop extends CubexStatement {
         params.add(new Nothing());
         CubexType testIter = new CubexCType(new CubexCName("Iterable"), params);
         // this cast should be safe
-        // System.out.println(expr);
-        // System.out.println(exprType);
         CubexCType foundIter = (CubexCType) CubexTC.join(cc, kc, testIter, exprType);
         // System.out.println(foundIter);
         SymbolTable tmp = mutableSt.set(name, foundIter.params.get(0));
@@ -232,15 +239,12 @@ class CubexForLoop extends CubexStatement {
 
         SymbolTable after = before.merge(ret.getLeft());
         // for everything in before, update it if it is also in ret
-        // System.out.println("before: " + before.map.toString());
-        // System.out.println("after: " + after.map.toString());
 
         for (CubexVName v : before.map.keySet()) {
             if (after.contains(v)) {
                 before = before.set(v, after.get(v));
             }
         }
-        // System.out.println("before 2: " + before.map.toString());
         return new Triple<SymbolTable, Boolean, CubexType>(before, new Boolean(false), ret.getRight());
     }
 
