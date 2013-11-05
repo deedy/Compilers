@@ -4,13 +4,10 @@ import java.util.ArrayList;
 
 abstract class LNode {
 	public abstract String accept(LVisitor v);
-	public abstract void convertFields(Map<String, Integer> map);
 }
 
 abstract class LExp extends LNode {
-	public void convertFields(Map<String, Integer> map) {
-		return;
-	}
+	public abstract LExp convertFields(Map<String, Integer> map);
 }
 
 class LExps extends LExp {
@@ -24,10 +21,12 @@ class LExps extends LExp {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
+	public LExp convertFields(Map<String, Integer> map) {
+		List<LExp> out = new ArrayList<LExp>();
 		for (LExp e : exps) {
-			e.convertFields(map);
+			out.add(e.convertFields(map));
 		}
+		return new LExps(out);
 	}	
 }
 
@@ -42,8 +41,8 @@ class LNull extends LExp {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
-		return;
+	public LExp convertFields(Map<String, Integer> map) {
+		return this;
 	}
 }
 
@@ -59,11 +58,11 @@ class LName extends LExp {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
-		Integer i = map.get(name);
-		// if mapping exists change the name;
-		if (i != null) {
-			name = i.toString();
+	public LExp convertFields(Map<String, Integer> map) {
+		if(map.containsKey(name)){
+			return new LFieldAccess(new LName("_obj"), map.get(name).intValue());
+		} else {
+			return this;
 		}
 	}
 }
@@ -81,6 +80,10 @@ class LFieldAccess extends LName {
 	public String accept(LVisitor v) {
 		return v.visit(this);
 	}
+
+	public LExp convertFields(Map<String, Integer> map) {
+		return this;
+	}
 }
 
 /* Integer literal */
@@ -93,6 +96,10 @@ class LNum extends LExp {
 
 	public String accept(LVisitor v) {
 		return v.visit(this);
+	}
+
+	public LExp convertFields(Map<String, Integer> map) {
+		return this;
 	}
 }
 
@@ -107,6 +114,10 @@ class LBool extends LExp {
 	public String accept(LVisitor v) {
 		return v.visit(this);
 	}
+
+	public LExp convertFields(Map<String, Integer> map) {
+		return this;
+	}
 }
 
 /* String literal */
@@ -119,6 +130,10 @@ class LString extends LExp {
 
 	public String accept(LVisitor v) {
 		return v.visit(this);
+	}
+
+	public LExp convertFields(Map<String, Integer> map) {
+		return this;
 	}
 }
 
@@ -133,6 +148,10 @@ class LId extends LExp {
 
 	public String accept(LVisitor v) {
 		return v.visit(this);
+	}
+
+	public LExp convertFields(Map<String, Integer> map) {
+		return this;
 	}
 }
 
@@ -149,8 +168,8 @@ class LFunCall extends LExp {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
-		args.convertFields(map);
+	public LExp convertFields(Map<String, Integer> map) {
+		return new LFunCall(name, args.convertFields(map));
 	}
 }
 
@@ -178,10 +197,12 @@ class LIter extends LExp {
 	public String accept(LVisitor v) {
 		return v.visit(this);
 	}
-	public void convertFields(Map<String, Integer> map) {
+	public LExp convertFields(Map<String, Integer> map) {
+		List<LExp> out = new ArrayList<LExp>();
 		for (LExp e : items) {
-			e.convertFields(map);
+			out.add(e.convertFields(map));
 		}
+		return new LIter(out);
 	}
 }
 
@@ -198,13 +219,13 @@ class LAppend extends LExp {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
-		iter1.convertFields(map);
-		iter2.convertFields(map);
+	public LExp convertFields(Map<String, Integer> map) {
+		return new LAppend(iter1.convertFields(map), iter2.convertFields(map));
 	}
 }
 
 abstract class LStmt extends LNode {
+	public abstract LStmt convertFields(Map<String, Integer> map);
 }
 
 class LStmts extends LStmt {
@@ -218,10 +239,12 @@ class LStmts extends LStmt {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
+	public LStmt convertFields(Map<String, Integer> map) {
+		List<LStmt> out = new ArrayList<LStmt>();
 		for (LStmt s : stmts) {
-			s.convertFields(map);
+			out.add(s.convertFields(map));
 		}
+		return new LStmts(out);
 	}
 }
 
@@ -240,8 +263,8 @@ class LFor extends LStmt {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
-		
+	public LStmt convertFields(Map<String, Integer> map) {
+		return new LFor(iter.convertFields(map), elem, stmt.convertFields(map));
 	}
 }
 
@@ -258,8 +281,8 @@ class LWhile extends LStmt {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
-		
+	public LStmt convertFields(Map<String, Integer> map) {
+		return new LWhile(cond.convertFields(map), stmt.convertFields(map));
 	}
 }
 
@@ -278,8 +301,11 @@ class LCond extends LStmt {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
-		
+	public LStmt convertFields(Map<String, Integer> map) {
+		LStmt s1 = ifBlock.convertFields(map);
+		LStmt s2 = elseBlock.convertFields(map);
+		LExp c = cond.convertFields(map);
+		return new LCond(c, s1, s2);
 	}
 }
 
@@ -296,8 +322,8 @@ class LAssign extends LStmt {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
-		
+	public LStmt convertFields(Map<String, Integer> map) {
+		return new LAssign((LName) var.convertFields(map), val.convertFields(map));
 	}
 }
 
@@ -312,8 +338,8 @@ class LReturn extends LStmt {
 		return v.visit(this);
 	}
 
-	public void convertFields(Map<String, Integer> map) {
-		
+	public LStmt convertFields(Map<String, Integer> map) {
+		return new LReturn(ret.convertFields(map));
 	}
 }
 

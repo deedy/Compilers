@@ -2,10 +2,14 @@
 
 class Wut () {
 	a := "who";
+	b := "wut";
 	fun print() : String {
 		return a;
+	}
+	fun print2(c : String) : String {
+		return string(c ++ b);
 	}
 }
 
 a := Wut();
-return [a.print()];
+return [a.print(), a.print2("dafuq ")];

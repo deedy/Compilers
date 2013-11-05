@@ -34,20 +34,15 @@ public class HighLow implements HLVisitor {
 	}
 
 	public LNode visit(HClass c) {
-		List<LFieldAccess> fa = new ArrayList<LFieldAccess>();
 		int fieldNum = 0;
-		for (String s : c.fields) {
-			LFieldAccess f = new LFieldAccess(new LName(s), fieldNum);
-			fa.add(f);
-			fieldNum++;
-		}
-
 		// Create the mapping from field name to field num
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
-		for (LFieldAccess a : fa) {
-			map.put(a.obj.name, a.field); 
+		for (String s : c.fields) {
+			map.put(s, fieldNum);
+			fieldNum += 1; 
 		}
 
+		System.out.println(map);
 		// get the list of arguments
 		List<LName> args = new ArrayList<LName>();
 		for(CubexName n : c.tCont.names) {
@@ -55,28 +50,32 @@ public class HighLow implements HLVisitor {
 		}
 
 		// get the parent 
+
 		LExp parentCall = new LNull();
-		if(c.parent != null) {
+		if (c.parent != null) {
 			parentCall = (LExp) c.parent.accept(this);
 		}
+
+		classID += 1;
 
 		// convert list of statements to use field accesses
 
 		List<LStmt> stmts = new ArrayList<LStmt>();
 		for (HStatement s : c.stmts) {
 			LStmt st = (LStmt)s.accept(this);
-			stmts.add(st);
-			st.convertFields(map);
+			stmts.add(st.convertFields(map));
 		}
-		funcs.add(new LConstructor(new LName(c.name), args, classID - 1, 
-			fieldNum, parentCall, new LStmts(stmts)));
+
+		funcs.add(new LConstructor(new LName(c.name), args, classID - 1, fieldNum, parentCall, new LStmts(stmts)));
 
 		// add all methods of the class to the global fun list
 		// convert functions to use field access
 		for (Map.Entry<String, HFunction> f : c.funs.entrySet()) {
+			f.getValue().args.add(0, "_obj");
 			LFunc lf = (LFunc)f.getValue().accept(this);
+			lf.name.name = c.name + "_" + lf.name.name;
 			funcs.add(lf);
-			lf.convertFields(map);
+			lf.stmts = lf.stmts.convertFields(map);
 		}
 
 		classID += 1;
@@ -196,13 +195,12 @@ public class HighLow implements HLVisitor {
 	}
 	public LNode visit(HClassProg c) {
 		// this will add functions on its own
-		LNode this_is_null = c.cls.accept(this);
+		LNode visited = c.cls.accept(this);
 		if(c.prog == null) {
 			return new LProg(globals, funcs, new LStmts(topLevels));
 		} else {
 			return c.prog.accept(this);
 		}
-
 	}
 
 	public LNode visit(HFunProg f) {
