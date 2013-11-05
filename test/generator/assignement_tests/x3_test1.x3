@@ -1,29 +1,11 @@
 # Cubex Compiler Test 1 - Stage 1
-ret := [];
 
-for ( i in input)
-{
-	# atoi
-	n := 0;
-	for (c in i) {
-		n := n * 10;
-		n := n + c.unicode() - 48;
-	}
-
-	n := n + n;
-
-	#itoa
-	m := [];
-
-	while(n > 0) {
-		for ( k in n % 10) {
-			m := [ character(k + 48)] ++ m;
-		}
-		for ( k in n / 10) {
-			n := k;
-		}
-	}
-
-	ret := ret ++ [string(m)];
+fun rev<T>(lst:Iterable<T>):Iterable<T>{
+	 ret := [];
+	 for(i in lst) {
+	 	ret := [i] ++ ret;
+	 }
+	 return ret;
 }
-return ret;
+
+return rev<String>(input);

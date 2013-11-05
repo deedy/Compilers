@@ -146,8 +146,8 @@ class CubexMethodCall extends CubexExpression {
         CubexTypeScheme s = CubexTC.method(cc, kc, base, name);
         if(s == null) {
             throw new CubexTC.TypeCheckException(
-                String.format("METHOD CALL %s IS NOT VALID", 
-                    this.toString())
+                String.format("%s METHOD CALL %s IS NOT VALID", 
+                    base, this.toString())
                 );
         }
         // swap out generics

@@ -1,10 +1,5 @@
-import java.util.Collection;
-import java.util.List;
-import java.util.ArrayList;
 import java.lang.StringBuilder;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.HashSet;
+import java.util.*;
 
 interface LVisitor {
 
@@ -160,7 +155,14 @@ public class CGenerator implements LVisitor {
 	}
 
 	public String visit(LName n) {
-		return n.name;
+		String[] badNames = {"auto","break", "case", "char", "const","continue","default","do","double","else"
+		,"enum","extern","float","for","goto","if","int","long","register","return","short","signed"
+		,"sizeof","static","struct","switch","typedef","union","unsigned","void","volatile","while"};
+		if (Arrays.asList(badNames).contains(n.name)) {
+			return n.name + "_";
+		} else {
+			return n.name;
+		}
 	}
 
 	public String visit(LIter i) {
@@ -242,7 +244,7 @@ public class CGenerator implements LVisitor {
 		for(String var : localVars) {
 			decrs.append(String.format("_decr(%s);\n", var));
 		}
-		return String.format("_ret = %s;\n_incr(_ret);\n%s\nreturn _ret;", ret, decrs);
+		return String.format("_ret = (Object) %s;\n_incr(_ret);\n%s\nreturn _ret;", ret, decrs);
 	}
 
 	public String visit(LProg p) {

@@ -147,6 +147,8 @@ public class CubexTC {
 
 		} else if (t1 instanceof Thing) {
 			return t2 instanceof Thing;
+		} else if (t2 instanceof Thing) {
+			return true;
 		} else if (t1 instanceof Nothing){
 			return true;
 		} else return false;

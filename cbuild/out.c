@@ -2,140 +2,109 @@
 #include "cubex_external_functions.h"
 #include "cubex_lib.h"
 
-_object safeDiv(_object o0, _object o1, _object o2) {
+_object rest(_object o0) {
 Object l = o0;
 _incr(l);
-
-Object r = o1;
-_incr(r);
-
-Object d = o2;
-_incr(d);
-
-Object m = NULL;
-
-Object _tmp = NULL;
-
-Object _ret = NULL;
-
-_tmp = m;
-m = (Object) Integer_divide(l, r);
-_incr(m);
-_decr(_tmp);
-
-_IterNode _iter0 = _iterator(m);
-while (_iter0) {
-_object i = _iter0->curr;
-_ret = i;
-_incr(_ret);
-_decr(m);
-
-return _ret;
-_iter0 = _iter0->next(_iter0);
-} x3free(_iter0);
-_ret = d;
-_incr(_ret);
-_decr(m);
-
-return _ret;
-}
-
-_object safeModulo(_object o0, _object o1, _object o2) {
-Object l = o0;
-_incr(l);
-
-Object r = o1;
-_incr(r);
-
-Object d = o2;
-_incr(d);
-
-Object m = NULL;
-
-Object _tmp = NULL;
-
-Object _ret = NULL;
-
-_tmp = m;
-m = (Object) Integer_modulo(l, r);
-_incr(m);
-_decr(_tmp);
-
-_IterNode _iter1 = _iterator(m);
-while (_iter1) {
-_object i = _iter1->curr;
-_ret = i;
-_incr(_ret);
-_decr(m);
-
-return _ret;
-_iter1 = _iter1->next(_iter1);
-} x3free(_iter1);
-_ret = d;
-_incr(_ret);
-_decr(m);
-
-return _ret;
-}
-
-_object intToStr(_object o0) {
-Object i = o0;
-_incr(i);
 
 Object ret = NULL;
 
-Object pref = NULL;
+Object passed = NULL;
 
 Object _tmp = NULL;
 
 Object _ret = NULL;
 
-_tmp = pref;
-pref = (Object) String_construct("");
-_incr(pref);
+_tmp = ret;
+ret = (Object) NULL;
+_incr(ret);
 _decr(_tmp);
 
-if (((Boolean) Integer_lessThan(i, Integer_construct(0), Boolean_construct(1)))->value) {
-_tmp = pref;
-pref = (Object) String_construct("-");
-_incr(pref);
+_tmp = passed;
+passed = (Object) Boolean_construct(0);
+_incr(passed);
 _decr(_tmp);
 
-_tmp = i;
-i = (Object) Integer_times(i, Integer_negative(Integer_construct(1)));
-_incr(i);
+_IterNode _iter0 = _iterator(l);
+while (_iter0) {
+_object e = _iter0->curr;
+if (((Boolean) passed)->value) {
+_tmp = ret;
+ret = (Object) _append(ret, Iterable_construct(e));
+_incr(ret);
 _decr(_tmp);
 
 } else {
 
 }
-_tmp = ret;
-ret = (Object) Iterable_construct(character(Integer_plus(Integer_construct(48), safeModulo(i, Integer_construct(10), Integer_construct(0)))));
-_incr(ret);
+_tmp = passed;
+passed = (Object) Boolean_construct(1);
+_incr(passed);
 _decr(_tmp);
 
-_tmp = i;
-i = (Object) safeDiv(i, Integer_construct(10), Integer_construct(0));
-_incr(i);
-_decr(_tmp);
-
-while (((Boolean) Integer_lessThan(Integer_construct(0), i, Boolean_construct(1)))->value) {
-_tmp = ret;
-ret = (Object) _append(Iterable_construct(character(Integer_plus(Integer_construct(48), safeModulo(i, Integer_construct(10), Integer_construct(0))))), ret);
-_incr(ret);
-_decr(_tmp);
-
-_tmp = i;
-i = (Object) safeDiv(i, Integer_construct(10), Integer_construct(0));
-_incr(i);
-_decr(_tmp);
-
-}
-_ret = string(_append(pref, ret));
+_iter0 = _iter0->next(_iter0);
+} x3free(_iter0);
+_ret = (Object) ret;
 _incr(_ret);
 _decr(ret);
-_decr(pref);
-_decr(i);
+_decr(passed);
+
+return _ret;
+}
+
+_object last(_object o0, _object o1) {
+Object l = o0;
+_incr(l);
+
+Object default_ = o1;
+_incr(default_);
+
+Object _tmp = NULL;
+
+Object _ret = NULL;
+
+_IterNode _iter1 = _iterator(l);
+while (_iter1) {
+_object e = _iter1->curr;
+_ret = (Object) last(rest(l), e);
+_incr(_ret);
+
+return _ret;
+_iter1 = _iter1->next(_iter1);
+} x3free(_iter1);
+_ret = (Object) default_;
+_incr(_ret);
+
+return _ret;
+}
+
+_object length(_object o0) {
+Object l = o0;
+_incr(l);
+
+Object ret = NULL;
+
+Object _tmp = NULL;
+
+Object _ret = NULL;
+
+_tmp = ret;
+ret = (Object) Integer_construct(0);
+_incr(ret);
+_decr(_tmp);
+
+_IterNode _iter2 = _iterator(l);
+while (_iter2) {
+_object e = _iter2->curr;
+_tmp = ret;
+ret = (Object) Integer_plus(ret, Integer_construct(1));
+_incr(ret);
+_decr(_tmp);
+
+_iter2 = _iter2->next(_iter2);
+} x3free(_iter2);
+_ret = (Object) ret;
+_incr(_ret);
+_decr(ret);
 
 return _ret;
 }
@@ -145,16 +114,7 @@ Object _tmp = NULL;
 
 Object _ret = NULL;
 
-_IterNode _iter2 = _iterator(_append(Integer_through(Integer_construct(1), Integer_construct(5), Boolean_construct(1), Boolean_construct(1)), Iterable_construct(Integer_construct(6))));
-while (_iter2) {
-_object i = _iter2->curr;
-_ret = Iterable_construct(intToStr(i));
-_incr(_ret);
-
-return _ret;
-_iter2 = _iter2->next(_iter2);
-} x3free(_iter2);
-_ret = Iterable_construct(String_construct("nope"));
+_ret = (Object) _append(Iterable_construct(last(input, String_construct(""))), Iterable_construct(string(Iterable_construct(character(Integer_plus(last(Integer_through(Integer_construct(5), length(input), Boolean_construct(1), Boolean_construct(1)), Integer_construct(3)), Integer_construct(30)))))));
 _incr(_ret);
 
 return _ret;
