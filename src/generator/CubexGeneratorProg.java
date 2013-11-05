@@ -59,7 +59,7 @@ public class CubexGeneratorProg {
                 + "#include \"cubex_external_functions.h\"\n"
                 + "#include \"cubex_lib.h\"\n"
                 + "void cubex_main() {\n"
-                    + "_print(\"String_construct(reject)\");\n"
+                    + "_print(String_construct(\"reject\"));\n"
                 + "}\n";
     }
 }

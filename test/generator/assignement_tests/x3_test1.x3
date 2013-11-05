@@ -1,15 +1,9 @@
-# Cubex Compiler Test 1 - Stage 1
-
-class Wut () {
-	a := "who";
-	b := "wut";
-	fun print() : String {
-		return a;
-	}
-	fun print2(c : String) : String {
-		return string(c ++ b);
-	}
+fun getInt<T>(i: Iterable<T>) : T
+{
+  for (e in i) {
+    a := 3;
+    return e;
+  }
+  return e;
 }
-
-a := Wut();
-return [a.print(), a.print2("dafuq ")];
+return ["fick"];

@@ -27,8 +27,8 @@ class CubexBlock extends CubexStatement {
                 doesReturn = true;
                 // find the common return type (always)
                 foldType = CubexTC.join(cc, kc, foldType, imm.getRight());
-                currOutgoing = imm.getLeft();
             }
+            currOutgoing = imm.getLeft();
             
         }
         return new Triple<SymbolTable, Boolean, CubexType>(currOutgoing, new Boolean(doesReturn), foldType);
@@ -206,7 +206,9 @@ class CubexForLoop extends CubexStatement {
     public Triple<SymbolTable, Boolean, CubexType> typeCheck(CubexClassContext cc, 
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st, SymbolTable mutableSt) {
 
-        CubexType exprType = expr.getType(cc, kc, fc, st.merge(mutableSt));
+        SymbolTable before = st.merge(mutableSt);
+
+        CubexType exprType = expr.getType(cc, kc, fc, before);
         // System.out.println(exprType);
 
         if (!exprType.isIterable(cc, kc)) {
@@ -227,7 +229,15 @@ class CubexForLoop extends CubexStatement {
 
         Triple<SymbolTable, Boolean, CubexType> ret = stmt.typeCheck(cc, kc, fc, st, tmp);
         // for returns same type as statement but not guarunteed to return
-        return new Triple<SymbolTable, Boolean, CubexType>(mutableSt.intersection(ret.getLeft(), cc, kc), new Boolean(false), ret.getRight());
+
+        SymbolTable after = ret.getLeft();
+        // for everything in before, update it if it is also in ret
+        for (CubexVName v : before.map.keySet()) {
+            if (after.contains(v)) {
+                before = before.set(v, after.get(v));
+            }
+        }
+        return new Triple<SymbolTable, Boolean, CubexType>(before, new Boolean(false), ret.getRight());
     }
 
     public String toString() {

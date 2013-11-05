@@ -141,6 +141,7 @@ class CubexMethodCall extends CubexExpression {
     public CubexType getType(CubexClassContext cc, 
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         // get the type of the base
+        // System.out.println(st.map);
         CubexType base = expr.getType(cc, kc, fc, st);
         // get the typescheme of the method
         CubexTypeScheme s = CubexTC.method(cc, kc, base, name);
