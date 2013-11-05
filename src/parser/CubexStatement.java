@@ -25,10 +25,11 @@ class CubexBlock extends CubexStatement {
             Triple<SymbolTable, Boolean, CubexType> imm = s.typeCheck(cc, kc, fc, st, currOutgoing);
             if(imm.getMiddle().booleanValue()) {
                 doesReturn = true;
+                // find the common return type (always)
+                foldType = CubexTC.join(cc, kc, foldType, imm.getRight());
+                currOutgoing = imm.getLeft();
             }
-            // find the common return type (always)
-            foldType = CubexTC.join(cc, kc, foldType, imm.getRight());
-            currOutgoing = imm.getLeft();
+            
         }
         return new Triple<SymbolTable, Boolean, CubexType>(currOutgoing, new Boolean(doesReturn), foldType);
     }
