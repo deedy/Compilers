@@ -39,7 +39,7 @@ class HInterface extends HNode {
         if (superInterfaces != null) {
             return superInterfaces;
         }
-        List<String> superInterfaces = new ArrayList<String>();
+        superInterfaces = new ArrayList<String>();
         for (String s : parents) {
             HInterface i = classes.get(s);
             if (!(i instanceof HClass)) {

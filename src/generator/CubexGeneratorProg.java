@@ -39,6 +39,9 @@ public class CubexGeneratorProg {
         for (Map.Entry<String, HInterface> i : hVisitor.classes.entrySet()) {
             i.getValue().implementSuperInterfaces(hVisitor.classes);
         }
+        for (Map.Entry<String, HInterface> i : hVisitor.classes.entrySet()) {
+            i.getValue().implementSuperInterfaces(hVisitor.classes);
+        }
         HighLow hl = new HighLow();
         LNode lRoot = hRoot.accept(hl);
         CGenerator cc = new CGenerator();
