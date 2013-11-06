@@ -81,7 +81,7 @@ public class CGenerator implements LVisitor {
 	public String visit(LId i) {
 		String name = i.name.accept(this);
 		int id = i.id;
-		return String.format("Boolean_construct((Object) %s)->id == i)", name, id);
+		return String.format("Boolean_construct(((Object) %s)->id == %d)", name, id);
 	}
 
 	public String visit(LFunc f) {

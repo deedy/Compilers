@@ -76,7 +76,7 @@ public class HighLow implements HLVisitor {
 			stmts.add(st.convertFields(map));
 		}
 
-		funcs.add(new LConstructor(new LName(c.name), args, classID - 1, fieldNum, parentCall, new LStmts(stmts)));
+		funcs.add(new LConstructor(new LName(c.name), args, classID, fieldNum, parentCall, new LStmts(stmts)));
 
 		// add all methods of the class to the global fun list
 		// convert functions to use field access
@@ -87,8 +87,6 @@ public class HighLow implements HLVisitor {
 			funcs.add(lf);
 			lf.stmts = lf.stmts.convertFields(map);
 		}
-
-		classID += 1;
 
 		return null;
 	}
@@ -156,7 +154,7 @@ public class HighLow implements HLVisitor {
 			int j = i.intValue();
 			HFunction hc = f.defs.get(i);
 			// make a function call
-			LFunCall lc = new LFunCall(new LName(hc.name), exArgs);
+			LFunCall lc = new LFunCall(new LName(hc.declassedName), exArgs);
 			fold = new LCond(new LId(new LName("_obj"), j), 
 				new LReturn(lc), fold);
 		}
