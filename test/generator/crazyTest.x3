@@ -1,0 +1,326 @@
+`
+THE CRAAAZZZIEST Cubex Test there ever was.
+'
+
+class Math(){
+
+	var := 0;
+
+	super();
+
+	fun pow(a : Integer<>, n : Integer<>) : Integer<>
+	{
+		ret := 1;
+		p := 0;
+		while(p < n){
+			n := n + 1;
+			ret := ret * a; 
+		}
+		return ret;
+	}
+
+	fun fst<T>(i : Iterable<T>, fallback : T) : T
+	{
+		for(e in i){
+			return e;
+		}
+
+		return fallback;
+	}
+
+	fun mod(a : Integer<>, b : Integer<>) : Integer
+	{
+		return fst<Integer>(a%b,-1);	
+	}
+}
+
+
+
+# A bad random number generator
+class Random(seed : Integer<>){
+
+	m := Math();
+
+	s := m.mod(seed, 9);	
+
+	super();
+
+
+	fun setSeed(seed : Integer<>) : Random<>
+	{
+		return Random(seed);
+	}
+
+	# returns random number between 1 and 10
+	fun getRandInt() : Integer<>
+	{
+		return s;
+	}
+
+	fun nextRandInt() : Random<>
+	{
+		return Random(m.mod(m.pow(s,m.mod(s, 4)), 9) + 1);
+	}
+
+
+	fun getRandBool() : Boolean<>
+	{
+		r := getRandInt();
+		ret := false;
+
+		if(m.mod(r,2) == 0){
+				ret := true;
+		}
+		
+		return ret;
+	}
+
+	fun nextRandBool() : Random<>
+	{
+		r := nextRandInt();
+		return Random(r.getRandInt());
+	}
+
+}
+
+# A very bad random number generator
+class Random2(seed : Integer<>){
+
+	a := seed;
+	m := Math();
+
+	super();
+
+	# returns in range of all integers with perfect balance
+	fun getRandInt() : Integer<>
+	{
+		return a;
+	}
+
+	fun nextRandInt() : Random2<>
+	{
+		return Random2(a + 1);
+	}
+
+	# always returns true and false equally
+	fun getRandBool() : Boolean<>
+	{
+		ret := false;
+		if(m.mod(a,2) == 0){
+			ret := true;
+		}
+		return ret;
+	}
+
+	fun nextRandBool() : Random2<>
+	{
+		return Random2(a + 1);
+	}
+
+}
+# A very very bad random number generator
+class Random3(){
+	super();
+
+	fun getRandInt() : Integer<>
+	{
+		# 4 chosen at random
+		# -> always returns a random number
+		return 4;
+	}
+
+	fun getRandBool() : Boolean<>
+	{
+		# false chosen at random
+		return false;
+	}
+}
+
+class CSMajor(name : String<>, gender : String<>, gradepa : Integer<>, friends : Boolean<>){
+	
+	n := name;
+	g := gender;
+	gpa := gradepa;
+	hasFriends := friends;
+
+	# RNG
+	rand := Random();
+
+	super();
+
+	fun getSleep() : Integer<>
+	{
+		allNighter := rand.getRandBool();
+		if(allNighter){
+			return 0;
+		}else{
+			return rand.getRandInt();
+		}
+	}
+
+	# returns GPA in 1/10ths (27 ~= 2.7)
+	fun getGPA() : Integer<>
+	{
+		return gpa;
+
+	}
+
+	# a manual override... A+s for all!!
+	fun setGPA(gradepa : Integer<>) : CSMajor<>
+	{
+		return CSMajor(n, gender, gradepa, hasFriends);
+	}
+
+	fun hasFriends() : Boolean<>
+	{
+		return(hasFriends);
+	}
+
+	fun getGender() : String<>
+	{
+
+		return g;
+
+	}
+
+	fun setGender(gender : String<>) : CSMajor<>
+	{
+
+		return CSMajor(n, gender, gpa, hasFriends);
+	}
+
+	fun setName(name : String<>) : CSMajor<>
+	{
+		return CSMajor(name, g, gpa, hasFriends);
+	}
+
+	fun getName() : String<>
+	{
+		return n;
+	}
+
+}
+
+# makes a line l  and appends len more of CS majors doing the Mambo
+class MamboLine(l : Iterable<CSMajor<>>, len : Integer)
+{
+
+	length := len;
+	for(e in l){
+		length := length + 1;
+	}
+
+	line := l;
+
+	rand := Random();
+
+	# append len more people
+	while(len > 1){
+		line := line ++ [CSMajor()];
+		len := len -1;
+	}
+
+	super();
+
+	fun getLine() : Iterable<CSMajor<>>
+	{
+		return line;
+	}
+	fun makeRandCS() : CSMajor<>
+	{
+
+		name := "";
+
+		gender := "F";
+		if(rand.getRandBool() | rand.getRandBool() | rand.getRandBool() | rand.getRandBool()){
+				gender := "M";
+		}
+
+		gpa := 27;
+		if(rand.getRandBool()){
+			while(gpa < 43 & rand.getRandBool()){
+				gpa := gpa + 1;
+			}
+		}else{
+			while(gpa > 10 & rand.getRandBool()){
+				gpa := gpa - 1;
+			}
+		}
+
+		hasFriends := rand.getRandBool() & rand.getRandBool() & rand.getRandBool() & rand.getRandBool();
+
+		return CSMajor(name,gender,gpa,false);
+
+	}
+
+	fun addRandMember() : MamboLine<>
+	{
+		return MamboLine(l ++ [makeRandCS()],0);
+	}
+
+	fun addMember(person : CSMajor<>) : MamboLine<>
+	{
+		return MamboLine(l ++ [person],0);
+	}
+
+
+	fun getMember(n : Integer<>) : CSMajor<>
+	{
+	
+		i := 0;
+		for(p in l){
+			i := i + 1;
+			if(i == n){
+				return p;
+			}
+		}
+
+		#failure... returns a random guy not in the line...
+		return makeRandCS();
+
+	}
+
+}
+
+
+
+line := MamboLine([], 33);
+
+rand := Random(8);
+
+name := "CS Guy";
+gender := "M";
+gpa := 20;
+hasFriends := rand.getRandBool() & rand.getRandBool() & rand.getRandBool() & rand.getRandBool();
+rando := CSMajor(name, gender, gpa, hasFriends);
+line := line.addMember(rando);
+
+name := "Benny K. C.";
+gender := "YERRRRRR";
+gpa := 40;
+hasFriends := rand.getRandBool() & rand.getRandBool() & rand.getRandBool();
+bkc := CSMajor(name, gender, gpa, hasFriends);
+sleep := (bkc.getSleep() > 0) & false;
+line := line.addMember(bkc);
+
+name := "Mandy";
+wic := "F";
+throughTheRoof := 44;
+hasFriends := rando.hasFriends() | true;
+mandy := CSMajor(name, wic, throughTheRoof, hasFriends);
+line := line.addMember(mandy);
+
+name := "Sung Max";
+gender := "M";
+gpa := 40 + rand.getRandInt();
+hasFriends := mandy.hasFriends();
+sam := CSMajor(name, gender, gpa, hasFriends);
+line := line.addMember(sam);
+
+names := [];
+for(mamboer in (line.getLine())){
+	names := names ++ [mamboer.getName()];
+}
+
+return ["oh hai "];
+
