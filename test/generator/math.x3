@@ -1,0 +1,42 @@
+class Math(){
+
+	var := 0;
+
+	super();
+
+	fun pow(a : Integer<>, n : Integer<>) : Integer<>
+	{
+		ret := 1;
+		p := 0;
+		while(p < n){
+			n := n + 1;
+			ret := ret * a; 
+		}
+		return ret;
+	}
+
+	fun fst<T>(i : Iterable<T>, fallback : T) : T
+	{
+		for(e in i){
+			return e;
+		}
+
+		return fallback;
+	}
+
+	fun mod(a : Integer<>, b : Integer<>) : Integer
+	{
+		return fst<Integer>(a%b,-1);	
+	}
+}
+
+m := Math();
+ret := [];
+i := m.mod(13,5);
+
+while(i > 0){
+	ret := ret ++ ["x"];
+	i := -1;
+}
+
+return ret;
