@@ -318,7 +318,11 @@ class HFunctionCall extends HExpression {
         }
         HFunction f = map.get(name);
         if (f != null) {
-            name = f.name;
+            name = f.declassedName;
+            List<HExpression> newArgs = new ArrayList<HExpression>();
+            newArgs.add(new HVar("_obj"));
+            newArgs.addAll(args);
+            args = newArgs;
         }
     }
 }
