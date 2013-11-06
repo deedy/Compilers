@@ -1,5 +1,6 @@
 import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -163,7 +164,28 @@ class CubexCType extends CubexType{
 
 	public List<CubexType> immediateSuperTypes(CubexClassContext cc) {
 		CubexObject obj = cc.get(name);
-		return new ArrayList<CubexType>(Arrays.asList(obj.type));
+    if (params.size()!=0) {
+      ArrayList<CubexType> superTypes = new ArrayList<CubexType>();
+      for (int i = 0; i < params.size(); i++) {
+        ArrayList<HashSet<CubexType>> al = CubexTC.findLevelPathToRoot(cc, null, params.get(i));
+        if (al.size() < 2) {
+          continue;
+        }
+        for (CubexType ct : al.get(1)) {
+          List<CubexType> newParams = new ArrayList<CubexType>(params);
+          newParams.set(i, ct);
+         
+          superTypes.add(new CubexCType(this.name, newParams));
+        }
+      }
+      if (superTypes.size() == 0) {
+        return new ArrayList<CubexType>(Arrays.asList(obj.type));
+      }
+      return superTypes;
+    } else {
+      return new ArrayList<CubexType>(Arrays.asList(obj.type));
+    }
+		
 	}
 
 	public boolean isIterable(CubexClassContext cc, CubexKindContext kc) {

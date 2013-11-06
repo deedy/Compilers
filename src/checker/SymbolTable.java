@@ -12,6 +12,7 @@ class SymbolTable {
 
 	public SymbolTable(PMap<CubexVName, CubexType> m) {
 		map = m;
+		// System.out.println(map);
 	}
 
 	// functional
