@@ -41,6 +41,12 @@ class CubexFunctionCall extends CubexExpression {
         CubexTypeScheme swapped = CubexTC.replaceGenerics(f.scheme.kCont, typeList, f.scheme);
         // show that each expression is a subtype
         List<CubexType> expected = swapped.tCont.types;
+        if (expected.size() != exprList.size()) {
+            throw new CubexTC.TypeCheckException(
+                String.format("%s ARGUMENTS EXPECTED TO FUNCTION %s BUT %s SUPPLIED", 
+                    expected.size(), name, exprList.size()));
+                
+        }
         for(int i = 0; i < exprList.size(); i++) {
             // get the expression
             CubexExpression expr = exprList.get(i);
@@ -155,6 +161,12 @@ class CubexMethodCall extends CubexExpression {
         CubexTypeScheme swapped = CubexTC.replaceGenerics(s.kCont, typeList, s);
         // show that each expression is a subtype
         List<CubexType> expected = swapped.tCont.types;
+        if (expected.size() != exprList.size()) {
+            throw new CubexTC.TypeCheckException(
+                String.format("%s ARGUMENTS EXPECTED TO FUNCTION %s BUT %s SUPPLIED", 
+                    expected.size(), name, exprList.size()));
+                
+        }
         for(int i = 0; i < exprList.size(); i++) {
             // get the expression
             CubexExpression expr = exprList.get(i);
