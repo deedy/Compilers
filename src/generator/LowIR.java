@@ -1,6 +1,7 @@
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.*;
 
 abstract class LNode {
 	public abstract String accept(LVisitor v);
@@ -49,9 +50,15 @@ class LNull extends LExp {
 /* variables */
 class LName extends LExp {
 	String name;
-
+	static final List<String> badNames = Arrays.asList("auto","break", "case", "char", "const","continue","default","do","double","else"
+		,"enum","extern","float","for","goto","if","int","long","register","return","short","signed"
+		,"sizeof","static","struct","switch","typedef","union","unsigned","void","volatile","while");
 	public LName(String s) {
-		name = s;
+		if (badNames.contains(s)) {
+			name =  "sexxxpanther_default_swag_"+s+ "_";
+		} else {
+			name = s;
+		}
 	}
 
 	public String accept(LVisitor v) {

@@ -141,7 +141,6 @@ public class HighLow implements HLVisitor {
 	}
 
 	public LNode visit(HUndefFunction f) {
-		System.out.println(f.defs);
 		LName name = new LName(f.name);
 		List<LName> args = new ArrayList<LName>();
 		for(String s : f.args) {

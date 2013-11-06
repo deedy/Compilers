@@ -88,15 +88,19 @@ public class CGenerator implements LVisitor {
 		// invariant: anything that assigns will add names to this
 		localVars = new HashSet<String>();
 		String name = f.name.accept(this);
-		String stmts = f.stmts.accept(this);
 
 		int argCount = 0;
 		List<String> params = new ArrayList<String>();
 		for(int i = 0; i < f.args.size(); i++) {
 			params.add("_object _o" + argCount);
+			localVars.add(f.args.get(i).name);
 			argCount += 1;
 		}
+
+		// System.out.println("Func " + localVars.toString());
 		String args = join(params, ", ");
+
+		String stmts = f.stmts.accept(this);
 
 		int count = 0;
 		List<String> varDefs = new ArrayList<String>();
@@ -169,14 +173,7 @@ public class CGenerator implements LVisitor {
 	}
 
 	public String visit(LName n) {
-		String[] badNames = {"auto","break", "case", "char", "const","continue","default","do","double","else"
-		,"enum","extern","float","for","goto","if","int","long","register","return","short","signed"
-		,"sizeof","static","struct","switch","typedef","union","unsigned","void","volatile","while"};
-		if (Arrays.asList(badNames).contains(n.name)) {
-			return n.name + "_";
-		} else {
-			return n.name;
-		}
+		return n.name;
 	}
 
 	public String visit(LIter i) {
@@ -255,6 +252,7 @@ public class CGenerator implements LVisitor {
 	public String visit(LReturn r) {
 		String ret = r.ret.accept(this);
 		StringBuilder decrs = new StringBuilder();
+		// System.out.println("Return " + localVars.toString());
 		for(String var : localVars) {
 			decrs.append(String.format("_decr(%s);\n", var));
 		}
