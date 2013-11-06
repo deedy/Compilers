@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 abstract class HNode {
-  public abstract LNode accept(HLVisitor v);  
+    public abstract LNode accept(HLVisitor v);
+    public void convertFuns(Map<String, HFunction> map) {
+        return;
+    }
 }
 
 abstract class HExpression extends HNode {
@@ -84,6 +87,12 @@ class HInterface extends HNode {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        for (Map.Entry<String,HFunction> f : funs.entrySet()) {
+            f.getValue().convertFuns(map);
+        }
+    }
 }
 
 class HClass extends HInterface {
@@ -107,6 +116,18 @@ class HClass extends HInterface {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        for (Map.Entry<String,HFunction> f : funs.entrySet()) {
+            f.getValue().convertFuns(map);
+        }
+        for (HStatement s : stmts) {
+            s.convertFuns(map);
+        }
+        for (HExpression e : exprs) {
+            e.convertFuns(map);
+        }
+    }
 }
 
 class HConditional extends HStatement {
@@ -124,6 +145,12 @@ class HConditional extends HStatement {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        expr.convertFuns(map);
+        stmt1.convertFuns(map);
+        stmt2.convertFuns(map);
+    }
 }
 
 class HForLoop extends HStatement {
@@ -140,6 +167,11 @@ class HForLoop extends HStatement {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        expr.convertFuns(map);
+        stmt.convertFuns(map);
+    }
 }
 
 class HWhileLoop extends HStatement {
@@ -155,6 +187,11 @@ class HWhileLoop extends HStatement {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        expr.convertFuns(map);
+        stmt.convertFuns(map);
+    }
 }
 
 class HReturn extends HStatement {
@@ -168,6 +205,10 @@ class HReturn extends HStatement {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        expr.convertFuns(map);
+    }
 }
 
 class HBlock extends HStatement {
@@ -180,6 +221,12 @@ class HBlock extends HStatement {
 
     public LNode accept(HLVisitor v) {
         return v.visit(this);
+    }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        for (HStatement s : stmts) {
+            s.convertFuns(map);
+        }
     }
 }
 
@@ -195,6 +242,10 @@ class HAssign extends HStatement {
 
     public LNode accept(HLVisitor v) {
         return v.visit(this);
+    }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        expr.convertFuns(map);
     }
 }
 
@@ -220,6 +271,10 @@ class HFunction {
 
     public LNode accept(HLVisitor v) {
         return v.visit(this);
+    }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        body.convertFuns(map);
     }
 }
 
@@ -256,6 +311,20 @@ class HFunctionCall extends HExpression {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        for (HExpression e : args) {
+            e.convertFuns(map);
+        }
+        HFunction f = map.get(name);
+        if (f != null) {
+            name = f.declassedName;
+            List<HExpression> newArgs = new ArrayList<HExpression>();
+            newArgs.add(new HVar("_obj"));
+            newArgs.addAll(args);
+            args = newArgs;
+        }
+    }
 }
 
 class HAppend extends HExpression {
@@ -270,6 +339,11 @@ class HAppend extends HExpression {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        left.convertFuns(map);
+        right.convertFuns(map);
+    }
 }
 
 class HIterable extends HExpression {
@@ -281,6 +355,12 @@ class HIterable extends HExpression {
 
     public LNode accept(HLVisitor v) {
         return v.visit(this);
+    }
+
+    public void convertFuns(Map<String, HFunction> map) {
+        for (HExpression e : elems) {
+            e.convertFuns(map);
+        }
     }
 }
 

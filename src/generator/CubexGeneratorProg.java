@@ -37,7 +37,9 @@ public class CubexGeneratorProg {
         HNode hRoot = node.accept(hVisitor);
         // Implement unimplemented 
         for (Map.Entry<String, HInterface> i : hVisitor.classes.entrySet()) {
-            i.getValue().implementSuperInterfaces(hVisitor.classes);
+            HInterface in = i.getValue();
+            in.implementSuperInterfaces(hVisitor.classes);
+            in.convertFuns(in.funs);
         }
         // for (Map.Entry<String, HInterface> i : hVisitor.classes.entrySet()) {
         //     for (Map.Entry<String, HFunction> f : i.getValue().funs.entrySet()) {
