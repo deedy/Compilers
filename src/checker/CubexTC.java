@@ -22,7 +22,7 @@ public class CubexTC {
 		}
 	}
 
-	private static ArrayList<HashSet<CubexType>> findLevelPathToRoot(CubexClassContext cc, CubexKindContext kc, CubexType t) {
+	public static ArrayList<HashSet<CubexType>> findLevelPathToRoot(CubexClassContext cc, CubexKindContext kc, CubexType t) {
 		// Not Sure what CubexKindContext should be doing here (deedy)
 		ArrayList<HashSet<CubexType>> allSuperTypes = new ArrayList<HashSet<CubexType>>();
 		Queue<Pair<Integer, CubexType>> superTypeQueue = new LinkedList<Pair<Integer, CubexType>>();
@@ -39,7 +39,7 @@ public class CubexTC {
 			}
 			for (CubexType ct : immpair.getRight().immediateSuperTypes(cc)) {
 				superTypeQueue.add(new Pair<Integer, CubexType>(level+1, ct));
-			}
+			}			
 		}
 		return allSuperTypes;
 	}
