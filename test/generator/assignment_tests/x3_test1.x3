@@ -1,0 +1,32 @@
+# Cubex Compiler Test 2 - Stage 2
+interface Option<T> {
+	fun hasVal() : Boolean;
+	fun getVal() : T;
+}
+
+class Some<T>(val : T) extends Option<T> {
+	fun hasVal() : Boolean {
+		return true;
+	}
+
+	fun getVal() : T {
+		return val;
+	}
+}
+
+class None<T>(fallback : T) extends Option<T> {
+	fun hasVal() : Boolean {
+		return false;
+	}
+
+	fun getVal() : T {
+		return fallback;
+	}
+}
+
+fun getVal<T>(o : Option<T>) : T{
+	return o.getVal();
+}
+
+a := Some<String>("wut");
+return [getVal<String>(a)];

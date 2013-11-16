@@ -1,0 +1,78 @@
+# Cubex Compiler Test 6 - Stage 8
+
+interface Printer
+{
+	fun print() : Iterable<String>;
+	fun line() : String;
+}
+
+class SinglePrinter(s:String)
+{
+	fun print() : Iterable<String>
+	{
+		return [s];
+	}
+	fun line() : String = s;
+}
+
+class ConstantPrinter() extends SinglePrinter
+{
+	super("Constant");
+}
+
+class Multiplier(s : String, n : Integer) extends SinglePrinter
+{
+	v:="";
+	nn := n;
+	while(nn>0)
+	{
+		v:=string(v++s);
+		nn := nn-1;
+	}
+	super(v);
+	
+	fun print() : Iterable<String>
+	{
+		ret:=[];
+		nnn := n;
+		while (nnn>0)
+		{
+			ret:=ret++[s];
+			nnn:=nnn-1;
+		}
+		return ret;
+	}
+}
+
+ps := [];
+c := 0;
+m := 0;
+for(i in input)
+{
+	m:=m+1;
+	if(c==0)
+	{
+		ps := ps ++ [ConstantPrinter()];
+		c := 1;
+	}
+	else if(c==1)
+	{
+		ps := ps ++ [SinglePrinter(i)];
+		c := 2;
+	}
+	else
+	{
+		ps := ps ++ [Multiplier(i,m)];
+		c := 0;
+	}
+}
+out := [];
+for(p in ps)
+{
+	out := out ++ [p.line()];
+}
+for(p in ps)
+{
+	out := out ++ p.print();
+}
+return out;
