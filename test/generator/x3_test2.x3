@@ -38,14 +38,7 @@ fun intToStr(i : Integer) : String
 	return string(pref ++ ret);
 }
 
-mapped := [];
-for (i in 1..10){
-	mapped := mapped ++ [intToStr(i + 1)];
-}
+for(i in (1..5) ++ [6])
+   return [intToStr(i)];
 
-ret := [];
-for(m in mapped) {
-	ret := [m] ++ ret;
-}
-
-return ret;
+return ["nope"];

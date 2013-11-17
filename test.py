@@ -1,7 +1,13 @@
 import os
 import sys
-from subprocess import call, Popen, PIPE
+from subprocess import check_output, STDOUT, CalledProcessError
 import re
+
+def easy_output(args):
+    try:
+        return check_output(args, stderr=STDOUT,universal_newlines=True)
+    except CalledProcessError as e:
+        return e.output
 
 x3s = set()
 ins = set()
@@ -35,7 +41,7 @@ for x3 in x3s:
 
 test_diag = open('TEST_DIAG.txt','w')
 
-for test in test_set:
+for test in sorted(list(test_set)):
     # get the relevant names
     common = indir + "/"+test
     prog = common + ".x3"
@@ -47,40 +53,32 @@ for test in test_set:
     devnull = open('/dev/null', 'w')
 
     # compile the progam (capture output if possible)
-    # > output to temp file?
-    comp = Popen(["java","-jar","build/jar/Cubex.jar",prog], stdout=PIPE)
-    compiler_output, compiler_error = comp.communicate()
-    compiler_output = compiler_output.decode('utf-8')
 
-    # call make from the build directory (capture output if possible)
-    mk_out = Popen(["make","-C",cdir], stdout=PIPE)
-    make_output, make_error = mk_out.communicate()
-    make_output = make_output.decode('utf-8')
+    compiler_output = easy_output(["java","-jar","build/jar/Cubex.jar",prog])
 
     # move out file to the build directory
-    call(["mv","./out.c",cdir], stdout = devnull, stderr = devnull)
+    easy_output(["mv","./out.c",cdir])
+
+    # call make from the build directory (capture output if possible)
+    make_output = easy_output(["make","-C",cdir])
 
     f = open(infile)
     args = f.read().split("\n")
     f.close()
 
-    prog = Popen([cdir + "/a.out"] + args, stdout = PIPE)
-    program_output, program_err = prog.communicate()
-    program_output = program_output.decode('utf-8')
+    program_output = easy_output([cdir + "/a.out"] + args)
 
     correct_file = open(outfile,'r')
     correct_output = correct_file.read()
 
-    print(program_output,correct_output)
-
     if (program_output == correct_output):
-        print("TEST PASSED: "+ common +"\n")
+        print("TEST PASSED: "+ common)
         test_diag.write("===== TEST PASSED: "+ common +"\n")
 
     else:
         print("TEST FAILED: "+ common)
         test_diag.write("_________________________________\n\n")
-        test_diag.write("TEST FAILED     : " + common[17:] +"\n\n")
+        test_diag.write("TEST FAILED     : " + test +"\n\n")
         test_diag.write("compiler output :  \n=================\n" + compiler_output+"\n")
         test_diag.write("make output     :  \n=================\n" + make_output+"\n")
         test_diag.write("expected output : " + correct_output+"\n")

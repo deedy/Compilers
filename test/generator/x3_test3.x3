@@ -33,4 +33,5 @@ fun length(l : Iterable<Thing>) : Integer
 	}
 	return ret;
 }
+
 return [last<String>(input,"")]++[string([character(last<Integer>(5..length(input),3)+30)])];

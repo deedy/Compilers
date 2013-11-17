@@ -27,4 +27,4 @@ for(d in ds)
 {
 	out := out ++ d.print();
 }
-return input ++ out;
+return out;

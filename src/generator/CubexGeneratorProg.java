@@ -14,22 +14,26 @@ public class CubexGeneratorProg {
         // lex it
         CubexLexer lex;
         CubexProg prog;
-        if ((lex = CLexer.lex(args[0])) == null) {
+        try {
+            if ((lex = CLexer.lex(args[0])) == null) {
+                writeOut(reject());
+                return;
+            } 
+            if ((prog = CParser.parse(lex)) == null) {
+                writeOut(reject());
+                return;
+            }
+            if (!CChecker.check(prog)) {
+                writeOut(reject());
+                return;
+            }
+            // System.out.println(prog);
+            String out = generate(prog);
+            writeOut(out);
+        } catch (Exception e) {
             writeOut(reject());
-            return;
-        } 
-        if ((prog = CParser.parse(lex)) == null) {
-            writeOut(reject());
-            return;
+            e.printStackTrace();
         }
-        if (!CChecker.check(prog)) {
-            writeOut(reject());
-            return;
-        }
-        System.out.println(prog);
-        String out = generate(prog);
-        // System.out.println(out);
-        writeOut(out);
     }
 
     public static String generate(CubexProg node) {
