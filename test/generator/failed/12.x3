@@ -1,0 +1,102 @@
+interface Land
+{
+  fun getX() : Integer;
+  fun getY() : Integer;
+  fun equals(other : Land) : Boolean;
+}
+interface Sea
+{
+  fun getX() : Integer;
+  fun getY() : Integer;
+  fun equals(other : Land) : Boolean;
+}
+interface Air
+{
+  fun getX() : Integer;
+  fun getY() : Integer;
+  fun getZ() : Integer; 
+  fun equals(other : Land) : Boolean;
+}
+interface TwoD
+{
+  fun getX() : Integer;
+  fun getY() : Integer;
+}
+interface ThreeD extends TwoD
+{
+  fun getZ() : Integer;
+}
+interface Vehicle<T,D>
+{
+  fun getType() : String;
+  fun move(vector : D) : Vehicle<T,D>;
+  fun getPos() : T;
+  fun crashed(other : Vehicle<T,D>) : Boolean;
+}
+interface Car extends Vehicle<Land,TwoD>
+{
+  fun getType() : String = "Car";
+  fun crashed(other : Vehicle<Land,TwoD>) : Boolean
+  {
+    return getPos().equals(other.getPos());
+  }
+}
+interface Boat extends Vehicle<Sea,TwoD>
+{
+  fun getType() : String = "Boat";
+}
+interface Plane extends Vehicle<Air,ThreeD>
+{
+  fun getType() : String = "Plane";
+}
+class FlatLand(x : Integer, y : Integer) extends Land
+{
+  fun getX() : Integer = x;
+  fun getY() : Integer = y;
+  fun equals(other : Land) : Boolean
+  {
+    return other.getX() == x & other.getY() == y;
+  }
+}
+class TwoDVec(x : Integer, y : Integer) extends TwoD
+{
+  fun getX() : Integer = x;
+  fun getY() : Integer = y;
+}
+
+class RaceCar(pos: Land) extends Car
+{
+  p := FlatLand(pos.getX(), pos.getY());
+  fun move(vector: TwoD) : Vehicle<Land,TwoD>
+  {
+    return RaceCar(FlatLand(p.getX() + vector.getX(), p.getY() + vector.getY()));
+  }
+  fun getType() : String = "YAY, A RACE CAR!";
+  fun getPos() : Land = p;
+}
+class AntiqueCar(pos: Land, maxX : Integer, maxY : Integer) extends Car
+{
+  p := FlatLand(pos.getX(), pos.getY());
+  fun move(vector: TwoD) : Vehicle<Land,TwoD>
+  {
+    if(vector.getX() > maxX | vector.getY() > maxY) #Spot the bug here
+    {
+      return AntiqueCar(p,maxX,maxY);
+    }
+    return AntiqueCar(FlatLand(p.getX() + vector.getX(), p.getY() + vector.getY()),maxX,maxY);
+  }
+  fun getPos() : Land = p;
+}
+
+ferrari := RaceCar(FlatLand(0,0));
+mercedes := AntiqueCar(FlatLand(5,0),0,5);
+mercedes := mercedes.move(TwoDVec(-5,0));
+
+if(mercedes.crashed(ferrari))
+{
+  return ["Crash",ferrari.getType(),mercedes.getType()];
+}
+else
+{
+  return ["No crash"];
+}

@@ -1,0 +1,14 @@
+interface Over
+{
+  fun getNumber() : Integer;
+}
+
+class Under<T>() extends Over
+{
+  fun getNumber() : Integer = 90;
+  fun makePair(t1 : T, t2 : T) : Iterable<T> = [t1, t2];
+}
+
+u := Under<String>();
+n := u.getNumber();
+return u.makePair(string([character(n)]), string([character(n + 9)]));

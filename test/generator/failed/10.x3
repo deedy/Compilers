@@ -1,0 +1,6 @@
+out := 67;
+for(i in -10000..10000)
+{
+  out:=out+i;
+}
+return [string([character(out)])];

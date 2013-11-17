@@ -1,0 +1,19 @@
+unicode := 122;
+
+fun ohthefun() : Iterable<String> 
+{
+  retval := [];
+  u := unicode;
+  for (p in 75...) {
+    if ((p * 2) <= 200) {
+      retval := retval++[string([character(u)])];
+    }
+    else {
+      return retval;
+    }
+    u := u - 1;
+  }
+  return ["Say what?"];
+}
+
+return ohthefun();
