@@ -115,7 +115,7 @@ class Random(seed : Integer<>){
 
 
 m := Math();
-rand := Random();
+rand := Random(3);
 ret := [];
 i := 5;
 
