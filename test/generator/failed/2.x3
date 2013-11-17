@@ -1,0 +1,18 @@
+unicode := 97;
+
+fun thefun() : Iterable<String> 
+{
+  retval := [];
+  u := unicode;
+  for (x in [2, 7, 4, 9, 456, 877, 123, 56, 678, 10, 89, 345, 491]) {
+    for (m in x % 2) {
+      if (!(0 == m)) {
+        retval := retval ++ [string([character(u)])];
+      }
+    }
+    u := u + 1;
+  }
+  return retval;
+}
+
+return thefun();

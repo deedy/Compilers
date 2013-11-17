@@ -1,0 +1,4 @@
+retVal := "";
+s := "The Return Value.";
+retVal := s;
+return [retVal];
