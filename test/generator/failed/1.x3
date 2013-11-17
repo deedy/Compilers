@@ -1,0 +1,38 @@
+class Pair<A,B>(a : A, b : B) {
+  fun pi1() : A  = a;
+  fun pi2() : B = b;
+}
+
+class Map<A>(lst : Iterable<Pair<String, A>>) {
+  fun add(key : String, val : A) : Map<A> {
+    return Map<A>(lst ++ [Pair<String, A>(key, val)]);
+  }
+
+  fun lookup(key : String) : Iterable<A> {
+    for (p in lst) {
+      if (p.pi1().equals(key)) {
+        return [p.pi2()];
+      }
+    }
+    return [];
+  }
+}
+
+x := Map<Integer>([]);
+v := 102;
+for (i in input)
+{
+	x := x.add(i, v);
+	v := v + 1;
+}
+ret := [];
+for (i in input)
+{
+	z := x.lookup(i);
+	zz := [];
+	for (j in z) {
+		zz := zz ++ [character(j)];
+	}
+	ret := ret++[string(zz)];
+}
+return ret;
