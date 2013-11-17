@@ -5,4 +5,4 @@ d := [b,b,b];
 e := true;
 #f := Nothing;
 #g := Thing;
-return (c ++ d);
+return (c ++ [d]);

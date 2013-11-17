@@ -1,7 +1,0 @@
-a := "AAAAAAA";
-b := "BBBBBBB";
-s := "STRINGZ";
-
-c := s ++ s;
-
-return [s,c,s];

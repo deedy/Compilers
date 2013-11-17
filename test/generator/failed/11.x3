@@ -1,0 +1,62 @@
+interface Interone<T>
+{
+  fun toIter(t : T) : Iterable<T>;
+}
+
+interface Intertwo<T>
+{
+  fun twoIter(t1 : T, t2 : T) : Iterable<T>;
+}
+
+class Emptier<T>() extends Interone<T> & Intertwo<T>
+{
+  fun toIter(t : T) : Iterable<T> = [];
+  fun twoIter(t1 : T, t2 : T) : Iterable<T> = [];
+}
+
+class Copier<T>() extends Interone<T> & Intertwo<T>
+{
+  fun toIter(t : T) : Iterable<T> = [t];
+  fun twoIter(t1 : T, t2 : T) : Iterable<T> = [t1, t2];
+}
+
+class Doubler<T>() extends Interone<T> & Intertwo<T>
+{
+  fun toIter(t : T) : Iterable<T> = [t, t];
+  fun twoIter(t1 : T, t2 : T) : Iterable<T> = [t1, t1, t2, t2];
+}
+
+class Dynamicasaurus<T>(i : Integer) extends Interone<T> & Intertwo<T>
+{
+  fun toIter(t : T) : Iterable<T>
+  {
+    ret := [];
+    for (x in 1..i)
+    {
+      ret := ret ++ [t];
+    }
+    return ret;
+  }
+  
+  fun twoIter(t1 : T, t2 : T) : Iterable<T> = toIter(t1) ++ toIter(t2);
+}
+
+ret := [];
+int := -1;
+for (i in input)
+{
+  e := Emptier<String>();
+  ret := ret ++ e.toIter(i);
+  ret := ret ++ e.twoIter(string(i++"E"),string(i++"E2"));
+  c := Copier<String>();
+  ret := ret ++ c.toIter(i);
+  ret := ret ++ c.twoIter(string(i++"C"),string(i++"C2"));
+  do := Doubler<String>();
+  ret := ret ++ do.toIter(i);
+  ret := ret ++ do.twoIter(string(i++"Do"),string(i++"Do2"));
+  dy := Dynamicasaurus<String>(int);
+  ret := ret ++ dy.toIter(i);
+  ret := ret ++ dy.twoIter(string(i++"Dy"),string(i++"Dy2"));
+  int := int + 1;
+}
+return ret;
