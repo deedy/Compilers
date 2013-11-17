@@ -1,0 +1,2784 @@
+This is an overview of the tests that failed:
+
+Test: stage5test3
+generic classes without inheritance
+[Stage 5]
+
+Program:
+class Pair<A,B>(a : A, b : B) {
+  fun pi1() : A  = a;
+  fun pi2() : B = b;
+}
+
+class Map<A>(lst : Iterable<Pair<String, A>>) {
+  fun add(key : String, val : A) : Map<A> {
+    return Map<A>(lst ++ [Pair<String, A>(key, val)]);
+  }
+
+  fun lookup(key : String) : Iterable<A> {
+    for (p in lst) {
+      if (p.pi1().equals(key)) {
+        return [p.pi2()];
+      }
+    }
+    return [];
+  }
+}
+
+x := Map<Integer>([]);
+v := 102;
+for (i in input)
+{
+	x := x.add(i, v);
+	v := v + 1;
+}
+ret := [];
+for (i in input)
+{
+	z := x.lookup(i);
+	zz := [];
+	for (j in z) {
+		zz := zz ++ [character(j)];
+	}
+	ret := ret++[string(zz)];
+}
+return ret;
+
+-------------------------------------------
+
+Sub-test 1 (1 points):
+
+Input:
+but one lonely line
+
+Possible outputs: 
+f
+
+Actual output:
+
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/1
+
+Sub-test 2 (1 points):
+
+Input:
+but another line
+and another
+another but different
+we have to keep them different
+so that they have different keys in the map
+blah
+blah blah
+blah blah blah
+i'm going to copy and paste some text from the internet now.
+Finally, we ask that you submit a small text file (.txt) that contains the following information:
+Who you discussed the problem set with.
+Remember that the solution must be your own,
+but you can discuss your ideas with others provided you mention that in this file.
+What the distribution of work in your team was like.
+Who did what?
+Any additional comments you might have about the problem set.
+
+Possible outputs: 
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+r
+s
+t
+u
+
+Actual output:
+g
+f
+f
+f
+f
+f
+f
+f
+f
+f
+f
+f
+f
+f
+f
+f
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/1
+
+
+
+Test: stage2test3
+non-generic functions
+[Stage 2]
+
+Program:
+unicode := 97;
+
+fun thefun() : Iterable<String> 
+{
+	retval := [];
+	u := unicode;
+	for (x in [2, 7, 4, 9, 456, 877, 123, 56, 678, 10, 89, 345, 491]) {
+		for (m in x % 2) {
+			if (!(0 == m)) {
+				retval := retval ++ [string([character(u)])];
+			}
+		}
+		u := u + 1;
+	}
+	return retval;
+}
+
+return thefun();
+
+-------------------------------------------
+
+C program could not be compiled!
+
+Compiler output:
+In file included from out.c:3:0:
+cubex_lib.h: In function ‘_allocate’:
+cubex_lib.h:108:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘_copy’:
+cubex_lib.h:185:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘_append’:
+cubex_lib.h:199:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Boolean_negate’:
+cubex_lib.h:216:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Boolean_and’:
+cubex_lib.h:226:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Boolean_or’:
+cubex_lib.h:237:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Boolean_through’:
+cubex_lib.h:253:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Boolean_onward’:
+cubex_lib.h:283:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Integer_through’:
+cubex_lib.h:420:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘String_construct’:
+cubex_lib.h:564:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘string’:
+cubex_lib.h:608:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h:613:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h:621:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘__init’:
+cubex_lib.h:638:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h:640:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+out.c: In function ‘thefun’:
+out.c:22:14: error: ‘unicode’ undeclared (first use in this function)
+out.c:22:14: note: each undeclared identifier is reported only once for each function it appears in
+out.c:26:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+out.c: In function ‘cubex_main’:
+out.c:79:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+make: *** [out.o] Error 1
+Score: 0/5
+
+
+Test: stage1test4
+assignment
+[Stage 1]
+
+Program:
+retVal := "";
+s := "The Return Value.";
+retVal := s;
+return [retVal];
+
+-------------------------------------------
+
+Sub-test 1 (15 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+The Return Value.
+
+Actual output:
+The Return Value.
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 14.166/15
+
+
+
+Test: stage4test2
+non-generic classes without inheritance
+[Stage 4]
+
+Program:
+class Cons(elem : Character, rest : Iterable<Cons>)
+{
+	super();
+	fun getFirst() : Character = elem;
+	fun getRest() : Iterable<Cons> = rest;
+	fun getIterable() : Iterable<Character>
+	{
+		for(r in rest)
+		{
+			return [elem] ++ r.getIterable();
+		}
+		return [elem];
+	}
+	fun append(list : Cons) : Cons
+	{
+		nrest := [list];
+		for(r in rest)
+		{
+			nrest := [r.append(list)];
+		}
+		return Cons(elem,nrest);
+	}
+	fun reverse() : Cons
+	{
+		ret := Cons(elem,[]);
+		for(r in rest)
+		{
+			ret := r.reverse().append(ret);
+		}
+		return ret;
+	}
+}
+
+fun strToCons(iter : Iterable<Character>) : Iterable<Cons>
+{
+	ret := [];
+	for(c in iter)
+	{
+		ret := [Cons(c,ret)];
+	}
+	for(r in ret)
+	{
+	   return [r.reverse()];
+	}
+	return [];
+}
+ret := [];
+for (str in input)
+{
+	hw := strToCons(str);
+	for(c in hw)
+	{
+		ret:= ret++[string(c.getIterable())];
+	}
+}
+return ret;
+
+-------------------------------------------
+
+Sub-test 1 (2 points):
+
+Input:
+Should the output be equal to the input?
+
+Possible outputs: 
+Should the output be equal to the input?
+
+Actual output:
+Should the output be equal to the input?A
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/2
+
+Sub-test 2 (4 points):
+
+Input:
+A larger input.
+We've decided not to burden you with reading a full semantics for the Cubex language.
+That means that you should implement the "obvious" semantics of statements, expressions, classes, interfaces, et cetera.
+(We place "obvious" in quotations because the correct mathematical formulation of those semantics is far from obvious!)
+The nitty-gritty details:
+We provided a small library and makefile that you have to use for your compiler.
+The top-level execution of the compiled Cubex program should be triggered by a call to the function cubex_main() in out.c.
+(cubex_main() is forward-declared in cubex_main.h).
+The file out.c should include exactly three other files:
+cubex_main.h,
+cubex_external_functions.h
+and cubex_lib.h
+and be otherwise self-contained.
+The only code allowed to run when a Cubex program is invoked is that in out.c and that in our provided library functions.
+A compiler breaking this rule intentionally will get a 0.
+
+Possible outputs: 
+A larger input.
+We've decided not to burden you with reading a full semantics for the Cubex language.
+That means that you should implement the "obvious" semantics of statements, expressions, classes, interfaces, et cetera.
+(We place "obvious" in quotations because the correct mathematical formulation of those semantics is far from obvious!)
+The nitty-gritty details:
+We provided a small library and makefile that you have to use for your compiler.
+The top-level execution of the compiled Cubex program should be triggered by a call to the function cubex_main() in out.c.
+(cubex_main() is forward-declared in cubex_main.h).
+The file out.c should include exactly three other files:
+cubex_main.h,
+cubex_external_functions.h
+and cubex_lib.h
+and be otherwise self-contained.
+The only code allowed to run when a Cubex program is invoked is that in out.c and that in our provided library functions.
+A compiler breaking this rule intentionally will get a 0.
+
+Actual output:
+
+Comment: 
+
+Program crashed: -30.0%
+
+Score: 0/4
+
+
+
+Test: stage3test4
+generic functions
+[Stage 3]
+
+Program:
+fun first<T> (l : Iterable<T>) : Iterable<T>
+{
+	ret := [];
+	for(e in l)
+	{
+		return [e];
+	}
+	return ret;
+}
+
+fun rest<T> (l : Iterable<T>) : Iterable<T>
+{
+	ret := [];
+	seenOne := false;
+	for(e in l)
+	{
+		if(seenOne)
+		{
+			ret := ret ++ [e];
+		}
+		else
+		{
+			seenOne:=true;
+		}
+	}
+	return ret;
+}
+
+fun merge<T> (l1 : Iterable<T>, l2 : Iterable<T>) : Iterable<T>
+{
+	ret := [];
+	for(e in l1)
+	{
+		ret := ret ++ [e] ++ first<T>(l2);
+		l2 := rest<T>(l2);
+	}
+	return ret ++ l2;
+}
+
+return [string(merge<Character>("HloWrdX","el ol!Y"))];
+
+-------------------------------------------
+
+Sub-test 1 (3 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+Hello World!XY
+
+Actual output:
+Hello World!XY
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 2.8332/3
+
+
+
+Test: stage6test1
+generic classes with single interface inheritance
+[Stage 6]
+
+Program:
+interface Over
+{
+	fun getNumber() : Integer;
+}
+
+class Under<T>() extends Over
+{
+	fun getNumber() : Integer = 90;
+	fun makePair(t1 : T, t2 : T) : Iterable<T> = [t1, t2];
+}
+
+u := Under<String>();
+n := u.getNumber();
+return u.makePair(string([character(n)]), string([character(n + 9)]));
+
+-------------------------------------------
+
+Error during compilation of cubex code.
+Score: 0/10
+
+
+Test: empty-return
+empty output
+[Stage 1]
+
+Program:
+return [];
+
+-------------------------------------------
+
+Sub-test 1 (20 points):
+
+Input:
+
+Possible outputs: 
+
+Actual output:
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 18.888/20
+
+Sub-test 2 (20 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+
+Actual output:
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 18.888/20
+
+
+
+Test: stage6test2
+generic classes with single interface inheritance
+[Stage 6]
+
+Program:
+interface List<T>
+{
+	fun getFirst() : Iterable<T>;
+	fun getRest() : List<T>;
+	fun getIterable() : Iterable<T>;
+	fun append(l:List<T>) : List<T>;
+	fun reverse() : List<T>;
+}
+
+class Nil<T>() extends List<T>
+{
+	super();
+	fun getFirst() : Iterable<T> = [];
+	fun getRest() : List<T> = Nil<T>();
+	fun getIterable() : Iterable<T> = [];
+	fun append(l:List<T>) : List<T> = l;
+	fun reverse() : List<T> = Nil<T>();
+}
+
+class Cons<T>(elem : T,rest : List<T>) extends List<T>
+{
+	super();
+	fun getFirst() : Iterable<T> = [elem];
+	fun getRest() : List<T> = rest;
+	fun getIterable() : Iterable<T>
+	{
+		return [elem] ++ rest.getIterable();
+	}
+	fun append(l:List<T>) : List<T>
+	{
+		return Cons<T>(elem,rest.append(l));
+	}
+	fun reverse() : List<T>
+	{
+		return rest.reverse().append(Cons<T>(elem,Nil<T>()));
+	}
+}
+
+fun strToCons<T>(iter : Iterable<T>) : List<T>
+{
+	ret := Nil<T>().reverse();
+	for(c in iter)
+	{
+		ret := Cons<T>(c,ret);
+	}
+	return ret.reverse();
+}
+
+str := "";
+for (i in input)
+{
+	str := str++i;
+}
+return [string(strToCons<Character>(str).getIterable())];
+
+-------------------------------------------
+
+Error during compilation of cubex code.
+Score: 0/2
+
+
+Test: stage5test2
+generic classes without inheritance
+[Stage 5]
+
+Program:
+class Multiplier<A>(a : A, n : Integer) {
+  fun getLst() : Iterable<A> {
+    ret := [];
+    for (nn in 1..n) {
+      ret := [a] ++ ret;
+    }
+    return ret;
+  }
+
+  fun getOtherLst<B>(b : B) : Iterable<B> {
+    x := Multiplier<B>(b, n);
+    return x.getLst();
+  }
+}
+
+for (i in input)
+{
+	return Multiplier<Integer>(100, 10).getOtherLst<String>(i);
+}
+
+return ["You didn't read the input :("];
+
+-------------------------------------------
+
+Sub-test 1 (1 points):
+
+Input:
+The only line.
+
+Possible outputs: 
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+
+Actual output:
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+The only line.
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0.9444/1
+
+Sub-test 2 (1 points):
+
+Input:
+The first line.
+The second line.
+The third line.
+The fourth line.
+The fifth line.
+The sixth line.
+The seventh line.
+The eighth line.
+The ninth line.
+The tenth line.
+
+Possible outputs: 
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+
+Actual output:
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0.9444/1
+
+Sub-test 3 (1 points):
+
+Input:
+The first line.
+The second line.
+
+Possible outputs: 
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+
+Actual output:
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+The first line.
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0.9444/1
+
+
+
+Test: stage1test5
+if/else
+[Stage 1]
+
+Program:
+t := [""];
+if (true)
+{
+	t := ["TRUE"];
+}
+else
+{
+	t := ["FALSE"];
+}
+return t;
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+TRUE
+
+Actual output:
+TRUE
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+
+
+Test: stage1test3
+reading and printing input
+[Stage 1]
+
+Program:
+return input;
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+one line.
+
+Possible outputs: 
+one line.
+
+Actual output:
+one line.
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+Sub-test 2 (5 points):
+
+Input:
+A few parts of the semantics are less than obvious.
+The following constraints,
+along with the above directive to implement the obvious semantics whenever such are available,
+should give you enough information to complete this assignment.
+Of course,
+we reserve the right to add to this list when we discover that we have (inevitably) left something out.
+
+Possible outputs: 
+A few parts of the semantics are less than obvious.
+The following constraints,
+along with the above directive to implement the obvious semantics whenever such are available,
+should give you enough information to complete this assignment.
+Of course,
+we reserve the right to add to this list when we discover that we have (inevitably) left something out.
+
+Actual output:
+A few parts of the semantics are less than obvious.
+The following constraints,
+along with the above directive to implement the obvious semantics whenever such are available,
+should give you enough information to complete this assignment.
+Of course,
+we reserve the right to add to this list when we discover that we have (inevitably) left something out.
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 4.722/5
+
+
+
+Test: stage1test6
+while loop, boolean operators
+[Stage 1]
+
+Program:
+a := true;
+b := true;
+retval := "How did you get here?";
+
+if (a & b) {
+	retval := "";
+}
+while (a | b) {
+	if (a) {
+		retval := retval++"a";
+		a := false;
+	}
+	else {
+		if (!b) {
+			retval := retval++"Nobody's supposed to be here.";
+			b := false;
+		}
+		else {
+			retval := retval++"b";
+			b := false;
+		}
+	}
+}
+
+return [string(retval)];
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+ab
+
+Actual output:
+ab
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+
+
+Test: stage2test1
+non-generic functions
+[Stage 2]
+
+Program:
+fun coolname() : Iterable<Character> {
+	temp := 20;
+
+	for (num in 1<<100) {
+		if (num != 75) {
+		}
+		else {
+			for (t in num/3) {
+				temp := t;
+			}
+		}
+	}
+	
+	if ((temp > 21) & (temp == 25)) {
+		return [character(121), character(101), character(115)];
+	}
+	
+	return [];
+}
+
+return [string(coolname())];
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+yes
+
+Actual output:
+yes
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+
+
+Test: stage2test4
+non-generic functions
+[Stage 2]
+
+Program:
+unicode := 122;
+
+fun ohthefun() : Iterable<String> 
+{
+	retval := [];
+	u := unicode;
+	for (p in 75...) {
+		if ((p * 2) <= 200) {
+			retval := retval++[string([character(u)])];
+		}
+		else {
+			return retval;
+		}
+		u := u - 1;
+	}
+	return ["Say what?"];
+}
+
+return ohthefun();
+
+-------------------------------------------
+
+Sub-test 1 (5 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+z
+y
+x
+w
+v
+u
+t
+s
+r
+q
+p
+o
+n
+m
+l
+k
+j
+i
+h
+g
+f
+e
+d
+c
+b
+a
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/5
+
+
+
+Test: stage9test1
+generic classes with multiple interface inheritance
+[Stage 9]
+
+Program:
+interface Building
+{
+	fun getAddress() : String;
+	fun getName() : String;
+}
+
+interface Asset
+{
+	fun getValue() : Integer;
+	fun getManagerName() : String;
+}
+
+class Branch(address : String, name : String, value : Integer, managerName : String) extends Building & Asset
+{
+	super();
+	fun getAddress() : String = address;
+	fun getName() : String = name;
+	fun getValue() : Integer = value;
+	fun getManagerName() : String = managerName;
+}
+
+fun concat(s1 : String, s2: String) : String = string(s1 ++ " " ++ s2);
+
+fun getBuildingData(b : Building) : String = concat(b.getAddress(),b.getName());
+
+fun getAssetData(a : Asset) : String = a.getManagerName();
+
+branch := Branch("1 Main Road", "Main Branch", 9001, "Chuck Norris");
+
+return [concat(getBuildingData(branch),getAssetData(branch))];
+
+-------------------------------------------
+
+Error during compilation of cubex code.
+Score: 0/2
+
+
+Test: GC-loop
+Simple test of the garbage collector
+[Stage 1]
+
+Program:
+out := 67;
+for(i in -10000..10000)
+{
+	out:=out+i;
+}
+return [string([character(out)])];
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+C
+
+Actual output:
+
+Comment: 
+
+Program crashed: -30.0%
+
+Score: 0/10
+
+
+
+Test: stage9test2
+generic classes with multiple interface inheritance
+[Stage 9]
+
+Program:
+interface Interone<T>
+{
+	fun toIter(t : T) : Iterable<T>;
+}
+
+interface Intertwo<T>
+{
+	fun twoIter(t1 : T, t2 : T) : Iterable<T>;
+}
+
+class Emptier<T>() extends Interone<T> & Intertwo<T>
+{
+	fun toIter(t : T) : Iterable<T> = [];
+	fun twoIter(t1 : T, t2 : T) : Iterable<T> = [];
+}
+
+class Copier<T>() extends Interone<T> & Intertwo<T>
+{
+	fun toIter(t : T) : Iterable<T> = [t];
+	fun twoIter(t1 : T, t2 : T) : Iterable<T> = [t1, t2];
+}
+
+class Doubler<T>() extends Interone<T> & Intertwo<T>
+{
+	fun toIter(t : T) : Iterable<T> = [t, t];
+	fun twoIter(t1 : T, t2 : T) : Iterable<T> = [t1, t1, t2, t2];
+}
+
+class Dynamicasaurus<T>(i : Integer) extends Interone<T> & Intertwo<T>
+{
+	fun toIter(t : T) : Iterable<T>
+	{
+		ret := [];
+		for (x in 1..i)
+		{
+			ret := ret ++ [t];
+		}
+		return ret;
+	}
+	
+	fun twoIter(t1 : T, t2 : T) : Iterable<T> = toIter(t1) ++ toIter(t2);
+}
+
+ret := [];
+int := -1;
+for (i in input)
+{
+	e := Emptier<String>();
+	ret := ret ++ e.toIter(i);
+	ret := ret ++ e.twoIter(string(i++"E"),string(i++"E2"));
+	c := Copier<String>();
+	ret := ret ++ c.toIter(i);
+	ret := ret ++ c.twoIter(string(i++"C"),string(i++"C2"));
+	do := Doubler<String>();
+	ret := ret ++ do.toIter(i);
+	ret := ret ++ do.twoIter(string(i++"Do"),string(i++"Do2"));
+	dy := Dynamicasaurus<String>(int);
+	ret := ret ++ dy.toIter(i);
+	ret := ret ++ dy.twoIter(string(i++"Dy"),string(i++"Dy2"));
+	int := int + 1;
+}
+return ret;
+
+-------------------------------------------
+
+Error during compilation of cubex code.
+Score: 0/6
+
+
+Test: stage7test1
+generic classes with single interface inheritance and interface method implementations
+[Stage 7]
+
+Program:
+interface Land
+{
+	fun getX() : Integer;
+	fun getY() : Integer;
+	fun equals(other : Land) : Boolean;
+}
+interface Sea
+{
+	fun getX() : Integer;
+	fun getY() : Integer;
+	fun equals(other : Land) : Boolean;
+}
+interface Air
+{
+	fun getX() : Integer;
+	fun getY() : Integer;
+	fun getZ() : Integer; 
+	fun equals(other : Land) : Boolean;
+}
+interface TwoD
+{
+	fun getX() : Integer;
+	fun getY() : Integer;
+}
+interface ThreeD extends TwoD
+{
+	fun getZ() : Integer;
+}
+interface Vehicle<T,D>
+{
+	fun getType() : String;
+	fun move(vector : D) : Vehicle<T,D>;
+	fun getPos() : T;
+	fun crashed(other : Vehicle<T,D>) : Boolean;
+}
+interface Car extends Vehicle<Land,TwoD>
+{
+	fun getType() : String = "Car";
+	fun crashed(other : Vehicle<Land,TwoD>) : Boolean
+	{
+		return getPos().equals(other.getPos());
+	}
+}
+interface Boat extends Vehicle<Sea,TwoD>
+{
+	fun getType() : String = "Boat";
+}
+interface Plane extends Vehicle<Air,ThreeD>
+{
+	fun getType() : String = "Plane";
+}
+class FlatLand(x : Integer, y : Integer) extends Land
+{
+	fun getX() : Integer = x;
+	fun getY() : Integer = y;
+	fun equals(other : Land) : Boolean
+	{
+		return other.getX() == x & other.getY() == y;
+	}
+}
+class TwoDVec(x : Integer, y : Integer) extends TwoD
+{
+	fun getX() : Integer = x;
+	fun getY() : Integer = y;
+}
+
+class RaceCar(pos: Land) extends Car
+{
+	p := FlatLand(pos.getX(), pos.getY());
+	fun move(vector: TwoD) : Vehicle<Land,TwoD>
+	{
+		return RaceCar(FlatLand(p.getX() + vector.getX(), p.getY() + vector.getY()));
+	}
+	fun getType() : String = "YAY, A RACE CAR!";
+	fun getPos() : Land = p;
+}
+class AntiqueCar(pos: Land, maxX : Integer, maxY : Integer) extends Car
+{
+	p := FlatLand(pos.getX(), pos.getY());
+	fun move(vector: TwoD) : Vehicle<Land,TwoD>
+	{
+		if(vector.getX() > maxX | vector.getY() > maxY) #Spot the bug here
+		{
+			return AntiqueCar(p,maxX,maxY);
+		}
+		return AntiqueCar(FlatLand(p.getX() + vector.getX(), p.getY() + vector.getY()),maxX,maxY);
+	}
+	fun getPos() : Land = p;
+}
+
+ferrari := RaceCar(FlatLand(0,0));
+mercedes := AntiqueCar(FlatLand(5,0),0,5);
+mercedes := mercedes.move(TwoDVec(-5,0));
+
+if(mercedes.crashed(ferrari))
+{
+	return ["Crash",ferrari.getType(),mercedes.getType()];
+}
+else
+{
+	return ["No crash"];
+}
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+Crash
+YAY, A RACE CAR!
+Car
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/10
+
+
+
+Test: stage8test2
+generic classes with class inheritance
+[Stage 8]
+
+Program:
+class Singleton<A>(a : A) {
+  fun get() : A { return a; }
+}
+
+class SettableSingleton<B>(b : B) extends Singleton<B> {
+  super(b);
+
+  fun set(b : B) : SettableSingleton<B> = SettableSingleton<B>(b);
+}
+
+l := [SettableSingleton<String>("hello"), SettableSingleton<String>("foo")];
+for (i in input)
+{
+	l := l ++ [SettableSingleton<String>(i)];
+}
+
+ll := [];
+for (x in l)
+{
+	s := x.get();
+	ll := ll ++ [x.set(string(s++"WAT")).get()];
+}
+
+return ll;
+
+-------------------------------------------
+
+Sub-test 1 (1 points):
+
+Input:
+one less lonely line.
+
+Possible outputs: 
+helloWAT
+fooWAT
+one less lonely line.WAT
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/1
+
+Sub-test 2 (1 points):
+
+Input:
+Modern Compiler Implementation in Java,
+2nd ed.
+Andrew Appel and Jens Palsberg,
+Cambridge University Press,
+2002.
+ISBN 0-521-82060-X.
+Compilers—Principles,
+Techniques and Tools
+(The "Dragon Book"),
+2nd ed.
+Alfred Aho,
+Monica Lam,
+Ravi Sethi and Jeffrey D.
+Ullman.
+Addison-Wesley,
+2006.
+ISBN:
+0-321-48681-1
+Engineering a Compiler.
+Keith Cooper and Linda Torczon.
+Elsevier/Morgan Kaufmann,
+2004.
+ISBN 1-55860-698-8.
+Advanced Compiler Design and Implementation.
+Steve Muchnick.
+Morgan Kaufmann Publishers,
+1997.
+ISBN 1-558-60320-4.
+Principles of Program Analysis.
+Flemming Nielson,
+Hanne Riis Nielson,
+and Chris Hankin.
+Springer,
+2004.
+ISBN 3540654100.
+
+Possible outputs: 
+helloWAT
+fooWAT
+Modern Compiler Implementation in Java,WAT
+2nd ed.WAT
+Andrew Appel and Jens Palsberg,WAT
+Cambridge University Press,WAT
+2002.WAT
+ISBN 0-521-82060-X.WAT
+Compilers—Principles,WAT
+Techniques and ToolsWAT
+(The "Dragon Book"),WAT
+2nd ed.WAT
+Alfred Aho,WAT
+Monica Lam,WAT
+Ravi Sethi and Jeffrey D.WAT
+Ullman.WAT
+Addison-Wesley,WAT
+2006.WAT
+ISBN:WAT
+0-321-48681-1WAT
+Engineering a Compiler.WAT
+Keith Cooper and Linda Torczon.WAT
+Elsevier/Morgan Kaufmann,WAT
+2004.WAT
+ISBN 1-55860-698-8.WAT
+Advanced Compiler Design and Implementation.WAT
+Steve Muchnick.WAT
+Morgan Kaufmann Publishers,WAT
+1997.WAT
+ISBN 1-558-60320-4.WAT
+Principles of Program Analysis.WAT
+Flemming Nielson,WAT
+Hanne Riis Nielson,WAT
+and Chris Hankin.WAT
+Springer,WAT
+2004.WAT
+ISBN 3540654100.WAT
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/1
+
+
+
+Test: stage2test7
+printing before reading input
+[Stage 2]
+
+Program:
+fun getinput() : Iterable<String>
+{
+	return ["Print this one before reading, too."]++input;
+}
+
+return ["Print this line before reading the input."]++getinput();
+
+-------------------------------------------
+
+Sub-test 1 (1 points):
+
+Input:
+one line.heyyy
+
+Possible outputs: 
+Print this line before reading the input.
+Print this one before reading, too.
+one line.heyyy
+
+Actual output:
+Print this line before reading the input.
+Print this one before reading, too.
+one line.heyyy
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0.9444/1
+
+Sub-test 2 (2 points):
+
+Input:
+A few parts of the semantics are less than obvious.heyyy
+The following constraints,heyyy
+along with the above directive to implement the obvious semantics whenever such are available,heyyy
+should give you enough information to complete this assignment.heyyy
+Of course,heyyy
+we reserve the right to add to this list when we discover that we have (inevitably) left something out.heyyy
+
+Possible outputs: 
+Print this line before reading the input.
+Print this one before reading, too.
+A few parts of the semantics are less than obvious.heyyy
+The following constraints,heyyy
+along with the above directive to implement the obvious semantics whenever such are available,heyyy
+should give you enough information to complete this assignment.heyyy
+Of course,heyyy
+we reserve the right to add to this list when we discover that we have (inevitably) left something out.heyyy
+OR
+Comment: 1
+Print this line before reading the input.Print this one before reading, too.A few parts of the semantics are less than obvious.heyyyThe following constraints,heyyyalong with the above directive to implement the obvious semantics whenever such are available,heyyyshould give you enough information to complete this assignment.heyyyOf course,heyyywe reserve the right to add to this list when we discover that we have (inevitably) left something out.heyyy
+OR
+Comment: 1
+Print this line before reading the input.
+Print this one before reading, too.
+A few parts of the semantics are less than obvious.heyyy
+
+Actual output:
+Print this line before reading the input.
+Print this one before reading, too.
+A few parts of the semantics are less than obvious.heyyyA
+The following constraints,heyyy
+along with the above directive to implement the obvious semantics whenever such are available,heyyy
+should give you enough information to complete this assignment.heyyy
+Of course,heyyy
+we reserve the right to add to this list when we discover that we have (inevitably) left something out.heyyy
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/2
+
+
+
+Test: stage2test5
+non-generic functions
+[Stage 2]
+
+Program:
+fun reversefirsttwo() : Iterable<String> {
+	getfirst := true;
+	first:= "";
+	for (i in input)
+	{
+		if (getfirst)
+		{
+			first := i;
+			getfirst := false;
+		}
+		else
+		{
+			second := i;
+			return [second]++[first];
+		}
+	}
+	
+	return ["no"];
+}
+
+return reversefirsttwo();
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+the first line
+the second line
+
+Possible outputs: 
+the second line
+the first line
+
+Actual output:
+the second line
+the first line
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+Sub-test 2 (5 points):
+
+Input:
+Statements
+Non-generic functions
+Generic functions
+Non-Generic classes without inheritance
+Generic classes without inheritance
+Generic classes with single interface inheritance
+Generic classes with single interface inheritance + interface method implementations
+Generic classes with class inheritance
+Generic classes with multiple interface inheritance
+
+Possible outputs: 
+Non-generic functions
+Statements
+
+Actual output:
+Non-generic functions
+Statements
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 4.722/5
+
+
+
+Test: two-words
+two-word output
+[Stage 1]
+
+Program:
+return ["Hello", "World!"];
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+
+Possible outputs: 
+Hello
+World!
+
+Actual output:
+Hello
+World!
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+Sub-test 2 (10 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+Hello
+World!
+
+Actual output:
+Hello
+World!
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+
+
+Test: stage8test3
+generic classes with class inheritance
+[Stage 8]
+
+Program:
+class Foo<A>(a : A) {
+  fun get() : A { return a; }
+}
+
+class Bar<A>(a : A) extends Foo<A> { 
+  super(a);
+}
+
+x := Bar<String>("hello");
+y := Foo<String>("world");
+lst := [x, y];
+ret := [];
+for (i in input) {
+	lst := lst ++ [Bar<String>(i), Foo<String>(i)];
+	
+	for (z in lst) {
+		ret := ret ++ [z.get()];
+	}
+	return ret;
+}
+
+return ["You didn't read the input :("];
+
+-------------------------------------------
+
+Sub-test 1 (1 points):
+
+Input:
+to be or not to be
+
+Possible outputs: 
+hello
+world
+to be or not to be
+to be or not to be
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/1
+
+Sub-test 2 (1 points):
+
+Input:
+To be or not to be?
+That is the question.
+
+Possible outputs: 
+hello
+world
+To be or not to be?
+To be or not to be?
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/1
+
+
+
+Test: stage7test3
+generic classes with single interface inheritance and interface method implementations
+[Stage 7]
+
+Program:
+interface TheInterface<T>
+{
+	fun getString() : String = "Interface";
+	fun getIT(it : Iterable<T>) : Iterable<T>;
+}
+
+class TheFirstClass<T>() extends TheInterface<T>
+{
+	fun getIT(it : Iterable<T>) : Iterable<T> = it++it;
+}
+
+class TheSecondClass<T>() extends TheInterface<T>
+{
+	fun getString() : String = "Second Class";
+	fun getIT(it : Iterable<T>) : Iterable<T> = it++it++it;
+}
+
+for (i in input)
+{
+	one := TheFirstClass<Character>();
+	two := TheSecondClass<Character>();
+	return [one.getString()]++[string(one.getIT(i))]++[two.getString()]++[string(two.getIT(i))];
+}
+
+return ["Que paso?"];
+
+-------------------------------------------
+
+Sub-test 1 (1 points):
+
+Input:
+WA
+
+Possible outputs: 
+Interface
+WAWA
+Second Class
+WAWAWA
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/1
+
+Sub-test 2 (1 points):
+
+Input:
+Wonderful
+Splendid
+Beautiful
+
+Possible outputs: 
+Interface
+WonderfulWonderful
+Second Class
+WonderfulWonderfulWonderful
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/1
+
+
+
+Test: stage1test2
+multi-line output
+[Stage 1]
+
+Program:
+return ["What"]++["Up"]++["Tho?"];
+
+-------------------------------------------
+
+Sub-test 1 (5 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+What
+Up
+Tho?
+
+Actual output:
+What
+Up
+Tho?
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 4.722/5
+
+
+
+Test: stage3test5
+generic functions
+[Stage 3]
+
+Program:
+fun copy<T>(i : Integer, its : Iterable<T>) : Iterable<T>
+{
+	out := [];
+	
+	for (x in 1..i)
+	{
+		out := out++its;
+	}
+	
+	return out;
+}
+
+fun inttostring(i : Integer) : String
+{
+	if (i == 0)
+	{
+		return "0";
+	}
+	
+	neg := false;
+	if (i < 0)
+	{
+		neg := true;
+		i := -i;
+	}
+	
+	retval := "";
+	while (i > 0)
+	{
+		mod := i % 10;
+		for (m in mod) {
+			retval := [character(m + 48)]++retval;
+		}
+		div := i / 10;
+		for (t in div)
+		{
+			i := t;
+		}
+	}
+	
+	if (neg)
+	{
+		retval := "-"++retval;
+	}
+	
+	return string(retval);
+}
+
+fun intstostring(ints : Iterable<Integer>) : String
+{
+	retval := "";
+	
+	for (i in ints)
+	{
+		retval := retval++inttostring(i)++", ";
+	}
+	
+	return string(retval);
+}
+
+retval := [intstostring(copy<Integer>(-5, [54, 9, 23, 87, 5, -587, -432, 0]))]++[intstostring(copy<Integer>(3, 35<.40))];
+
+for (i in input)
+{
+	retval := retval++[string(copy<Character>(10, i))];
+}
+
+return retval;
+
+-------------------------------------------
+
+Sub-test 1 (3 points):
+
+Input:
+just1
+
+Possible outputs: 
+
+36, 37, 38, 39, 40, 36, 37, 38, 39, 40, 36, 37, 38, 39, 40, 
+just1just1just1just1just1just1just1just1just1just1
+
+Actual output:
+
+35, 37, 38, 39, 40, 35, 37, 38, 39, 40, 35, 37, 38, 39, 40, 
+just1just1just1just1just1just1just1just1just1just1
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/3
+
+Sub-test 2 (5 points):
+
+Input:
+Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:
+Expressions (denoted e in the grammar) may be surrounded by parentheses.
+
+Possible outputs: 
+
+36, 37, 38, 39, 40, 36, 37, 38, 39, 40, 36, 37, 38, 39, 40, 
+Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:Characters in the core language which have no obvious ASCII equivalent are represented in the full language in ASCII as follows:
+Expressions (denoted e in the grammar) may be surrounded by parentheses.Expressions (denoted e in the grammar) may be surrounded by parentheses.Expressions (denoted e in the grammar) may be surrounded by parentheses.Expressions (denoted e in the grammar) may be surrounded by parentheses.Expressions (denoted e in the grammar) may be surrounded by parentheses.Expressions (denoted e in the grammar) may be surrounded by parentheses.Expressions (denoted e in the grammar) may be surrounded by parentheses.Expressions (denoted e in the grammar) may be surrounded by parentheses.Expressions (denoted e in the grammar) may be surrounded by parentheses.Expressions (denoted e in the grammar) may be surrounded by parentheses.
+
+Actual output:
+
+Comment: 
+
+Program crashed: -30.0%
+
+Score: 0/5
+
+
+
+Test: stage3test6
+generic functions
+[Stage 3]
+
+Program:
+fun id<T>(x : T) : T = x;
+return [id<String>("Hi World!")];
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+
+Possible outputs: 
+Hi World!
+
+Actual output:
+Hi World!
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+Sub-test 2 (10 points):
+
+Input:
+This input should be ignored
+
+Possible outputs: 
+Hi World!
+
+Actual output:
+Hi World!
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+
+
+Test: stage1test1
+one-line output
+[Stage 1]
+
+Program:
+return ["Hello world!!..."];
+
+-------------------------------------------
+
+Sub-test 1 (50 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+Hello world!!...
+
+Actual output:
+Hello world!!...
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 47.22/50
+
+
+
+Test: stage5test1
+generic classes without inheritance
+[Stage 5]
+
+Program:
+class Singleton<A>(a : A) {
+  fun get() : A { return a; }
+}
+x := Singleton<String>("hello");
+return [x.get()];
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+hello
+
+Actual output:
+hello
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+
+
+Test: stage1test8
+for loop, through, onwards
+[Stage 1]
+
+Program:
+str1 := "TenTs:";
+for (i in 0..9) {
+	str1 := str1++"T";
+}
+
+str2 := "";
+for (i in 96<..) {
+	if (i == 123) {
+		return [string(str1)]++[string(str2)];
+	}
+	else {
+		str2 := str2++[character(i)];
+	}
+}
+
+return ["WAT"];
+
+-------------------------------------------
+
+Sub-test 1 (5 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+TenTs:TTTTTTTTTT
+abcdefghijklmnopqrstuvwxyz
+
+Actual output:
+
+Comment: 
+
+Program crashed: -30.0%
+
+Score: 0/5
+
+
+
+Test: stage3test3
+generic functions
+[Stage 3]
+
+Program:
+fun id<T> (t : T) : T = t;
+
+fun singleton<T> (t : T) : Iterable<T> = [t];
+
+fun test<T> (t : T) : Iterable<T> = id<Iterable<T>>(singleton<T>(t));
+
+fun output<T> (t : T, b : Boolean) : Iterable<String>
+{
+	ret := "";
+	if (b)
+	{
+		return singleton<String>("Yes.");
+	}
+	else
+	{
+		ret := "FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU...";
+	}
+	return [ret];
+}
+
+fun charoutput (char : Character) : Iterable<String>
+{
+	bool := false;
+	
+	for (c in test<Character>(char)) {
+		if (c == char) {
+			bool := true;
+		}
+	}
+	
+	return output<Character>(char, bool);	
+}
+
+return charoutput(character(66));
+
+-------------------------------------------
+
+Sub-test 1 (4 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+Yes.
+
+Actual output:
+Yes.
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 3.7776/4
+
+
+
+Test: stage1test7
+equality operators
+[Stage 1]
+
+Program:
+bools := [("a" != "a"), (character(65) == character(66)), (3 > 15), (347 >= 346), (false < true), (true <= true)];
+str := "";
+for (b in bools) {
+	if (b) {
+		str := str++"t";
+	}
+	else {
+		str := str++"f";
+	}
+}
+return [string(str)];
+
+-------------------------------------------
+
+Sub-test 1 (12 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+fffttt
+
+Actual output:
+tffttt
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/12
+
+
+
+Test: X3Test1
+(No description)
+[Stage 1]
+
+Program:
+# Cubex Compiler Test 1 - Stage 1
+ret := [];
+for ( i in input)
+{
+	ret := [i] ++ ret ++ [i];
+}
+return ret;
+
+-------------------------------------------
+
+Sub-test 1 (5 points):
+
+Input:
+d
+o
+r
+e
+v
+e
+n
+
+Possible outputs: 
+n
+e
+v
+e
+r
+o
+d
+d
+o
+r
+e
+v
+e
+n
+
+Actual output:
+n
+e
+v
+e
+r
+o
+d
+d
+o
+r
+e
+v
+e
+n
+
+GC faulty: too much memory allocated at once: -5.56%
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 4.459456800000001/5
+
+
+
+Test: stage1test9
+arithmetic operators
+[Stage 1]
+
+Program:
+bools := [(-6 < -90), (11 + 1 == 100), (36 - 6 == 3), (3 * 89 == 267)];
+
+bool := false;
+for (x in 100/9) {
+	if (x == 11) {
+		bool := true;
+	}
+}
+for (x in 29/0) {
+	bool := false;
+}
+bools := bools++[bool];
+
+bool := false;
+for (x in 484%9) {
+	if (x == 7) {
+		bool := true;
+	}
+}
+for (x in 73%0) {
+	bool := false;
+}
+bools := bools++[bool];
+
+str := "";
+for (b in bools) {
+	if (b) {
+		str := str++"t";
+	}
+	else {
+		str := str++"f";
+	}
+}
+return [string(str)];
+
+-------------------------------------------
+
+Sub-test 1 (6 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+fffttt
+
+Actual output:
+fffttt
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 5.6664/6
+
+
+
+Test: stage2test2
+non-generic functions
+[Stage 2]
+
+Program:
+fun myinitial() : String = string([character(66)]);
+
+return [myinitial()];
+
+-------------------------------------------
+
+Sub-test 1 (15 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+B
+
+Actual output:
+B
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 14.166/15
+
+
+
+Test: stage7test2
+generic classes with single interface inheritance and interface method implementations
+[Stage 7]
+
+Program:
+interface MyInterface<T>
+{
+	fun getRandom() : Integer = 4; #Chosen by fair dice roll
+	fun getT() : T;
+}
+class MyClass<T>(t : T) extends MyInterface<T>
+{
+	fun getT() : T = t;
+}
+class MyClass2() extends MyInterface<Integer>
+{
+	fun getT() : Integer = getRandom();
+}
+class MyClass3() extends MyInterface<String>
+{
+	fun getT() : String = "Hello World!";
+}
+
+m1:=MyClass<String>("Hello");
+m2:=MyClass<String>("World!");
+m3:=MyClass2();
+m4:=MyClass3();
+l:=[m1,m2,m4];
+
+for (i in input) {
+	m:=MyClass<String>(i);
+	l:=l++[m];
+}
+
+if(m3.getT() == 4)
+{
+	ret := [];
+	for(e in l)
+	{
+		ret := ret ++ [e.getT()];
+	}
+	return ret;
+}
+else
+{
+	return [""];
+}
+
+-------------------------------------------
+
+Sub-test 1 (1 points):
+
+Input:
+The first and only line of the input.
+
+Possible outputs: 
+Hello
+World!
+Hello World!
+The first and only line of the input.
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/1
+
+Sub-test 2 (2 points):
+
+Input:
+Unless it occurs inside a string literal,
+white space is disregarded except for its role of separating names and other tokens
+(e.g. \: =" is not the same as \:=" and only the latter can be used in a variable assignment).
+Unless it occurs inside a string literal,
+pound starts a comment that extends to the end of the line.
+Unless it occurs inside a string literal,
+backtick starts a comment that extends to the matching ', 
+where these comments can be nested inside each other.
+Comments are disregarded except for their role of separating names and other tokens.
+
+Possible outputs: 
+Hello
+World!
+Hello World!
+Unless it occurs inside a string literal,
+white space is disregarded except for its role of separating names and other tokens
+(e.g. \: =" is not the same as \:=" and only the latter can be used in a variable assignment).
+Unless it occurs inside a string literal,
+pound starts a comment that extends to the end of the line.
+Unless it occurs inside a string literal,
+backtick starts a comment that extends to the matching ', 
+where these comments can be nested inside each other.
+Comments are disregarded except for their role of separating names and other tokens.
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/2
+
+
+
+Test: stage8test1
+generic classes with class inheritance
+[Stage 8]
+
+Program:
+class Aa(s : String)
+{
+	super();
+	fun getString() : String = s;
+}
+
+class Bb() extends Aa
+{
+	super("Hello Worllldddddddd!");
+}
+
+return [Bb().getString()];
+
+-------------------------------------------
+
+C program could not be compiled!
+
+Compiler output:
+In file included from out.c:3:0:
+cubex_lib.h: In function ‘_allocate’:
+cubex_lib.h:108:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘_copy’:
+cubex_lib.h:185:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘_append’:
+cubex_lib.h:199:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Boolean_negate’:
+cubex_lib.h:216:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Boolean_and’:
+cubex_lib.h:226:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Boolean_or’:
+cubex_lib.h:237:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Boolean_through’:
+cubex_lib.h:253:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Boolean_onward’:
+cubex_lib.h:283:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘Integer_through’:
+cubex_lib.h:420:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘String_construct’:
+cubex_lib.h:564:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘string’:
+cubex_lib.h:608:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h:613:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h:621:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h: In function ‘__init’:
+cubex_lib.h:638:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+cubex_lib.h:640:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+out.c: In function ‘Aa’:
+out.c:10:8: warning: unused variable ‘_ret’ [-Wunused-variable]
+out.c: In function ‘Aa_getString’:
+out.c:23:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+out.c:23:8: warning: unused variable ‘_tmp’ [-Wunused-variable]
+out.c: In function ‘Bb’:
+out.c:36:8: warning: unused variable ‘_ret’ [-Wunused-variable]
+out.c:35:8: warning: unused variable ‘_tmp’ [-Wunused-variable]
+out.c: In function ‘_prog_main’:
+out.c:46:1: warning: implicit declaration of function ‘Bb_getString’ [-Wimplicit-function-declaration]
+out.c:46:1: warning: passing argument 1 of ‘Iterable_construct’ makes pointer from integer without a cast [enabled by default]
+cubex_lib.h:171:9: note: expected ‘_object’ but argument is of type ‘int’
+out.c:42:8: warning: unused variable ‘_tmp’ [-Wunused-variable]
+out.c: In function ‘cubex_main’:
+out.c:54:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+out.o: In function `_prog_main':
+/home/fabian/Documents/CS4120F13/SVN/grading/pa4/group_of_bae43_cl585_dd367_dkt36/out.c:46: undefined reference to `Bb_getString'
+collect2: ld returned 1 exit status
+make: *** [all] Error 1
+Score: 0/10
+
+
+Test: stage4test1
+non-generic classes without inheritance
+[Stage 4]
+
+Program:
+class MyClass(b : Boolean)
+{
+	fun whatAmI() : String
+	{
+		if(b)
+		{
+			return "I'm true";
+		}
+		else
+		{
+			return "I'm false";
+		}
+	}
+}
+return [MyClass(true).whatAmI(),MyClass(false).whatAmI()];
+
+-------------------------------------------
+
+Sub-test 1 (10 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+I'm true
+I'm false
+
+Actual output:
+I'm true
+I'm false
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 9.444/10
+
+
+
+Test: stage3test1
+generic functions
+[Stage 3]
+
+Program:
+fun matrixize<T> (l : Iterable<T>, maxcol : Integer) : Iterable<Iterable<T>>
+{
+	ret := [];
+	curr := [];
+	i := 0;
+	
+	if (maxcol < 1)
+	{
+		return [];
+	}
+	else
+	{
+		for(e in l)
+		{
+			if (i < maxcol)
+			{
+				curr := curr ++ [e];
+				i := i + 1;
+			}
+			else
+			{
+				i := 0;
+				ret := ret ++ [curr];
+				curr := [e];
+			}
+		}
+		return ret ++ [curr];
+	}
+}
+
+fun flatten<T> (l : Iterable<Iterable<T>>) : Iterable<T>
+{
+	ret := [];
+	
+	for (i in l)
+	{
+		for (e in i)
+		{
+			ret := ret ++ [e];
+		}
+	}
+	
+	return ret;
+}
+
+for (i in input)
+{
+	return [string(flatten<Character>(matrixize<Character>(i, 10)))];
+}
+
+return [""];
+
+-------------------------------------------
+
+Sub-test 1 (3 points):
+
+Input:
+OneLiner.
+
+Possible outputs: 
+OneLiner.
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/3
+
+Sub-test 2 (5 points):
+
+Input:
+This assignment will be graded in a staged mode, which means that you can concentrate on some parts of the assignment and leave others out with a predictable loss of points. Our tests will be organized in the following stages (same as PA3), meaning that programs only consist of the things in that stage and the preceding ones:
+This line should never be read, right?
+Along with this one.
+Ignore this one, too.
+We returned after reading only one line.
+
+Possible outputs: 
+This assignment will be graded in a staged mode, which means that you can concentrate on some parts of the assignment and leave others out with a predictable loss of points. Our tests will be organized in the following stages (same as PA3), meaning that programs only consist of the things in that stage and the preceding ones:
+
+Actual output:
+reject
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/5
+
+
+
+Test: stage2test6
+non-generic functions
+[Stage 2]
+
+Program:
+fun print(s : String, ss : String, b : Boolean) : String
+{
+	out := s;
+	
+	if (b) {
+		out := out++" == ";
+	}
+	else {
+		out := out++" != ";
+	}
+	
+	return string(out++ss);
+}
+
+retval := [print("true", "false", true == false)]++[print("56", "65", 56 == 65)];
+
+for (str in input)
+{
+	for (c in str)
+	{
+		retval := retval++[print(string([c]), string([c]), c == c)];
+	}
+}
+
+for (one in input)
+{
+	for (two in input)
+	{
+		retval := retval++[print(one, two, one == two)];
+	}
+}
+
+return retval;
+
+-------------------------------------------
+
+Sub-test 1 (2 points):
+
+Input:
+ON3liN3.
+
+Possible outputs: 
+true != false
+56 != 65
+O == O
+N == N
+3 == 3
+l == l
+i == i
+N == N
+3 == 3
+. == .
+ON3liN3. == ON3liN3.
+
+Actual output:
+true != false
+56 != 65
+O == O
+N == N
+3 == 3
+l == l
+i == i
+N == N
+3 == 3
+. == .
+ON3liN3. != ON3liN3.
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/2
+
+Sub-test 2 (4 points):
+
+Input:
+AbC
+AbC
+ABC
+
+Possible outputs: 
+true != false
+56 != 65
+A == A
+b == b
+C == C
+A == A
+b == b
+C == C
+A == A
+B == B
+C == C
+AbC == AbC
+AbC == AbC
+AbC != ABC
+AbC == AbC
+AbC == AbC
+AbC != ABC
+ABC != AbC
+ABC != AbC
+ABC == ABC
+
+Actual output:
+true != false
+56 != 65
+A == A
+b == b
+C == C
+A == A
+b == b
+C == C
+A == A
+B == B
+C == C
+AbC != AbC
+AbC != AbC
+AbC == ABC
+AbC != AbC
+AbC != AbC
+AbC == ABC
+ABC == AbC
+ABC == AbC
+ABC != ABC
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 0/4
+
+
+
+Test: stage3test2
+generic functions
+[Stage 3]
+
+Program:
+fun isEmpty<T> (l : Iterable<T>) : Boolean
+{
+	ret := true;
+	for (e in l)
+	{
+		ret := false;
+	}
+	return ret;
+}
+
+fun length<T> (l : Iterable<T>) : Integer
+{
+	len := 0;
+	for (e in l)
+	{
+		len := len + 1;
+	}
+	return len;
+}
+
+fun areWeGood<T> (l : Iterable<T>) : Iterable<Character>
+{
+	good := false;
+	
+	if (isEmpty<T>(l))
+	{
+		if (length<T>(l) == 0)
+		{
+			good := true;
+		}
+	}
+	else
+	{
+		if (length<T>(l) > 0)
+		{
+			good := true;
+		}
+	}
+	
+	if (good)
+	{
+		return "Yeah, we good!";
+	}
+	else
+	{
+		return "No, we are not good. Something went very, very wrong.";
+	}
+}
+
+return [string(areWeGood<Integer>(3..15))];
+
+-------------------------------------------
+
+Sub-test 1 (4 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+Yeah, we good!
+
+Actual output:
+Yeah, we good!
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 3.7776/4
+
+
+
+Test: stage2test2a
+non-generic functions
+[Stage 2]
+
+Program:
+fun myinitial() : String = "Hello World!";
+
+return [myinitial()];
+
+-------------------------------------------
+
+Sub-test 1 (30 points):
+
+Input:
+This input should be ignored.
+
+Possible outputs: 
+Hello World!
+
+Actual output:
+Hello World!
+
+GC faulty: not all memory freed at end of program: -5.56%
+
+Score: 28.332/30
+
+
+
+Score in Stage #f: 0/0
+Score in Stage 1: 175.3958568/203
+Score in Stage 2: 67.0524/89
+Score in Stage 3: 29.276400000000002/47
+Score in Stage 4: 9.444/16
+Score in Stage 5: 12.2772/15
+Score in Stage 6: 0/12
+Score in Stage 7: 0/15
+Score in Stage 8: 0/14
+Score in Stage 9: 0/8
+
+Total Score: 293.4458568/419
+
+Normalized Score: 64.0/90
