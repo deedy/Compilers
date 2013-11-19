@@ -39,6 +39,8 @@ public class CubexGeneratorProg {
     public static String generate(CubexProg node) {
         HVisitor hVisitor = new HVisitor();
         HNode hRoot = node.accept(hVisitor);
+        // do common subexpression elimination
+        ((HProg)hRoot).cse(new AvailExprsList());
         // Implement unimplemented 
         for (Map.Entry<String, HInterface> i : hVisitor.classes.entrySet()) {
             HInterface in = i.getValue();

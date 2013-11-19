@@ -95,25 +95,49 @@ public class HighLow implements HLVisitor {
 		LExp exp = (LExp) c.expr.accept(this);
 		LStmt s1 = (LStmt) c.stmt1.accept(this);
 		LStmt s2 = (LStmt) c.stmt2.accept(this);
-		return new LCond(exp, s1, s2);
+		LCond cond = new LCond(exp, s1, s2);
+		if (c.newDeclarations.stmts.size() > 0) {
+			LStmts stmts = (LStmts) c.newDeclarations.accept(this);
+			stmts.stmts.add(cond);
+			return stmts;
+		}
+		return cond;
 	}
 
 	public LNode visit(HForLoop f) {
 		LExp iter = (LExp) f.expr.accept(this);
 		LName elem = new LName(f.name);
 		LStmt stmt = (LStmt) f.stmt.accept(this);
-		return new LFor(iter, elem, stmt);
+		LFor fo = new LFor(iter, elem, stmt);
+		if (f.newDeclarations.stmts.size() > 0) {
+			LStmts stmts = (LStmts) f.newDeclarations.accept(this);
+			stmts.stmts.add(fo);
+			return stmts;
+		}
+		return fo;
 	}
 
 	public LNode visit(HWhileLoop w) {
 		LExp cond = (LExp) w.expr.accept(this);
 		LStmt stmt = (LStmt) w.stmt.accept(this);
-		return new LWhile(cond, stmt);
+		LWhile wh = new LWhile(cond, stmt);
+		if (w.newDeclarations.stmts.size() > 0) {
+			LStmts stmts = (LStmts) w.newDeclarations.accept(this);
+			stmts.stmts.add(wh);
+			return stmts;
+		}
+		return wh;
 	}
 
 	public LNode visit(HReturn r) {
-		LExp ret = (LExp) r.expr.accept(this);
-		return new LReturn(ret);
+		LExp e = (LExp) r.expr.accept(this);
+		LReturn ret = new LReturn(e);
+		if (r.newDeclarations.stmts.size() > 0) {
+			LStmts stmts = (LStmts) r.newDeclarations.accept(this);
+			stmts.stmts.add(ret);
+			return stmts;
+		}
+		return ret;
 	}
 
 	public LNode visit(HBlock b) {
@@ -121,13 +145,23 @@ public class HighLow implements HLVisitor {
 		for (HStatement s : b.stmts) {
 			stmts.add((LStmt) s.accept(this));
 		}
+		for (HStatement s : b.newDeclarations.stmts) {
+			stmts.add((LStmt) s.accept(this));
+		}
+
 		return new LStmts(stmts);
 	}
 
 	public LNode visit(HAssign a) {
 		LExp exp = (LExp) a.expr.accept(this);
 		LName name = new LName(a.name);
-		return new LAssign(name, exp);
+		LAssign ass = new LAssign(name, exp);
+		if (a.newDeclarations.stmts.size() > 0) {
+			LStmts stmts = (LStmts) a.newDeclarations.accept(this);
+			stmts.stmts.add(ass);
+			return stmts;
+		}
+		return ass;
 	}
 
 	public LNode visit(HFunction f) {
@@ -171,12 +205,18 @@ public class HighLow implements HLVisitor {
 	}
 
 	public LNode visit(HAppend a) {
+		if (a.newExpr != null) {
+			return new LName(a.newExpr.var);
+		}
 		LExp left = (LExp) a.left.accept(this);
 		LExp right = (LExp) a.right.accept(this);
 		return new LAppend(left, right);
 	}
 
 	public LNode visit(HIterable i) {
+		if (i.newExpr != null) {
+			return new LName(i.newExpr.var);
+		}
 		List<LExp> exprs = new ArrayList<LExp>();
 		for(HExpression e : i.elems) {
 			exprs.add((LExp) e.accept(this));

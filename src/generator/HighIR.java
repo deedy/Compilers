@@ -2,8 +2,54 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+class ExprUse extends Triple<HStatement, HExpression, HVar> {
+
+    public ExprUse(HStatement s, HExpression e, HVar v) {
+        super(s, e, v);
+    }
+
+    public boolean equals(ExprUse e) {
+        return e.middle.equals(middle);
+    }
+
+    public boolean dependsOn(String name) {
+        return middle.dependsOn(name);
+    }
+}
+
+class AvailExprsList {
+    LinkedHashSet<ExprUse> list;
+
+    public AvailExprsList() {
+        list = new LinkedHashSet<ExprUse>();
+    }
+
+    public void add(HStatement s, HExpression e, HVar v) {
+        list.add(new ExprUse(s, e, v));
+    }
+
+    public AvailExprsList copy() {
+        AvailExprsList a = new AvailExprsList();
+        a.list = new LinkedHashSet<ExprUse>(list);
+        return a;
+    }
+
+    public boolean contains(ExprUse e) {
+        return list.contains(e);
+    }
+
+    public void invalidateVar(String name) {
+        for (ExprUse e : list) {
+            if (e.dependsOn(name)) {
+                list.remove(e);
+            }
+        }
+    }
+}
 
 abstract class HNode {
     public abstract LNode accept(HLVisitor v);
@@ -13,11 +59,41 @@ abstract class HNode {
 }
 
 abstract class HExpression extends HNode {
-    
+
+    public static int curVar = 0;
+
+    HVar newExpr;
+
+    public boolean joinExpr(AvailExprsList avail, HStatement stmt) {
+        for (ExprUse t : avail.list) {
+            if (this.equals(t.middle)) {
+                // if this hasn't been assigned to a var yet, assign it
+                if (t.right == null) {
+                    HVar uniqVar = new HVar("_" + curVar);
+                    curVar++;
+                    HStatement assign = new HAssign(uniqVar.var, t.middle);
+                    stmt.newDeclarations.stmts.add(assign);
+                    t.right = uniqVar;
+                    newExpr = uniqVar;
+                    return true;
+                }
+                else {
+                    newExpr = t.right;
+                }
+            }
+        }
+        avail.add(stmt, this, null);
+        return false;
+    }
+
+    public abstract void cse(AvailExprsList avail, HStatement stmt);
+
+    public abstract boolean dependsOn(String name);
 }
 
 abstract class HStatement extends HNode {
-
+    HBlock newDeclarations = new HBlock(new ArrayList<HStatement>());
+    public abstract void cse(AvailExprsList avail);
 }
 
 class HInterface extends HNode {
@@ -93,6 +169,12 @@ class HInterface extends HNode {
             f.getValue().convertFuns(map);
         }
     }
+
+    public void cse(AvailExprsList avail) {
+        for (Map.Entry<String, HFunction> e : funs.entrySet()) {
+            e.getValue().cse(avail);
+        }
+    }
 }
 
 class HClass extends HInterface {
@@ -128,6 +210,14 @@ class HClass extends HInterface {
             e.convertFuns(map);
         }
     }
+
+    public void cse(AvailExprsList avail) {
+        for (HStatement s : stmts) {
+            s.cse(avail);
+        }
+
+        // need to do cse for the constructor args
+    }
 }
 
 class HConditional extends HStatement {
@@ -151,6 +241,28 @@ class HConditional extends HStatement {
         stmt1.convertFuns(map);
         stmt2.convertFuns(map);
     }
+
+    // public Map<HAssign, String> cse(Map<HAssign, String> avail) {
+    //     Map<HAssign, String> s1 = stmt1.cse(avail);
+    //     Map<HAssign, String> s2 = stmt2.cse(avail);
+
+    //     for (Map.Entry<HAssign, String> e : stmt1.entrySet()) {
+    //         if (e.getValue() == ) 
+    //     }
+    // }
+    public void cse(AvailExprsList avail) {
+        expr.cse(avail, this);
+        AvailExprsList avail1 = avail.copy();
+        AvailExprsList avail2 = avail.copy();
+        stmt1.cse(avail1);
+        stmt2.cse(avail2);
+        // combine the lists
+        for (ExprUse t : avail1.list) {
+            if (avail2.contains(t)) {
+                avail.add(t.left, t.middle, t.right);
+            }
+        }
+    }
 }
 
 class HForLoop extends HStatement {
@@ -172,6 +284,12 @@ class HForLoop extends HStatement {
         expr.convertFuns(map);
         stmt.convertFuns(map);
     }
+
+    public void cse(AvailExprsList avail) {
+        expr.cse(avail, this);
+        AvailExprsList avail1 = avail.copy();
+        stmt.cse(avail1);
+    }
 }
 
 class HWhileLoop extends HStatement {
@@ -192,6 +310,12 @@ class HWhileLoop extends HStatement {
         expr.convertFuns(map);
         stmt.convertFuns(map);
     }
+
+    public void cse(AvailExprsList avail) {
+        expr.cse(avail, this);
+        AvailExprsList avail1 = avail.copy();
+        stmt.cse(avail1);
+    }    
 }
 
 class HReturn extends HStatement {
@@ -208,6 +332,10 @@ class HReturn extends HStatement {
 
     public void convertFuns(Map<String, HFunction> map) {
         expr.convertFuns(map);
+    }
+
+    public void cse(AvailExprsList avail) {
+        expr.cse(avail, this);
     }
 }
 
@@ -228,6 +356,12 @@ class HBlock extends HStatement {
             s.convertFuns(map);
         }
     }
+
+    public void cse(AvailExprsList avail) {
+        for (HStatement s : stmts) {
+            s.cse(avail);
+        }
+    }
 }
 
 class HAssign extends HStatement {
@@ -246,6 +380,11 @@ class HAssign extends HStatement {
 
     public void convertFuns(Map<String, HFunction> map) {
         expr.convertFuns(map);
+    }
+
+    public void cse(AvailExprsList avail) {
+        expr.cse(avail, this);
+        avail.invalidateVar(name);
     }
 }
 
@@ -277,6 +416,11 @@ class HFunction {
         if (body != null) {
             body.convertFuns(map);
         }
+    }
+
+    public void cse(AvailExprsList avail) {
+        AvailExprsList availcopy = avail.copy();
+        body.cse(availcopy);
     }
 }
 
@@ -327,6 +471,34 @@ class HFunctionCall extends HExpression {
             args = newArgs;
         }
     }
+
+    public boolean equals(HFunctionCall e) {
+        if (args.size() != e.args.size())
+            return false;
+        if (!name.equals(e.name))
+            return false;
+
+        for (int i = 0; i < args.size(); i++) {
+            if (args.get(i).equals(e.args.get(i))) 
+                return false;
+        }
+        return true;
+    }
+
+    public void cse(AvailExprsList avail, HStatement stmt) {
+        joinExpr(avail, stmt);
+        for (HExpression e : args) {
+            e.joinExpr(avail, stmt);
+        }
+    }
+
+    public boolean dependsOn(String name) {
+        for (HExpression e : args) {
+            if (e.dependsOn(name))
+                return true;
+        }
+        return false;
+    }
 }
 
 class HAppend extends HExpression {
@@ -346,6 +518,21 @@ class HAppend extends HExpression {
         left.convertFuns(map);
         right.convertFuns(map);
     }
+
+    public boolean equals(HAppend a) {
+        return left.equals(a.left) && right.equals(a.right);
+    }
+
+    public void cse(AvailExprsList avail, HStatement stmt) {
+        joinExpr(avail, stmt);
+
+        left.joinExpr(avail, stmt);
+        right.joinExpr(avail, stmt);
+    }
+
+    public boolean dependsOn(String name) {
+        return left.dependsOn(name) || right.dependsOn(name);
+    }
 }
 
 class HIterable extends HExpression {
@@ -364,6 +551,31 @@ class HIterable extends HExpression {
             e.convertFuns(map);
         }
     }
+
+    public boolean equals(HIterable h) {
+        if (elems.size() != h.elems.size())
+            return false;
+
+        for (int i = 0; i < elems.size(); i++) {
+            if (!elems.get(i).equals(h.elems.get(i)))
+                return false;
+        }
+
+        return true;
+    }
+    public void cse(AvailExprsList avail, HStatement stmt) {
+        for (HExpression e : elems) {
+            e.joinExpr(avail, stmt);
+        }
+    }
+
+    public boolean dependsOn(String name) {
+        for (HExpression e : elems) {
+            if (e.dependsOn(name))
+                return true;
+        }
+        return false;
+    }
 }
 
 class HBoolean extends HExpression {
@@ -376,6 +588,14 @@ class HBoolean extends HExpression {
 
     public LNode accept(HLVisitor v) {
         return v.visit(this);
+    }
+
+    public void cse(AvailExprsList avail, HStatement stmt) {
+        return;
+    }
+
+    public boolean dependsOn(String name) {
+        return false;
     }
 }
 
@@ -390,6 +610,18 @@ class HInt extends HExpression {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public boolean equals(HInt h) {
+        return val == h.val;
+    }
+
+    public void cse(AvailExprsList avail, HStatement stmt) {
+        return;
+    }
+
+    public boolean dependsOn(String name) {
+        return false;
+    }
 }
 
 class HString extends HExpression {
@@ -402,6 +634,18 @@ class HString extends HExpression {
 
     public LNode accept(HLVisitor v) {
         return v.visit(this);
+    }
+
+    public boolean equals(HString h) {
+        return val.equals(h.val);
+    }
+
+    public void cse(AvailExprsList avail, HStatement stmt) {
+        return;
+    }
+
+    public boolean dependsOn(String name) {
+        return false;
     }
 }
 
@@ -416,10 +660,23 @@ class HVar extends HExpression {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public boolean equals(HVar h) {
+        return var.equals(h.var);
+    }
+
+    public void cse(AvailExprsList avail, HStatement stmt) {
+        return;
+    }
+
+    public boolean dependsOn(String name) {
+        return var.equals(name);
+    }
 }
 
 abstract class HProg extends HNode {
     HProg prog;
+    public abstract void cse(AvailExprsList avail);
 }
 
 class HStatementProg extends HProg {
@@ -432,6 +689,12 @@ class HStatementProg extends HProg {
 
     public LNode accept(HLVisitor v) {
         return v.visit(this);
+    }
+
+    public void cse(AvailExprsList avail) {
+        for (HStatement s : stmts) {
+            s.cse(avail);
+        }
     }
 }
 
@@ -447,6 +710,10 @@ class HClassProg extends HProg {
     public LNode accept(HLVisitor v) {
         return v.visit(this);
     }
+
+    public void cse(AvailExprsList avail) {
+        cls.cse(avail);
+    }
 }
 
 class HFunProg extends HProg {
@@ -460,5 +727,11 @@ class HFunProg extends HProg {
 
     public LNode accept(HLVisitor v) {
         return v.visit(this);
+    }
+
+    public void cse(AvailExprsList avail) {
+        for (HFunction f : funs) {
+            f.cse(avail);
+        }
     }
 }
