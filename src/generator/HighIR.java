@@ -54,7 +54,7 @@ class HInterface extends HNode {
                 superInterfaces.addAll(superInterface.getSuperInterfaces());
             }
         }
-        System.out.println(superInterfaces);
+        // System.out.println(superInterfaces);
         return superInterfaces;
     }
 
@@ -274,7 +274,9 @@ class HFunction {
     }
 
     public void convertFuns(Map<String, HFunction> map) {
-        body.convertFuns(map);
+        if (body != null) {
+            body.convertFuns(map);
+        }
     }
 }
 

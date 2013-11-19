@@ -1,0 +1,15 @@
+A larger input.
+We've decided not to burden you with reading a full semantics for the Cubex language.
+That means that you should implement the "obvious" semantics of statements, expressions, classes, interfaces, et cetera.
+(We place "obvious" in quotations because the correct mathematical formulation of those semantics is far from obvious!)
+The nitty-gritty details:
+We provided a small library and makefile that you have to use for your compiler.
+The top-level execution of the compiled Cubex program should be triggered by a call to the function cubex_main() in out.c.
+(cubex_main() is forward-declared in cubex_main.h).
+The file out.c should include exactly three other files:
+cubex_main.h,
+cubex_external_functions.h
+and cubex_lib.h
+and be otherwise self-contained.
+The only code allowed to run when a Cubex program is invoked is that in out.c and that in our provided library functions.
+A compiler breaking this rule intentionally will get a 0.

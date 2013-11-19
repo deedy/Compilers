@@ -18,5 +18,5 @@ build/*
 
 # made things
 *.o
-*.out
+cbuild/a.out
 *.so
