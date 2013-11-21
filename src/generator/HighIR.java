@@ -72,7 +72,7 @@ abstract class HExpression extends HNode {
                     HVar uniqVar = new HVar("_" + curVar);
                     curVar++;
                     HStatement assign = new HAssign(uniqVar.var, t.middle);
-                    stmt.newDeclarations.stmts.add(assign);
+                    stmt.newDeclarations.add(assign);
                     t.right = uniqVar;
                     newExpr = uniqVar;
                     return true;
@@ -92,7 +92,7 @@ abstract class HExpression extends HNode {
 }
 
 abstract class HStatement extends HNode {
-    HBlock newDeclarations = new HBlock(new ArrayList<HStatement>());
+    List<HStatement> newDeclarations = new ArrayList<HStatement>();
     public abstract void cse(AvailExprsList avail);
 }
 

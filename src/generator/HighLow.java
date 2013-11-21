@@ -96,10 +96,13 @@ public class HighLow implements HLVisitor {
 		LStmt s1 = (LStmt) c.stmt1.accept(this);
 		LStmt s2 = (LStmt) c.stmt2.accept(this);
 		LCond cond = new LCond(exp, s1, s2);
-		if (c.newDeclarations.stmts.size() > 0) {
-			LStmts stmts = (LStmts) c.newDeclarations.accept(this);
-			stmts.stmts.add(cond);
-			return stmts;
+		if (c.newDeclarations.size() > 0) {
+			ArrayList<LStmt> stmts = new ArrayList<LStmt>();
+			for (HStatement s : c.newDeclarations) {
+				stmts.add((LStmt)s.accept(this));
+			}
+			stmts.add(cond);
+			return new LStmts(stmts);
 		}
 		return cond;
 	}
@@ -109,10 +112,13 @@ public class HighLow implements HLVisitor {
 		LName elem = new LName(f.name);
 		LStmt stmt = (LStmt) f.stmt.accept(this);
 		LFor fo = new LFor(iter, elem, stmt);
-		if (f.newDeclarations.stmts.size() > 0) {
-			LStmts stmts = (LStmts) f.newDeclarations.accept(this);
-			stmts.stmts.add(fo);
-			return stmts;
+		if (f.newDeclarations.size() > 0) {
+			ArrayList<LStmt> stmts = new ArrayList<LStmt>();
+			for (HStatement s : f.newDeclarations) {
+				stmts.add((LStmt)s.accept(this));
+			}
+			stmts.add(fo);
+			return new LStmts(stmts);
 		}
 		return fo;
 	}
@@ -121,10 +127,12 @@ public class HighLow implements HLVisitor {
 		LExp cond = (LExp) w.expr.accept(this);
 		LStmt stmt = (LStmt) w.stmt.accept(this);
 		LWhile wh = new LWhile(cond, stmt);
-		if (w.newDeclarations.stmts.size() > 0) {
-			LStmts stmts = (LStmts) w.newDeclarations.accept(this);
-			stmts.stmts.add(wh);
-			return stmts;
+		if (w.newDeclarations.size() > 0) {
+			ArrayList<LStmt> stmts = new ArrayList<LStmt>();
+			for (HStatement s : w.newDeclarations) {
+				stmts.add((LStmt)s.accept(this));
+			}
+			return new LStmts(stmts);
 		}
 		return wh;
 	}
@@ -132,10 +140,13 @@ public class HighLow implements HLVisitor {
 	public LNode visit(HReturn r) {
 		LExp e = (LExp) r.expr.accept(this);
 		LReturn ret = new LReturn(e);
-		if (r.newDeclarations.stmts.size() > 0) {
-			LStmts stmts = (LStmts) r.newDeclarations.accept(this);
-			stmts.stmts.add(ret);
-			return stmts;
+		if (r.newDeclarations.size() > 0) {
+			ArrayList<LStmt> stmts = new ArrayList<LStmt>();
+			for (HStatement s : r.newDeclarations) {
+				stmts.add((LStmt)s.accept(this));
+			}
+			stmts.add(ret);
+			return new LStmts(stmts);
 		}
 		return ret;
 	}
@@ -145,7 +156,7 @@ public class HighLow implements HLVisitor {
 		for (HStatement s : b.stmts) {
 			stmts.add((LStmt) s.accept(this));
 		}
-		for (HStatement s : b.newDeclarations.stmts) {
+		for (HStatement s : b.newDeclarations) {
 			stmts.add((LStmt) s.accept(this));
 		}
 
@@ -156,10 +167,13 @@ public class HighLow implements HLVisitor {
 		LExp exp = (LExp) a.expr.accept(this);
 		LName name = new LName(a.name);
 		LAssign ass = new LAssign(name, exp);
-		if (a.newDeclarations.stmts.size() > 0) {
-			LStmts stmts = (LStmts) a.newDeclarations.accept(this);
-			stmts.stmts.add(ass);
-			return stmts;
+		if (a.newDeclarations.size() > 0) {
+			ArrayList<LStmt> stmts = new ArrayList<LStmt>();
+			for (HStatement s : a.newDeclarations) {
+				stmts.add((LStmt)s.accept(this));
+			}
+			stmts.add(ass);
+			return new LStmts(stmts);
 		}
 		return ass;
 	}
