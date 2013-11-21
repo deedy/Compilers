@@ -91,18 +91,25 @@ class CFGStmts extends CFGNode {
 	public NodeListPair buildSubGraph () {
 		int len = children.size();
 		NodeList entering = new NodeList();
-		NodeList exiting = new NodeList();
+		NodeList foldOut = new NodeList();
 		if (len > 0) {
-			entering.add(children.get(0));
-			exiting.add(children.get(len - 1));
+			CFGNode c = children.get(0);
+			NodeListPair pair = c.buildSubGraph();
+			entering = pair.getLeft();
+			foldOut = pair.getRight();
 			for (int i = 1; i < len; i++) {
-				CFGNode a = children.get(i - 1);
-				CFGNode b = children.get(i);
-				a.succ.add(b);
-				b.prev.add(a);
+				c = children.get(i);
+				pair = c.buildSubGraph();
+				for(CFGNode j : pair.getLeft()) {
+					for(CFGNode o : foldOut) {
+						o.succ.add(j);
+						j.prev.add(o);
+					}
+				}
+				foldOut = pair.getRight();
 			}
 		}
-		return new NodeListPair(entering, exiting);
+		return new NodeListPair(entering, foldOut);
 	}
 
 	public StmtList translate () {
