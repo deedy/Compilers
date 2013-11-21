@@ -297,7 +297,8 @@ class CFG {
 
 
 	public CFG (LStmt s, MapPSet<LName> initial) {
-
+		root = s.toCFGNode(this);
+		root.use = root.use.plusAll(initial);
 	}
 
 	// solve the data flow equations in place

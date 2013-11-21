@@ -45,15 +45,10 @@ public class CubexGeneratorProg {
             in.implementSuperInterfaces(hVisitor.classes);
             in.convertFuns(in.funs);
         }
-        // for (Map.Entry<String, HInterface> i : hVisitor.classes.entrySet()) {
-        //     for (Map.Entry<String, HFunction> f : i.getValue().funs.entrySet()) {
-        //         if (f.getValue() instanceof HUndefFunction) {
-        //             System.out.println(((HUndefFunction)f.getValue()).defs);
-        //         }
-        //     }
-        // }
+        
         HighLow hl = new HighLow();
         LNode lRoot = hRoot.accept(hl);
+        
         CGenerator cc = new CGenerator();
         return lRoot.accept(cc);
     }
