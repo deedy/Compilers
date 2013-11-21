@@ -17,7 +17,7 @@ abstract class LExp extends LNode {
 
 abstract class LStmt extends LNode {
 	public abstract LStmt convertFields(Map<String, Integer> map);
-	public abstract CFGNode toCFG();
+	public abstract CFGNode toCFGNode(CFG graph);
 }
 
 
@@ -327,8 +327,8 @@ class LStmts extends LStmt {
 		return new LStmts(out);
 	}
 
-	public CFGNode toCFG() {
-		return new CFGStmts(this);
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGStmts(this, graph);
 	}
 }
 
@@ -351,8 +351,8 @@ class LFor extends LStmt {
 		return new LFor(iter.convertFields(map), elem, stmt.convertFields(map));
 	}
 
-	public CFGNode toCFG() {
-		return new CFGFor(this);
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGFor(this, graph);
 	}
 }
 
@@ -373,8 +373,8 @@ class LWhile extends LStmt {
 		return new LWhile(cond.convertFields(map), stmt.convertFields(map));
 	}
 
-	public CFGNode toCFG() {
-		return new CFGWhile(this);
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGWhile(this, graph);
 	}
 }
 
@@ -400,8 +400,8 @@ class LCond extends LStmt {
 		return new LCond(c, s1, s2);
 	}
 
-	public CFGNode toCFG() {
-		return new CFGCond(this);
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGCond(this, graph);
 	}
 }
 
@@ -427,8 +427,8 @@ class LAssign extends LStmt {
 		return new LAssign((LName) var.convertFields(map), val.convertFields(map));
 	}
 
-	public CFGNode toCFG() {
-		return new CFGAssign(this);
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGAssign(this, graph);
 	}
 }
 
@@ -447,8 +447,8 @@ class LReturn extends LStmt {
 		return new LReturn(ret.convertFields(map));
 	}
 
-	public CFGNode toCFG() {
-		return new CFGReturn(this);
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGReturn(this, graph);
 	}
 }
 
@@ -537,7 +537,7 @@ class LIncr extends LStmt {
 		return new LIncr(arg.convertFields(map));
 	}
 
-	public CFGNode toCFG() {
+	public CFGNode toCFGNode(CFG graph) {
 		return null;
 	}
 }
@@ -557,7 +557,7 @@ class LDecr extends LStmt {
 		return new LDecr(arg.convertFields(map));
 	}
 
-	public CFGNode toCFG() {
+	public CFGNode toCFGNode(CFG graph) {
 		return null;
 	}
 }
