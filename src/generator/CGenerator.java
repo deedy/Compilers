@@ -117,7 +117,15 @@ public class CGenerator implements LVisitor {
 
 		// translate and indent the statement
 		tabCount += 1;
-		String stmts = indent(f.stmts.accept(this));
+
+		LStmt sP = f.stmts;
+		ArrayList<LName> initial = new ArrayList<LName>();
+		initial.addAll(f.args);
+		initial.add(new LName("input"));
+		CFG cfg = new CFG(sP, initial);
+		cfg.solveLiveness();
+		LStmt sO = cfg.translate();
+		String stmts = indent(sO.accept(this));
 
 		int count = 0;
 		List<String> varDefs = new ArrayList<String>();
@@ -129,6 +137,7 @@ public class CGenerator implements LVisitor {
 			varDefs.add(indent(String.format("_incr(%s);\n", arg)));
 			count += 1;
 		}
+		varDefs.add(indent("_incr(input);\n"));
 		// declare all other variables null
 		for(String varName : localVars) {
 			if (vArgs.contains(varName)) {
@@ -240,8 +249,8 @@ public class CGenerator implements LVisitor {
 		String dec = String.format("_IterNode %s = _iterator(%s);\n", iterName, iter);
 		String elem = f.elem.accept(this);
 		String stmt = f.stmt.accept(this);
-		String loop = indent(String.format("_object %s = %s->curr;\n%s\n%s = %s->next(%s);"
-									, elem, iterName, stmt, iterName, iterName, iterName));
+		String loop = indent(String.format("_object %s = %s->curr;\n_incr(%s);\n%s\n%s = %s->next(%s);"
+									, elem, iterName, elem, stmt, iterName, iterName, iterName));
 		return String.format("%swhile (%s) {\n%s}\nx3free(%s);\n",
 							dec, iterName, loop, iterName);
 	}

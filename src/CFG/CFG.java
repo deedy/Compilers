@@ -113,7 +113,13 @@ class CFGStmts extends CFGNode {
 	}
 
 	public StmtList translate () {
-		return null;
+		StmtList ret = new StmtList();
+		for (CFGNode c : children) {
+			for (LStmt s : c.translate()) {
+				ret.add(s);
+			}
+		}
+		return ret;
 	}
 }
 
@@ -148,7 +154,10 @@ class CFGFor extends CFGNode {
 
 
 	public StmtList translate() {
-		return null;
+		StmtList ret = new StmtList();
+		StmtList s = children.get(0).translate();
+		ret.add(new LFor(stmt.iter, stmt.elem, new LStmts(s)));
+		return ret;
 	}
 }
 
@@ -181,7 +190,10 @@ class CFGWhile extends CFGNode {
 	}
 
 	public StmtList translate() {
-		return null;
+		StmtList ret = new StmtList();
+		StmtList s = children.get(0).translate();
+		ret.add(new LWhile(stmt.cond, new LStmts(s)));
+		return ret;
 	}
 }
 
@@ -230,7 +242,12 @@ class CFGCond extends CFGNode {
 	}
 
 	public StmtList translate() {
-		return null;
+		StmtList ret = new StmtList();
+		StmtList s1 = children.get(0).translate();
+		StmtList s2 = children.get(1).translate();
+		LExp cond = stmt.cond;
+		ret.add(new LCond(cond, new LStmts(s1), new LStmts(s2)));
+		return ret;
 	}
 }
 
@@ -250,7 +267,20 @@ class CFGAssign extends CFGNode {
 	}
 
 	public StmtList translate() {
-		return null;
+		StmtList ret = new StmtList();
+		LName tmp = new LName("_tmp");
+		// assign to temporary
+		ret.add(new LAssign(tmp, stmt.val));
+		// increment tmp
+		ret.add(new LIncr(tmp));
+		// decrement the old value
+		ret.add(new LDecr(stmt.var));
+		// make the assignment
+		ret.add(new LAssign(stmt.var, tmp));
+		for (LName n : collectables()) {
+			ret.add(new LDecr(n));
+		}
+		return ret;
 	}
 }
 
@@ -269,7 +299,16 @@ class CFGReturn extends CFGNode {
 	}
 
 	public StmtList translate() {
-		return null;
+		StmtList ret = new StmtList();
+		// add a temporary assignment
+		ret.add(new LAssign("_ret", stmt.ret));
+		// decr all collectables
+		for (LName n : collectables()) {
+			ret.add(new LDecr(n));
+		}
+		// return ret
+		ret.add(new LReturn(new LName("_ret")));
+		return ret;
 	}
 }
 
@@ -293,10 +332,10 @@ class CFG {
 	// the root of the statement tree
 	CFGNode root;
 	// basic blocks (does not include ifs, whiles, etc)
-	NodeList nodes;
+	NodeList nodes = new NodeList();
 
 
-	public CFG (LStmt s, MapPSet<LName> initial) {
+	public CFG (LStmt s, Collection<LName> initial) {
 		root = s.toCFGNode(this);
 		root.use = root.use.plusAll(initial);
 	}
@@ -310,5 +349,9 @@ class CFG {
 				fold = fold && node.update();
 			}
 		}
+	}
+
+	public LStmt translate () {
+		return new LStmts(root.translate());
 	}
 }
