@@ -1,0 +1,9 @@
+class Wut () {
+    a := "who";
+    fun print() : String {
+        return a;
+    }
+}
+
+a := Wut();
+return [a.print()];
