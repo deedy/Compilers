@@ -78,7 +78,7 @@ class LName extends LExp {
 		,"sizeof","static","struct","switch","typedef","union","unsigned","void","volatile","while");
 	public LName(String s) {
 		if (badNames.contains(s)) {
-			name =  "sexxxpanther_default_swag_"+s+ "_";
+			name =  "_swag_"+s+ "_swag_";
 		} else {
 			name = s;
 		}
@@ -111,6 +111,10 @@ class LName extends LExp {
 	public MapPSet<LName> getNames() {
 		MapPSet<LName> out = HashTreePSet.empty();
 		return out.plus(this);
+	}
+
+	public String toString() {
+		return name;
 	}
 }
 

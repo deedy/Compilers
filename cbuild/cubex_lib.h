@@ -195,13 +195,14 @@ Iterable _copy(Iterable a) {
 Iterable _append(_object o1, _object o2) {
 	Iterable a = o1;
 	Iterable b = o2;
-	_incr(a);
-	_incr(b);
-	if(!a || !(a->fields[0])) {
-		_decr(a);
-		_decr(b);
+	if(!a) {
 		return b;
 	}
+	if (!b) {
+		return a;
+	}
+	_incr(a);
+	_incr(b);
 	Iterable c = _copy(a);
 	c->fields[1] = _append(a->fields[1], b);
 	_incr(c->fields[1]);
@@ -569,17 +570,19 @@ _object String_construct(const char* s) {
 	if (!s) {
 		return NULL;
 	} else {
-		String str = _allocate(4, 0);
-		str->field_count = 2;
+		String str = _allocate(4, 2);
 		char* buff = x3malloc(sizeof(char) * (strLen(s) + 1));
 		strCpy(s, buff);
+		str->value = buff;
 		Iterable i = strIter(s);
 		if(i) {
+			x3free(str->fields);
 			str->fields = i->fields;
 			str->next = i->next;
 			x3free(i);
+		} else {
+			str->next = _common_next;
 		}
-		str->value = buff;
 		return str;
 	}
 }
@@ -641,21 +644,18 @@ _object input = NULL;
 void __init() {
 	while (1) {
 		int next_input_len = next_line_len();
-		_object fold = NULL;
 		if (next_input_len) {
 			char *buff = x3malloc(sizeof(char) * (next_input_len + 1));
 			int j;
-			for(j = 0; j <= next_input_len; j++) {
-				buff[j] = 0;
-			}
+		for(j = 0; j <= next_input_len; j++) {
+			buff[j] = 0;
+		}
 			read_line(buff);
 			String line = String_construct(buff);
 			x3free(buff);
 			Iterable i = Iterable_construct(line);
-			fold = _append(fold, i);
-			j += 1;
+			input = _append(input, i);
 		} else {
-			input = fold;
 			break;
 		}
 	}

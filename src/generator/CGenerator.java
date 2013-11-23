@@ -49,7 +49,6 @@ interface LVisitor {
 }
 
 public class CGenerator implements LVisitor {
-
 	int iterCount = 0;
 	int tabCount = 0;
 	HashSet<String> localVars = new HashSet<String>();
@@ -121,23 +120,29 @@ public class CGenerator implements LVisitor {
 		LStmt sP = f.stmts;
 		ArrayList<LName> initial = new ArrayList<LName>();
 		initial.addAll(f.args);
-		initial.add(new LName("input"));
 		CFG cfg = new CFG(sP, initial);
+		cfg.root.buildSubGraph();
 		cfg.solveLiveness();
 		LStmt sO = cfg.translate();
 		String stmts = indent(sO.accept(this));
+
+		ArrayList<String> toIncr = new ArrayList<String>();
+		Collection<LName> usedVars = cfg.root.in.plusAll(cfg.root.use);
+		for (LName n : usedVars) {
+			toIncr.add(indent(String.format("_incr(%s);\n", n)));
+		}
+
+		String incrs = join(toIncr, "");
 
 		int count = 0;
 		List<String> varDefs = new ArrayList<String>();
 		List<String> vArgs = visitAll(f.args);
 
-		// declare and increment the arguments
+		// declare the arguments
 		for(String arg : vArgs) {
 			varDefs.add(indent(String.format("Object %s = _o%d;\n",arg, count)));
-			varDefs.add(indent(String.format("_incr(%s);\n", arg)));
 			count += 1;
 		}
-		varDefs.add(indent("_incr(input);\n"));
 		// declare all other variables null
 		for(String varName : localVars) {
 			if (vArgs.contains(varName)) {
@@ -151,7 +156,7 @@ public class CGenerator implements LVisitor {
 		String locals = join(varDefs, "");
 
 		localVars = new HashSet<String>();
-		return String.format("%s {\n%s%s}\n", def, locals, stmts);
+		return String.format("%s {\n%s%s%s}\n", def, locals, incrs, stmts);
 	}
 
 	public String visit(LConstructor f) {
@@ -176,6 +181,13 @@ public class CGenerator implements LVisitor {
 			count += 1;
 		}
 
+		ArrayList<LStmt> fieldIncrs = new ArrayList<LStmt>();
+		for (int i = 0; i < f.fields; i++) {
+			fieldIncrs.add(new LIncr(new LFieldAccess(new LName("_obj"), i)));
+		}
+
+		String incrs = indent(join(visitAll(fieldIncrs),""));
+
 		varDefs.add(indent("Object _tmp = NULL;"));
 		varDefs.add(indent("Object _ret = NULL;"));
 		varDefs.add(indent(String.format("Object _obj = _allocate(%d, %d);", f.id, f.fields)));
@@ -183,7 +195,7 @@ public class CGenerator implements LVisitor {
 		String locals = join(varDefs, "");
 
 		localVars = new HashSet<String>();
-		return String.format("_object %s(%s) {\n%s%s\treturn _obj;\n}\n", name, args, locals, stmts);
+		return String.format("_object %s(%s) {\n%s%s%s\treturn _obj;\n}\n", name, args, locals, stmts, incrs);
 	}
 
 	public String visit(LNum n) {
@@ -281,8 +293,6 @@ public class CGenerator implements LVisitor {
 
 	public String visit(LReturn r) {
 		String ret = r.ret.accept(this);
-		StringBuilder decrs = new StringBuilder();
-
 		return String.format("return %s;\n", ret);
 	}
 
@@ -317,14 +327,16 @@ public class CGenerator implements LVisitor {
                 + "%s\n"
                 + "%s\n"
                 + "void cubex_main() {\n"
-                	+ "__init();\n"
-              		+ "_object _i = _prog_main();\n"
-                    + "_IterNode _i_iter = _iterator(_i);\n"
-                    + "while(_i_iter) {\n"
-                    	+ "_print(_i_iter->curr);\n"
-                    	+ "_i_iter = _i_iter->next(_i_iter);\n"
-                    + "}\n"
-                    + "x3free(_i_iter);\n"
+                	+ "\t__init();\n"
+              		+ "\t_object _i = _prog_main();\n"
+                    + "\t_IterNode _i_iter = _iterator(_i);\n"
+                    + "\twhile(_i_iter) {\n"
+                    	+ "\t_print(_i_iter->curr);\n"
+                    	+ "\t_i_iter = _i_iter->next(_i_iter);\n"
+                    + "\t}\n"
+                    + "\tx3free(_i_iter);\n"
+                    + "\t_decr(_i);\n"
+                    + "\t_decr(input);\n"
                 + "}\n";
     	return String.format(baseProg, globDecs, funHeads, funDecs);
 	}

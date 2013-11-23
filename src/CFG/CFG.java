@@ -28,6 +28,10 @@ class NodeListPair extends Pair<NodeList, NodeList> {
 }
 
 abstract class CFGNode {
+	// count of if, for, and while statements, for nesting
+	static int ifCount = 0;
+	static int forCount = 0;
+	static int whileCount = 0;
 	// the original statement
 	LStmt stmt;
 	// the set of variables live before statement
@@ -58,17 +62,19 @@ abstract class CFGNode {
 	public boolean update () {
 		MapPSet<LName> inP = in;
 		MapPSet<LName> outP = out;
-		in = use.plusAll(out.minusAll(def));
-		out = out.minusAll(out);
+		out = HashTreePSet.empty();
 		for (CFGNode n : succ) {
 			out = out.plusAll(n.in);
 		}
+		in = use.plusAll(out.minusAll(def));
+		System.out.printf("inP: %s, outP: %s, use: %s, def: %s, in: %s, out: %s\n", inP, outP, use, def, in, out);
 		return (inP.equals(in) && outP.equals(out));
 	}
 
 	// the set of items that can be garbage collected
 	MapPSet<LName> collectables() {
 		// can only possibly collect live things
+		// MapPSet<LName> ret = in.plusAll(def);
 		MapPSet<LName> ret = in;
 		// cannot garbge collect what is needed later
 		ret = ret.minusAll(out);
@@ -129,27 +135,27 @@ class CFGFor extends CFGNode {
 
 	public CFGFor (LFor s,  CFG graph) {
 		stmt = s;
-		CFGNode c = stmt.stmt.toCFGNode(graph);
-		children.add(c);
 		br = new CFGBranch(graph);
 		br.use = stmt.iter.getNames();
 		br.def = stmt.elem.getNames();
+		CFGNode c = stmt.stmt.toCFGNode(graph);
+		children.add(c);
 	}
 
 	public NodeListPair buildSubGraph () {
 		CFGNode c = children.get(0);
 		NodeListPair pair = c.buildSubGraph();
-		NodeList entering = new NodeList(br);
+		NodeList entering = new NodeList(pair.getLeft());
 		NodeList exiting = new NodeList(pair.getRight());
 		br.succ.addAll(entering);
 		for (CFGNode i : entering) {
 				i.prev.add(br);
-			for (CFGNode j : exiting) {
-				j.succ.add(i);
-				i.prev.add(j);
-			}
 		}
-		return new NodeListPair(entering, exiting);
+		for (CFGNode j : exiting) {
+			j.succ.add(br);
+			br.prev.add(j);
+		}
+		return new NodeListPair(new NodeList(br), new NodeList(br));
 	}
 
 
@@ -167,26 +173,26 @@ class CFGWhile extends CFGNode {
 
 	public CFGWhile (LWhile s,  CFG graph) {
 		stmt = s;
-		CFGNode c = stmt.stmt.toCFGNode(graph);
-		children.add(c);
 		br = new CFGBranch(graph);
 		br.use = stmt.cond.getNames();
+		CFGNode c = stmt.stmt.toCFGNode(graph);
+		children.add(c);
 	}
 
 	public NodeListPair buildSubGraph () {
 		CFGNode c = children.get(0);
 		NodeListPair pair = c.buildSubGraph();
-		NodeList entering = new NodeList(br);
+		NodeList entering = new NodeList(pair.getLeft());
 		NodeList exiting = new NodeList(pair.getRight());
 		br.succ.addAll(entering);
 		for (CFGNode i : entering) {
 				i.prev.add(br);
-			for (CFGNode j : exiting) {
-				j.succ.add(i);
-				i.prev.add(j);
-			}
 		}
-		return new NodeListPair(entering, exiting);
+		for (CFGNode j : exiting) {
+			j.succ.add(br);
+			br.prev.add(j);
+		}
+		return new NodeListPair(new NodeList(br), new NodeList(br));
 	}
 
 	public StmtList translate() {
@@ -242,11 +248,18 @@ class CFGCond extends CFGNode {
 	}
 
 	public StmtList translate() {
+		ifCount += 1;
+		LName ifVar = new LName(String.format("_if_tmp%d", ifCount));
 		StmtList ret = new StmtList();
+		LExp cond = stmt.cond;
+		ret.add(new LAssign(ifVar, cond));
+		ret.add(new LIncr(ifVar));
 		StmtList s1 = children.get(0).translate();
 		StmtList s2 = children.get(1).translate();
-		LExp cond = stmt.cond;
-		ret.add(new LCond(cond, new LStmts(s1), new LStmts(s2)));
+		s1.add(0, new LDecr(ifVar));
+		s2.add(0, new LDecr(ifVar));
+
+		ret.add(new LCond(ifVar, new LStmts(s1), new LStmts(s2)));
 		return ret;
 	}
 }
@@ -270,16 +283,16 @@ class CFGAssign extends CFGNode {
 		StmtList ret = new StmtList();
 		LName tmp = new LName("_tmp");
 		// assign to temporary
-		ret.add(new LAssign(tmp, stmt.val));
-		// increment tmp
-		ret.add(new LIncr(tmp));
-		// decrement the old value
-		ret.add(new LDecr(stmt.var));
+		ret.add(new LAssign(tmp, stmt.var));
 		// make the assignment
-		ret.add(new LAssign(stmt.var, tmp));
-		for (LName n : collectables()) {
-			ret.add(new LDecr(n));
-		}
+		ret.add(new LAssign(stmt.var, stmt.val));
+		// increment tmp
+		ret.add(new LIncr(stmt.var));
+		// decrement the old value
+		ret.add(new LDecr(tmp));
+		// for (LName n : collectables()) {
+		// 	ret.add(new LDecr(new LName(n.name + "/*gc*/")));
+		// }
 		return ret;
 	}
 }
@@ -295,18 +308,16 @@ class CFGReturn extends CFGNode {
 
 	public NodeListPair buildSubGraph () {
 		NodeList ret = new NodeList(this);
-		return new NodeListPair(ret, new NodeList());
+		return new NodeListPair(ret, ret);
 	}
 
 	public StmtList translate() {
 		StmtList ret = new StmtList();
 		// add a temporary assignment
 		ret.add(new LAssign("_ret", stmt.ret));
-		// decr all collectables
-		for (LName n : collectables()) {
-			ret.add(new LDecr(n));
-		}
-		// return ret
+		// for (LName n : collectables()) {
+		// 	ret.add(new LDecr(new LName(n.name + "/*gc*/")));
+		// }
 		ret.add(new LReturn(new LName("_ret")));
 		return ret;
 	}
@@ -345,8 +356,11 @@ class CFG {
 		boolean fold = false;
 		while (!fold) {
 			fold = true;
+			int count = 0;
 			for (CFGNode node : nodes) {
-				fold = fold && node.update();
+				System.out.printf("%d: ", count);
+				fold = node.update() && fold;
+				count += 1;
 			}
 		}
 	}
