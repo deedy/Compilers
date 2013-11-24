@@ -209,6 +209,9 @@ public class HighLow implements HLVisitor {
 	}
 
 	public LNode visit(HFunctionCall fc) {
+		if (fc.newExpr != null) {
+			return fc.newExpr.accept(this);
+		}
 		List<LExp> exprs = new ArrayList<LExp>();
 		for(HExpression e : fc.args) {
 			exprs.add((LExp) e.accept(this));
