@@ -313,9 +313,9 @@ class LAppend extends LExp {
 }
 
 class LStmts extends LStmt {
-	List<? extends LStmt> stmts;
+	List<LStmt> stmts;
 
-	public LStmts(List<? extends LStmt> lst) {
+	public LStmts(List<LStmt> lst) {
 		stmts = lst;
 	}
 

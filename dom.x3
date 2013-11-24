@@ -34,7 +34,6 @@ for (i in input)
 	ret := ret++[string(zz)];
 }
 return ret;
-
 `ret := [];
 out := [];
 if (true) {

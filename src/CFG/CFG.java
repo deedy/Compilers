@@ -67,15 +67,15 @@ abstract class CFGNode {
 			out = out.plusAll(n.in);
 		}
 		in = use.plusAll(out.minusAll(def));
-		System.out.printf("inP: %s, outP: %s, use: %s, def: %s, in: %s, out: %s\n", inP, outP, use, def, in, out);
+		// System.out.printf("inP: %s, outP: %s, use: %s, def: %s, in: %s, out: %s\n", inP, outP, use, def, in, out);
 		return (inP.equals(in) && outP.equals(out));
 	}
 
 	// the set of items that can be garbage collected
 	MapPSet<LName> collectables() {
 		// can only possibly collect live things
-		// MapPSet<LName> ret = in.plusAll(def);
-		MapPSet<LName> ret = in;
+		MapPSet<LName> ret = in.plusAll(def);
+		// MapPSet<LName> ret = in;
 		// cannot garbge collect what is needed later
 		ret = ret.minusAll(out);
 		return ret;
@@ -290,9 +290,9 @@ class CFGAssign extends CFGNode {
 		ret.add(new LIncr(stmt.var));
 		// decrement the old value
 		ret.add(new LDecr(tmp));
-		// for (LName n : collectables()) {
-		// 	ret.add(new LDecr(new LName(n.name + "/*gc*/")));
-		// }
+		for (LName n : collectables()) {
+			ret.add(new LDecr(new LName(n.name + "/*gc*/")));
+		}
 		return ret;
 	}
 }
@@ -315,9 +315,10 @@ class CFGReturn extends CFGNode {
 		StmtList ret = new StmtList();
 		// add a temporary assignment
 		ret.add(new LAssign("_ret", stmt.ret));
-		// for (LName n : collectables()) {
-		// 	ret.add(new LDecr(new LName(n.name + "/*gc*/")));
-		// }
+		ret.add(new LIncr(new LName("_ret")));
+		for (LName n : collectables()) {
+			ret.add(new LDecr(new LName(n.name + "/*gc*/")));
+		}
 		ret.add(new LReturn(new LName("_ret")));
 		return ret;
 	}
@@ -358,7 +359,7 @@ class CFG {
 			fold = true;
 			int count = 0;
 			for (CFGNode node : nodes) {
-				System.out.printf("%d: ", count);
+				// System.out.printf("%d: ", count);
 				fold = node.update() && fold;
 				count += 1;
 			}
