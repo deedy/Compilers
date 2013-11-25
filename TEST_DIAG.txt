@@ -1,0 +1,207 @@
+===== TEST PASSED: ./test/generator/1
+===== TEST PASSED: ./test/generator/1-2
+===== TEST PASSED: ./test/generator/10
+_________________________________
+
+TEST FAILED     : 11
+
+compiler output :  
+=================
+
+make output     :  
+=================
+make: Entering directory '/home/dominick/workspace/Compilers/cbuild'
+gcc -c -o out.o out.c -g
+gcc -o a.out cubex_external_functions.o master.o out.o -g
+make: Leaving directory '/home/dominick/workspace/Compilers/cbuild'
+
+expected output : NO COMPILE
+actual output   : NO COMPILE
+NO COMPILEC
+NO COMPILEC2
+NO COMPILE
+NO COMPILE
+NO COMPILEDo
+NO COMPILEDo
+NO COMPILEDo2
+NO COMPILEDo2
+_________________________________
+
+
+_________________________________
+
+TEST FAILED     : 12
+
+compiler output :  
+=================
+Checker Error
+CubexTC$TypeCheckException: CLASS RaceCar DOES NOT PRESENT METHOD crashed FOUND IN PARENT TYPE
+	at CubexClass.typeCheck(CubexObject.java:254)
+	at CubexClassProg.typeCheck(CubexProgs.java:209)
+	at CubexClassProg.typeCheck(CubexProgs.java:210)
+	at CubexClassProg.typeCheck(CubexProgs.java:210)
+	at CubexInterfaceProg.typeCheck(CubexProgs.java:185)
+	at CubexInterfaceProg.typeCheck(CubexProgs.java:185)
+	at CubexInterfaceProg.typeCheck(CubexProgs.java:185)
+	at CubexInterfaceProg.typeCheck(CubexProgs.java:185)
+	at CubexInterfaceProg.typeCheck(CubexProgs.java:185)
+	at CubexInterfaceProg.typeCheck(CubexProgs.java:185)
+	at CubexInterfaceProg.typeCheck(CubexProgs.java:185)
+	at CubexInterfaceProg.typeCheck(CubexProgs.java:185)
+	at CubexInterfaceProg.typeCheck(CubexProgs.java:185)
+	at CChecker.check(CChecker.java:15)
+	at CubexGeneratorProg.main(CubexGeneratorProg.java:26)
+
+make output     :  
+=================
+make: Entering directory '/home/dominick/workspace/Compilers/cbuild'
+gcc -c -o out.o out.c -g
+gcc -o a.out cubex_external_functions.o master.o out.o -g
+make: Leaving directory '/home/dominick/workspace/Compilers/cbuild'
+
+expected output : Crash
+YAY, A RACE CAR!
+Car
+
+actual output   : reject
+_________________________________
+
+
+_________________________________
+
+TEST FAILED     : 2
+
+compiler output :  
+=================
+
+make output     :  
+=================
+make: Entering directory '/home/dominick/workspace/Compilers/cbuild'
+gcc -c -o out.o out.c -g
+out.c: In function ‘thefun’:
+out.c:18:15: error: ‘unicode’ undeclared (first use in this function)
+  u = (Object) unicode;
+               ^
+out.c:18:15: note: each undeclared identifier is reported only once for each function it appears in
+Makefile:6: recipe for target 'out.o' failed
+make: *** [out.o] Error 1
+make: Leaving directory '/home/dominick/workspace/Compilers/cbuild'
+
+expected output : NO C COMPILE
+actual output   : reject
+_________________________________
+
+
+===== TEST PASSED: ./test/generator/3
+===== TEST PASSED: ./test/generator/4
+===== TEST PASSED: ./test/generator/4-2
+===== TEST PASSED: ./test/generator/5-1
+_________________________________
+
+TEST FAILED     : 6
+
+compiler output :  
+=================
+
+make output     :  
+=================
+make: Entering directory '/home/dominick/workspace/Compilers/cbuild'
+gcc -c -o out.o out.c -g
+gcc -o a.out cubex_external_functions.o master.o out.o -g
+make: Leaving directory '/home/dominick/workspace/Compilers/cbuild'
+
+expected output : NO COMPILE
+actual output   : Z
+c
+_________________________________
+
+
+_________________________________
+
+TEST FAILED     : 7
+
+compiler output :  
+=================
+
+make output     :  
+=================
+make: Entering directory '/home/dominick/workspace/Compilers/cbuild'
+gcc -c -o out.o out.c -g
+gcc -o a.out cubex_external_functions.o master.o out.o -g
+make: Leaving directory '/home/dominick/workspace/Compilers/cbuild'
+
+expected output : NO COMPILE
+actual output   : NO COMPILE
+_________________________________
+
+
+_________________________________
+
+TEST FAILED     : 8
+
+compiler output :  
+=================
+Parser error
+
+make output     :  
+=================
+make: Entering directory '/home/dominick/workspace/Compilers/cbuild'
+gcc -c -o out.o out.c -g
+gcc -o a.out cubex_external_functions.o master.o out.o -g
+make: Leaving directory '/home/dominick/workspace/Compilers/cbuild'
+
+expected output : z
+y
+x
+w
+v
+u
+t
+s
+r
+q
+p
+o
+n
+m
+l
+k
+j
+i
+h
+g
+f
+e
+d
+c
+b
+a
+
+actual output   : reject
+_________________________________
+
+
+_________________________________
+
+TEST FAILED     : 9
+
+compiler output :  
+=================
+
+make output     :  
+=================
+make: Entering directory '/home/dominick/workspace/Compilers/cbuild'
+gcc -c -o out.o out.c -g
+gcc -o a.out cubex_external_functions.o master.o out.o -g
+make: Leaving directory '/home/dominick/workspace/Compilers/cbuild'
+
+expected output : NO COMPILE
+actual output   :   
+_________________________________
+
+
+===== TEST PASSED: ./test/generator/x3_test1
+===== TEST PASSED: ./test/generator/x3_test2
+===== TEST PASSED: ./test/generator/x3_test3
+===== TEST PASSED: ./test/generator/x3_test4
+===== TEST PASSED: ./test/generator/x3_test5

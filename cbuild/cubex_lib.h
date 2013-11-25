@@ -105,10 +105,15 @@ _object _allocate(int id, int field_count) {
 	o->parent = NULL;
 	o->ref_count = 0;
 	o->field_count = field_count;
-	_object *fields = x3malloc(sizeof(_object) * field_count);
-	int i;
-	for (i = 0; i < field_count; i++) {
-		fields[i] = NULL;
+	_object *fields;
+	if (field_count) {
+		fields = x3malloc(sizeof(_object) * field_count);
+		int i;
+		for (i = 0; i < field_count; i++) {
+			fields[i] = NULL;
+		}
+	} else {
+		fields = NULL;
 	}
 	o->fields = fields;
 	return o;
@@ -190,12 +195,11 @@ Iterable _copy(Iterable a) {
 Iterable _append(_object o1, _object o2) {
 	Iterable a = o1;
 	Iterable b = o2;
-	_incr(a);
-	_incr(b);
-	if(!a || !(a->fields[0])) {
-		_decr(a);
+	if(!a) {
 		return b;
 	}
+	_incr(a);
+	_incr(b);
 	Iterable c = _copy(a);
 	c->fields[1] = _append(a->fields[1], b);
 	_incr(c->fields[1]);
@@ -542,9 +546,12 @@ void strCpy(const char *src, char *dest) {
 }
 
 int strLen(const char *str) {
-	register const char *s;
-	for (s = str; *s; ++s);
-	return(s - str);
+	int l = 0;
+	while (*str) {
+		str++;
+		l++;
+	}
+	return l;
 }
 
 _object strIter(const char *s) {
@@ -561,14 +568,18 @@ _object String_construct(const char* s) {
 		return NULL;
 	} else {
 		String str = _allocate(4, 2);
-		char* buff = x3malloc(sizeof(char) * strLen(s) + 1);
+		char* buff = x3malloc(sizeof(char) * (strLen(s) + 1));
 		strCpy(s, buff);
+		str->value = buff;
 		Iterable i = strIter(s);
 		if(i) {
+			x3free(str->fields);
 			str->fields = i->fields;
 			str->next = i->next;
+			x3free(i);
+		} else {
+			str->next = _common_next;
 		}
-		str->value = buff;
 		return str;
 	}
 }
@@ -631,11 +642,11 @@ void __init() {
 	while (1) {
 		int next_input_len = next_line_len();
 		if (next_input_len) {
-			char *buff = x3malloc(sizeof(char) * (next_input_len));
+			char *buff = x3malloc(sizeof(char) * (next_input_len + 1));
 			int j;
-			for(j = 0; j <= next_input_len; j++) {
-				buff[j] = 0;
-			}
+		for(j = 0; j <= next_input_len; j++) {
+			buff[j] = 0;
+		}
 			read_line(buff);
 			String line = String_construct(buff);
 			x3free(buff);

@@ -3,13 +3,23 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.*;
 
+import org.pcollections.HashTreePSet;
+import org.pcollections.MapPSet;
+
 abstract class LNode {
 	public abstract String accept(LVisitor v);
 }
 
 abstract class LExp extends LNode {
 	public abstract LExp convertFields(Map<String, Integer> map);
+	public abstract MapPSet<LName> getNames();
 }
+
+abstract class LStmt extends LNode {
+	public abstract LStmt convertFields(Map<String, Integer> map);
+	public abstract CFGNode toCFGNode(CFG graph);
+}
+
 
 class LExps extends LExp {
 	List<? extends LExp> exps;
@@ -28,7 +38,15 @@ class LExps extends LExp {
 			out.add(e.convertFields(map));
 		}
 		return new LExps(out);
-	}	
+	}
+
+	public MapPSet<LName> getNames() {
+		MapPSet<LName> fold = HashTreePSet.empty();
+		for (LExp e : exps) {
+			fold = fold.plusAll(e.getNames());
+		}
+		return fold;
+	}
 }
 
 /* null value */
@@ -45,6 +63,11 @@ class LNull extends LExp {
 	public LExp convertFields(Map<String, Integer> map) {
 		return this;
 	}
+
+	public MapPSet<LName> getNames() {
+		return HashTreePSet.empty();
+	}
+
 }
 
 /* variables */
@@ -55,9 +78,21 @@ class LName extends LExp {
 		,"sizeof","static","struct","switch","typedef","union","unsigned","void","volatile","while");
 	public LName(String s) {
 		if (badNames.contains(s)) {
-			name =  "sexxxpanther_default_swag_"+s+ "_";
+			name =  "_swag_"+s+ "_swag_";
 		} else {
 			name = s;
+		}
+	}
+
+	public int hashCode() {
+		return name.hashCode();
+	}
+
+	public boolean equals(Object that) {
+		if (that instanceof LName) {
+			return (((LName) that).name.equals(name));
+		} else {
+			return false;
 		}
 	}
 
@@ -71,6 +106,15 @@ class LName extends LExp {
 		} else {
 			return this;
 		}
+	}
+
+	public MapPSet<LName> getNames() {
+		MapPSet<LName> out = HashTreePSet.empty();
+		return out.plus(this);
+	}
+
+	public String toString() {
+		return name;
 	}
 }
 
@@ -91,6 +135,11 @@ class LFieldAccess extends LName {
 	public LExp convertFields(Map<String, Integer> map) {
 		return this;
 	}
+
+	public MapPSet<LName> getNames() {
+		// field access is handled by base library
+		return HashTreePSet.empty();
+	}
 }
 
 /* Integer literal */
@@ -107,6 +156,10 @@ class LNum extends LExp {
 
 	public LExp convertFields(Map<String, Integer> map) {
 		return this;
+	}
+
+	public MapPSet<LName> getNames() {
+		return HashTreePSet.empty();
 	}
 }
 
@@ -125,6 +178,10 @@ class LBool extends LExp {
 	public LExp convertFields(Map<String, Integer> map) {
 		return this;
 	}
+
+	public MapPSet<LName> getNames() {
+		return HashTreePSet.empty();
+	}
 }
 
 /* String literal */
@@ -141,6 +198,10 @@ class LString extends LExp {
 
 	public LExp convertFields(Map<String, Integer> map) {
 		return this;
+	}
+
+	public MapPSet<LName> getNames() {
+		return HashTreePSet.empty();
 	}
 }
 
@@ -160,6 +221,10 @@ class LId extends LExp {
 	public LExp convertFields(Map<String, Integer> map) {
 		return this;
 	}
+
+	public MapPSet<LName> getNames() {
+		return HashTreePSet.empty();
+	}
 }
 
 class LFunCall extends LExp {
@@ -177,6 +242,10 @@ class LFunCall extends LExp {
 
 	public LExp convertFields(Map<String, Integer> map) {
 		return new LFunCall(name, args.convertFields(map));
+	}
+
+	public MapPSet<LName> getNames() {
+		return args.getNames();
 	}
 }
 
@@ -211,6 +280,14 @@ class LIter extends LExp {
 		}
 		return new LIter(out);
 	}
+
+	public MapPSet<LName> getNames() {
+		MapPSet<LName> fold = HashTreePSet.empty();
+		for (LExp e : items) {
+			fold = fold.plusAll(e.getNames());
+		}
+		return fold;
+	}
 }
 
 class LAppend extends LExp {
@@ -229,10 +306,10 @@ class LAppend extends LExp {
 	public LExp convertFields(Map<String, Integer> map) {
 		return new LAppend(iter1.convertFields(map), iter2.convertFields(map));
 	}
-}
 
-abstract class LStmt extends LNode {
-	public abstract LStmt convertFields(Map<String, Integer> map);
+	public MapPSet<LName> getNames() {
+		return iter1.getNames().plusAll(iter2.getNames());
+	}
 }
 
 class LStmts extends LStmt {
@@ -252,6 +329,10 @@ class LStmts extends LStmt {
 			out.add(s.convertFields(map));
 		}
 		return new LStmts(out);
+	}
+
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGStmts(this, graph);
 	}
 }
 
@@ -273,6 +354,10 @@ class LFor extends LStmt {
 	public LStmt convertFields(Map<String, Integer> map) {
 		return new LFor(iter.convertFields(map), elem, stmt.convertFields(map));
 	}
+
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGFor(this, graph);
+	}
 }
 
 class LWhile extends LStmt {
@@ -290,6 +375,10 @@ class LWhile extends LStmt {
 
 	public LStmt convertFields(Map<String, Integer> map) {
 		return new LWhile(cond.convertFields(map), stmt.convertFields(map));
+	}
+
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGWhile(this, graph);
 	}
 }
 
@@ -314,6 +403,10 @@ class LCond extends LStmt {
 		LExp c = cond.convertFields(map);
 		return new LCond(c, s1, s2);
 	}
+
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGCond(this, graph);
+	}
 }
 
 class LAssign extends LStmt {
@@ -325,12 +418,21 @@ class LAssign extends LStmt {
 		val = v;
 	}
 
+	public LAssign(String s, LExp v) {
+		var = new LName(s);
+		val = v;
+	}
+
 	public String accept(LVisitor v) {
 		return v.visit(this);
 	}
 
 	public LStmt convertFields(Map<String, Integer> map) {
 		return new LAssign((LName) var.convertFields(map), val.convertFields(map));
+	}
+
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGAssign(this, graph);
 	}
 }
 
@@ -347,6 +449,10 @@ class LReturn extends LStmt {
 
 	public LStmt convertFields(Map<String, Integer> map) {
 		return new LReturn(ret.convertFields(map));
+	}
+
+	public CFGNode toCFGNode(CFG graph) {
+		return new CFGReturn(this, graph);
 	}
 }
 
@@ -417,5 +523,45 @@ class LProg extends LNode {
 
 	public void convertFields(Map<String, Integer> map) {
 		return;
+	}
+}
+
+class LIncr extends LStmt {
+	LExp arg;
+
+	public LIncr(LExp i) {
+		arg = i;
+	}
+
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
+
+	public LStmt convertFields(Map<String, Integer> map) {
+		return new LIncr(arg.convertFields(map));
+	}
+
+	public CFGNode toCFGNode(CFG graph) {
+		return null;
+	}
+}
+
+class LDecr extends LStmt {
+	LExp arg;
+
+	public LDecr(LExp i) {
+		arg = i;
+	}
+
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
+
+	public LStmt convertFields(Map<String, Integer> map) {
+		return new LDecr(arg.convertFields(map));
+	}
+
+	public CFGNode toCFGNode(CFG graph) {
+		return null;
 	}
 }

@@ -56,6 +56,7 @@ public class CubexGeneratorProg {
         ((HProg)hRoot).cse(new AvailExprsList());
         HighLow hl = new HighLow();
         LNode lRoot = hRoot.accept(hl);
+        
         CGenerator cc = new CGenerator();
         return lRoot.accept(cc);
     }
