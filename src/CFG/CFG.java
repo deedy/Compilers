@@ -253,11 +253,11 @@ class CFGCond extends CFGNode {
 		StmtList ret = new StmtList();
 		LExp cond = stmt.cond;
 		ret.add(new LAssign(ifVar, cond));
-		ret.add(new LIncr(ifVar));
+		// ret.add(new LIncr(ifVar));
 		StmtList s1 = children.get(0).translate();
 		StmtList s2 = children.get(1).translate();
-		s1.add(0, new LDecr(ifVar));
-		s2.add(0, new LDecr(ifVar));
+		// s1.add(0, new LDecr(ifVar));
+		// s2.add(0, new LDecr(ifVar));
 
 		ret.add(new LCond(ifVar, new LStmts(s1), new LStmts(s2)));
 		return ret;

@@ -132,7 +132,8 @@ public class CGenerator implements LVisitor {
 			toIncr.add(indent(String.format("_incr(%s);\n", n)));
 		}
 
-		String incrs = join(toIncr, "");
+		// String incrs = join(toIncr, "");
+		String incrs = "";
 
 		int count = 0;
 		List<String> varDefs = new ArrayList<String>();
@@ -261,9 +262,9 @@ public class CGenerator implements LVisitor {
 		String dec = String.format("_IterNode %s = _iterator(%s);\n", iterName, iter);
 		String elem = f.elem.accept(this);
 		String stmt = f.stmt.accept(this);
-		String loop = indent(String.format("_object %s = %s->curr;\n_incr(%s);\n%s\n%s = %s->next(%s);"
-									, elem, iterName, elem, stmt, iterName, iterName, iterName));
-		return String.format("%swhile (%s) {\n%s}\nx3free(%s);\n",
+		String loop = indent(String.format("_object %s = %s->curr;\n%s\n%s = %s->next(%s);"
+									, elem, iterName, stmt, iterName, iterName, iterName));
+		return String.format("%swhile (%s) {\n%s}\n_decr(%s);\n",
 							dec, iterName, loop, iterName);
 	}
 
@@ -335,8 +336,7 @@ public class CGenerator implements LVisitor {
                     	+ "\t_i_iter = _i_iter->next(_i_iter);\n"
                     + "\t}\n"
                     + "\tx3free(_i_iter);\n"
-                    + "\t_decr(_i);\n"
-                    + "\t_decr(input);\n"
+                    + "\t_free_all_the_things();\n"
                 + "}\n";
     	return String.format(baseProg, globDecs, funHeads, funDecs);
 	}
