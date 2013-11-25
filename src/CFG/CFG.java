@@ -98,21 +98,32 @@ class CFGStmts extends CFGNode {
 		int len = children.size();
 		NodeList entering = new NodeList();
 		NodeList foldOut = new NodeList();
+		boolean del = false;
 		if (len > 0) {
 			CFGNode c = children.get(0);
 			NodeListPair pair = c.buildSubGraph();
 			entering = pair.getLeft();
 			foldOut = pair.getRight();
+
 			for (int i = 1; i < len; i++) {
-				c = children.get(i);
-				pair = c.buildSubGraph();
-				for(CFGNode j : pair.getLeft()) {
-					for(CFGNode o : foldOut) {
-						o.succ.add(j);
-						j.prev.add(o);
-					}
+				if (foldOut.size() == 0) {
+					del = true;
 				}
-				foldOut = pair.getRight();
+				if (del) {
+					children.remove(i);
+					i -= 1;
+					len -= 1;
+				} else {
+					c = children.get(i);
+					pair = c.buildSubGraph();
+					for(CFGNode j : pair.getLeft()) {
+						for(CFGNode o : foldOut) {
+							o.succ.add(j);
+							j.prev.add(o);
+						}
+					}
+					foldOut = pair.getRight();
+				}
 			}
 		}
 		return new NodeListPair(entering, foldOut);
@@ -281,18 +292,20 @@ class CFGAssign extends CFGNode {
 
 	public StmtList translate() {
 		StmtList ret = new StmtList();
-		LName tmp = new LName("_tmp");
-		// assign to temporary
-		ret.add(new LAssign(tmp, stmt.var));
-		// make the assignment
-		ret.add(new LAssign(stmt.var, stmt.val));
-		// increment tmp
-		ret.add(new LIncr(stmt.var));
-		// decrement the old value
-		ret.add(new LDecr(tmp));
-		// for (LName n : collectables()) {
-		// 	ret.add(new LDecr(new LName(n.name + "/*gc*/")));
-		// }
+		if (out.contains(stmt.var)) {
+			LName tmp = new LName("_tmp");
+			// assign to temporary
+			ret.add(new LAssign(tmp, stmt.var));
+			// make the assignment
+			ret.add(new LAssign(stmt.var, stmt.val));
+			// increment tmp
+			ret.add(new LIncr(stmt.var));
+			// decrement the old value
+			ret.add(new LDecr(tmp));
+			// for (LName n : collectables()) {
+			// 	ret.add(new LDecr(new LName(n.name + "/*gc*/")));
+			// }
+		}
 		return ret;
 	}
 }
@@ -308,7 +321,7 @@ class CFGReturn extends CFGNode {
 
 	public NodeListPair buildSubGraph () {
 		NodeList ret = new NodeList(this);
-		return new NodeListPair(ret, ret);
+		return new NodeListPair(ret, new NodeList());
 	}
 
 	public StmtList translate() {

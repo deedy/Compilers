@@ -544,13 +544,13 @@ _object Integer_equals(_object o1, _object o2) {
 	Integer a = o1;
 	Integer b = o2;
 	Boolean _ret;
-	_incr(a);
-	_incr(b);
+	// _incr(a);
+	// _incr(b);
 
 	_ret = Boolean_construct(a->value == b->value);
 
-	_decr(a);
-	_decr(b);
+	// _decr(a);
+	// _decr(b);
 	return _ret;
 }
 

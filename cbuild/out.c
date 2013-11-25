@@ -2,299 +2,126 @@
 #include "cubex_external_functions.h"
 #include "cubex_lib.h"
 
-_object Interone_toIter(_object _o0, _object _o1);
-_object Intertwo_twoIter(_object _o0, _object _o1, _object _o2);
-_object Emptier_toIter(_object _o0, _object _o1);
-_object Emptier_twoIter(_object _o0, _object _o1, _object _o2);
-_object Copier_toIter(_object _o0, _object _o1);
-_object Copier_twoIter(_object _o0, _object _o1, _object _o2);
-_object Doubler_toIter(_object _o0, _object _o1);
-_object Doubler_twoIter(_object _o0, _object _o1, _object _o2);
-_object Dynamicasaurus_toIter(_object _o0, _object _o1);
-_object Dynamicasaurus_twoIter(_object _o0, _object _o1, _object _o2);
+_object Printer_print(_object _o0);
+_object ConstantPrinter_print(_object _o0);
+_object Doubler_print(_object _o0);
 _object _prog_main();
-_object Interone_toIter(_object _o0, _object _o1) {
+_object Printer_print(_object _o0) {
 	Object _obj = _o0;
-	Object t = _o1;
 	Object _if_tmp1 = NULL;
 	Object _if_tmp2 = NULL;
 	Object _ret = NULL;
-	Object _if_tmp3 = NULL;
-	Object _if_tmp4 = NULL;
-	_if_tmp1 = (Object) Boolean_construct(((Object) _obj)->id == 10);
+	_incr(_obj);
+	_if_tmp1 = (Object) Boolean_construct(((Object) _obj)->id == 7);
 	if (((Boolean) _if_tmp1)->value) {
-		_ret = (Object) Dynamicasaurus_toIter(_obj, t);
+		_ret = (Object) Doubler_print(_obj);
 		_incr(_ret);
 		return _ret;
 	} else {
-		_if_tmp2 = (Object) Boolean_construct(((Object) _obj)->id == 9);
+		_if_tmp2 = (Object) Boolean_construct(((Object) _obj)->id == 6);
 		if (((Boolean) _if_tmp2)->value) {
-			_ret = (Object) Doubler_toIter(_obj, t);
+			_ret = (Object) ConstantPrinter_print(_obj);
 			_incr(_ret);
 			return _ret;
 		} else {
-			_if_tmp3 = (Object) Boolean_construct(((Object) _obj)->id == 8);
-			if (((Boolean) _if_tmp3)->value) {
-				_ret = (Object) Copier_toIter(_obj, t);
-				_incr(_ret);
-				return _ret;
-			} else {
-				_if_tmp4 = (Object) Boolean_construct(((Object) _obj)->id == 7);
-				if (((Boolean) _if_tmp4)->value) {
-					_ret = (Object) Emptier_toIter(_obj, t);
-					_incr(_ret);
-					return _ret;
-				} else {
-					_ret = (Object) NULL;
-					_incr(_ret);
-					return _ret;
-				}
-			}
+			_ret = (Object) NULL;
+			_incr(_ret);
+			return _ret;
 		}
 	}
 }
 
-_object Intertwo_twoIter(_object _o0, _object _o1, _object _o2) {
-	Object _obj = _o0;
-	Object t1 = _o1;
-	Object t2 = _o2;
-	Object _ret = NULL;
-	Object _if_tmp7 = NULL;
-	Object _if_tmp6 = NULL;
-	Object _if_tmp5 = NULL;
-	Object _if_tmp8 = NULL;
-	_if_tmp5 = (Object) Boolean_construct(((Object) _obj)->id == 10);
-	if (((Boolean) _if_tmp5)->value) {
-		_ret = (Object) Dynamicasaurus_twoIter(_obj, t1, t2);
-		_incr(_ret);
-		return _ret;
-	} else {
-		_if_tmp6 = (Object) Boolean_construct(((Object) _obj)->id == 9);
-		if (((Boolean) _if_tmp6)->value) {
-			_ret = (Object) Doubler_twoIter(_obj, t1, t2);
-			_incr(_ret);
-			return _ret;
-		} else {
-			_if_tmp7 = (Object) Boolean_construct(((Object) _obj)->id == 8);
-			if (((Boolean) _if_tmp7)->value) {
-				_ret = (Object) Copier_twoIter(_obj, t1, t2);
-				_incr(_ret);
-				return _ret;
-			} else {
-				_if_tmp8 = (Object) Boolean_construct(((Object) _obj)->id == 7);
-				if (((Boolean) _if_tmp8)->value) {
-					_ret = (Object) Emptier_twoIter(_obj, t1, t2);
-					_incr(_ret);
-					return _ret;
-				} else {
-					_ret = (Object) NULL;
-					_incr(_ret);
-					return _ret;
-				}
-			}
-		}
-	}
-}
-
-_object Emptier() {
+_object ConstantPrinter() {
 	Object _tmp = NULL;
 	Object _ret = NULL;
 	Object _obj = _allocate(6, 0);
 	return _obj;
 }
 
-_object Emptier_toIter(_object _o0, _object _o1) {
+_object ConstantPrinter_print(_object _o0) {
 	Object _obj = _o0;
-	Object t = _o1;
 	Object _ret = NULL;
-	_ret = (Object) NULL;
+	_incr(_obj);
+	_ret = (Object) Iterable_construct(String_construct("Constant"));
 	_incr(_ret);
 	return _ret;
 }
 
-_object Emptier_twoIter(_object _o0, _object _o1, _object _o2) {
-	Object _obj = _o0;
-	Object t1 = _o1;
-	Object t2 = _o2;
-	Object _ret = NULL;
-	_ret = (Object) NULL;
-	_incr(_ret);
-	return _ret;
-}
-
-_object Copier() {
+_object Doubler(_object _o0) {
+	Object s = _o0;
 	Object _tmp = NULL;
 	Object _ret = NULL;
-	Object _obj = _allocate(7, 0);
-	return _obj;
-}
-
-_object Copier_toIter(_object _o0, _object _o1) {
-	Object _obj = _o0;
-	Object t = _o1;
-	Object _ret = NULL;
-	_ret = (Object) Iterable_construct(t);
-	_incr(_ret);
-	return _ret;
-}
-
-_object Copier_twoIter(_object _o0, _object _o1, _object _o2) {
-	Object _obj = _o0;
-	Object t1 = _o1;
-	Object t2 = _o2;
-	Object _ret = NULL;
-	_ret = (Object) _append(Iterable_construct(t1), Iterable_construct(t2));
-	_incr(_ret);
-	return _ret;
-}
-
-_object Doubler() {
-	Object _tmp = NULL;
-	Object _ret = NULL;
-	Object _obj = _allocate(8, 0);
-	return _obj;
-}
-
-_object Doubler_toIter(_object _o0, _object _o1) {
-	Object _obj = _o0;
-	Object t = _o1;
-	Object _ret = NULL;
-	_ret = (Object) _append(Iterable_construct(t), Iterable_construct(t));
-	_incr(_ret);
-	return _ret;
-}
-
-_object Doubler_twoIter(_object _o0, _object _o1, _object _o2) {
-	Object _obj = _o0;
-	Object t1 = _o1;
-	Object t2 = _o2;
-	Object _ret = NULL;
-	_ret = (Object) _append(Iterable_construct(t1), _append(Iterable_construct(t1), _append(Iterable_construct(t2), Iterable_construct(t2))));
-	_incr(_ret);
-	return _ret;
-}
-
-_object Dynamicasaurus(_object _o0) {
-	Object i = _o0;
-	Object _tmp = NULL;
-	Object _ret = NULL;
-	Object _obj = _allocate(9, 1);
-	_obj->fields[0] = (Object) i;
+	Object _obj = _allocate(7, 1);
+	_obj->fields[0] = (Object) s;
 	_incr(_obj->fields[0]);
 	return _obj;
 }
 
-_object Dynamicasaurus_toIter(_object _o0, _object _o1) {
+_object Doubler_print(_object _o0) {
 	Object _obj = _o0;
-	Object t = _o1;
-	Object ret = NULL;
 	Object _ret = NULL;
-	Object _tmp = NULL;
-	_tmp = (Object) ret;
-	ret = (Object) NULL;
-	_incr(ret);
-	_decr(_tmp);
-	_IterNode _iter0 = _iterator(Integer_through(Integer_construct(1), _obj->fields[0], Boolean_construct(1), Boolean_construct(1)));
-	while (_iter0) {
-		_object x = _iter0->curr;
-		_tmp = (Object) ret;
-		ret = (Object) _append(ret, Iterable_construct(t));
-		_incr(ret);
-		_decr(_tmp);
-		_iter0 = _iter0->next(_iter0);
-	}
-	_decr(_iter0);
-	_ret = (Object) ret;
-	_incr(_ret);
-	return _ret;
-}
-
-_object Dynamicasaurus_twoIter(_object _o0, _object _o1, _object _o2) {
-	Object _obj = _o0;
-	Object t1 = _o1;
-	Object t2 = _o2;
-	Object _ret = NULL;
-	_ret = (Object) _append(Dynamicasaurus_toIter(_obj, t1), Dynamicasaurus_toIter(_obj, t2));
+	_incr(_obj);
+	_ret = (Object) _append(Iterable_construct(_obj->fields[0]), Iterable_construct(_obj->fields[0]));
 	_incr(_ret);
 	return _ret;
 }
 
 _object _prog_main() {
-	Object ret = NULL;
-	Object _swag_do_swag_ = NULL;
-	Object e = NULL;
-	Object dy = NULL;
 	Object c = NULL;
 	Object _ret = NULL;
+	Object _if_tmp3 = NULL;
 	Object _tmp = NULL;
-	Object _swag_int_swag_ = NULL;
-	_tmp = (Object) ret;
-	ret = (Object) NULL;
-	_incr(ret);
+	Object out = NULL;
+	Object ps = NULL;
+	_tmp = (Object) ps;
+	ps = (Object) NULL;
+	_incr(ps);
 	_decr(_tmp);
-	_tmp = (Object) _swag_int_swag_;
-	_swag_int_swag_ = (Object) Integer_negative(Integer_construct(1));
-	_incr(_swag_int_swag_);
+	_tmp = (Object) c;
+	c = (Object) Integer_construct(0);
+	_incr(c);
 	_decr(_tmp);
-	_IterNode _iter1 = _iterator(input);
+	_IterNode _iter0 = _iterator(input);
+	while (_iter0) {
+		_object i = _iter0->curr;
+		_if_tmp3 = (Object) Integer_equals(c, Integer_construct(0));
+		if (((Boolean) _if_tmp3)->value) {
+			_tmp = (Object) ps;
+			ps = (Object) _append(ps, Iterable_construct(ConstantPrinter()));
+			_incr(ps);
+			_decr(_tmp);
+			_tmp = (Object) c;
+			c = (Object) Integer_construct(1);
+			_incr(c);
+			_decr(_tmp);
+		} else {
+			_tmp = (Object) ps;
+			ps = (Object) _append(ps, Iterable_construct(Doubler(i)));
+			_incr(ps);
+			_decr(_tmp);
+			_tmp = (Object) c;
+			c = (Object) Integer_construct(0);
+			_incr(c);
+			_decr(_tmp);
+		}
+		_iter0 = _iter0->next(_iter0);
+	}
+	_decr(_iter0);
+	_tmp = (Object) out;
+	out = (Object) NULL;
+	_incr(out);
+	_decr(_tmp);
+	_IterNode _iter1 = _iterator(ps);
 	while (_iter1) {
-		_object i = _iter1->curr;
-		_tmp = (Object) e;
-		e = (Object) Emptier();
-		_incr(e);
-		_decr(_tmp);
-		_tmp = (Object) ret;
-		ret = (Object) _append(ret, Emptier_toIter(e, i));
-		_incr(ret);
-		_decr(_tmp);
-		_tmp = (Object) ret;
-		ret = (Object) _append(ret, Emptier_twoIter(e, string(_append(i, String_construct("E"))), string(_append(i, String_construct("E2")))));
-		_incr(ret);
-		_decr(_tmp);
-		_tmp = (Object) c;
-		c = (Object) Copier();
-		_incr(c);
-		_decr(_tmp);
-		_tmp = (Object) ret;
-		ret = (Object) _append(ret, Copier_toIter(c, i));
-		_incr(ret);
-		_decr(_tmp);
-		_tmp = (Object) ret;
-		ret = (Object) _append(ret, Copier_twoIter(c, string(_append(i, String_construct("C"))), string(_append(i, String_construct("C2")))));
-		_incr(ret);
-		_decr(_tmp);
-		_tmp = (Object) _swag_do_swag_;
-		_swag_do_swag_ = (Object) Doubler();
-		_incr(_swag_do_swag_);
-		_decr(_tmp);
-		_tmp = (Object) ret;
-		ret = (Object) _append(ret, Doubler_toIter(_swag_do_swag_, i));
-		_incr(ret);
-		_decr(_tmp);
-		_tmp = (Object) ret;
-		ret = (Object) _append(ret, Doubler_twoIter(_swag_do_swag_, string(_append(i, String_construct("Do"))), string(_append(i, String_construct("Do2")))));
-		_incr(ret);
-		_decr(_tmp);
-		_tmp = (Object) dy;
-		dy = (Object) Dynamicasaurus(_swag_int_swag_);
-		_incr(dy);
-		_decr(_tmp);
-		_tmp = (Object) ret;
-		ret = (Object) _append(ret, Dynamicasaurus_toIter(dy, i));
-		_incr(ret);
-		_decr(_tmp);
-		_tmp = (Object) ret;
-		ret = (Object) _append(ret, Dynamicasaurus_twoIter(dy, string(_append(i, String_construct("Dy"))), string(_append(i, String_construct("Dy2")))));
-		_incr(ret);
-		_decr(_tmp);
-		_tmp = (Object) _swag_int_swag_;
-		_swag_int_swag_ = (Object) Integer_plus(_swag_int_swag_, Integer_construct(1));
-		_incr(_swag_int_swag_);
+		_object p = _iter1->curr;
+		_tmp = (Object) out;
+		out = (Object) _append(out, Printer_print(p));
+		_incr(out);
 		_decr(_tmp);
 		_iter1 = _iter1->next(_iter1);
 	}
 	_decr(_iter1);
-	_ret = (Object) ret;
+	_ret = (Object) out;
 	_incr(_ret);
 	return _ret;
 }

@@ -132,8 +132,8 @@ public class CGenerator implements LVisitor {
 			toIncr.add(indent(String.format("_incr(%s);\n", n)));
 		}
 
-		// String incrs = join(toIncr, "");
-		String incrs = "";
+		String incrs = join(toIncr, "");
+		// String incrs = "";
 
 		int count = 0;
 		List<String> varDefs = new ArrayList<String>();
