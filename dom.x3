@@ -34,16 +34,3 @@ for (i in input)
 	ret := ret++[string(zz)];
 }
 return ret;
-`ret := [];
-out := [];
-if (true) {
-  out := ["wut", "who"];
-} else {
-  out := ["who", "wut"];
-}
-
-for (i in out) {
-  ret := ret ++ [i];
-}
-
-return ret;'

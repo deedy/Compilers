@@ -198,9 +198,6 @@ Iterable _append(_object o1, _object o2) {
 	if(!a) {
 		return b;
 	}
-	if (!b) {
-		return a;
-	}
 	_incr(a);
 	_incr(b);
 	Iterable c = _copy(a);

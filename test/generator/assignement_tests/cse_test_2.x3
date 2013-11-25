@@ -1,0 +1,16 @@
+a := 1;
+b := 0;
+
+if (true) {
+    c := a + b;
+} else {
+    b := 1;
+    c := a + b;
+    e := a + b;
+    a := 24;
+    f := a + b;
+}
+
+d := a + b;
+
+return ["sup"];

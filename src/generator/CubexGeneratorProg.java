@@ -39,15 +39,21 @@ public class CubexGeneratorProg {
     public static String generate(CubexProg node) {
         HVisitor hVisitor = new HVisitor();
         HNode hRoot = node.accept(hVisitor);
-        // do common subexpression elimination
-        ((HProg)hRoot).cse(new AvailExprsList());
         // Implement unimplemented 
         for (Map.Entry<String, HInterface> i : hVisitor.classes.entrySet()) {
             HInterface in = i.getValue();
             in.implementSuperInterfaces(hVisitor.classes);
             in.convertFuns(in.funs);
         }
-        
+        // for (Map.Entry<String, HInterface> i : hVisitor.classes.entrySet()) {
+        //     for (Map.Entry<String, HFunction> f : i.getValue().funs.entrySet()) {
+        //         if (f.getValue() instanceof HUndefFunction) {
+        //             System.out.println(((HUndefFunction)f.getValue()).defs);
+        //         }
+        //     }
+        // }
+        // do common subexpression elimination
+        ((HProg)hRoot).cse(new AvailExprsList());
         HighLow hl = new HighLow();
         LNode lRoot = hRoot.accept(hl);
         

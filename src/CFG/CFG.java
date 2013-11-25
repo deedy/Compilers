@@ -290,9 +290,9 @@ class CFGAssign extends CFGNode {
 		ret.add(new LIncr(stmt.var));
 		// decrement the old value
 		ret.add(new LDecr(tmp));
-		for (LName n : collectables()) {
-			ret.add(new LDecr(new LName(n.name + "/*gc*/")));
-		}
+		// for (LName n : collectables()) {
+		// 	ret.add(new LDecr(new LName(n.name + "/*gc*/")));
+		// }
 		return ret;
 	}
 }
@@ -316,9 +316,9 @@ class CFGReturn extends CFGNode {
 		// add a temporary assignment
 		ret.add(new LAssign("_ret", stmt.ret));
 		ret.add(new LIncr(new LName("_ret")));
-		for (LName n : collectables()) {
-			ret.add(new LDecr(new LName(n.name + "/*gc*/")));
-		}
+		// for (LName n : collectables()) {
+		// 	ret.add(new LDecr(new LName(n.name + "/*gc*/")));
+		// }
 		ret.add(new LReturn(new LName("_ret")));
 		return ret;
 	}
