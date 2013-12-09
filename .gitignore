@@ -20,3 +20,8 @@ build/*
 *.o
 cbuild/a.out
 *.so
+
+
+# Test outputs
+TEST_DIAG.txt
+MEM_DIAG.txt

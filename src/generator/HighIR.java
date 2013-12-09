@@ -273,9 +273,9 @@ class HConditional extends HStatement {
     //     }
     // }
     public void cse(AvailExprsList avail) {
-        expr.cse(avail, this);
         AvailExprsList avail1 = avail.copy();
         AvailExprsList avail2 = avail.copy();
+        expr.cse(avail, this);
         stmt1.cse(avail1);
         stmt2.cse(avail2);
         // combine the lists
@@ -534,10 +534,10 @@ class HFunctionCall extends HExpression {
     }
 
     public void cse(AvailExprsList avail, HStatement stmt) {
-        joinExpr(avail, stmt);
         for (HExpression e : args) {
             e.cse(avail, stmt);
         }
+        joinExpr(avail, stmt);
     }
 
     public boolean dependsOn(String name) {
@@ -583,10 +583,10 @@ class HAppend extends HExpression {
     }
 
     public void cse(AvailExprsList avail, HStatement stmt) {
-        joinExpr(avail, stmt);
-
         left.cse(avail, stmt);
         right.cse(avail, stmt);
+
+        joinExpr(avail, stmt);
     }
 
     public HExpression copy() {

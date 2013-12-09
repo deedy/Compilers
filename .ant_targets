@@ -1,0 +1,11 @@
+    clean
+    antlr
+    compile_no_antlr
+    compile
+    jar_lexer
+    jar_parser
+    jar_checker
+    jar_generator
+    test_lexer
+    test_parser
+    test_checker

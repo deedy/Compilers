@@ -4,7 +4,8 @@ typedef void* _object;
 
 struct Object_t {
 	int id;
-	_object parent;
+	struct Object_t *prev;
+	struct Object_t *tail;
 	int ref_count;
 	int field_count;
 	_object *fields;
@@ -13,6 +14,12 @@ struct Object_t {
 typedef struct Object_t* Object;
 
 struct _IterNode_t {
+	int id;
+	struct Object_t *prev;
+	struct Object_t *tail;
+	int ref_count;
+	int field_count;
+	_object *fields;
 	_object curr;
 	struct _IterNode_t* (*next)(struct _IterNode_t*);
 	_object nextIter;
@@ -22,7 +29,8 @@ typedef struct _IterNode_t* _IterNode;
 
 struct Iterable_t {
 	int id;
-	_object parent;
+	struct Object_t *prev;
+	struct Object_t *tail;
 	int ref_count;
 	int field_count;
 	_object *fields;
@@ -33,7 +41,8 @@ typedef struct Iterable_t* Iterable;
 
 struct Integer_t {
 	int id;
-	_object parent;
+	struct Object_t *prev;
+	struct Object_t *tail;
 	int ref_count;
 	int field_count;
 	_object *fields;
@@ -44,7 +53,8 @@ typedef struct Integer_t* Integer;
 
 struct Boolean_t {
 	int id;
-	_object parent;
+	struct Object_t *prev;
+	struct Object_t *tail;
 	int ref_count;
 	int field_count;
 	_object *fields;
@@ -55,7 +65,8 @@ typedef struct Boolean_t* Boolean;
 
 struct Character_t {
 	int id;
-	_object parent;
+	struct Object_t *prev;
+	struct Object_t *tail;
 	int ref_count;
 	int field_count;
 	_object *fields;
@@ -66,7 +77,8 @@ typedef struct Character_t* Character;
 
 struct String_t {
 	int id;
-	_object parent;
+	struct Object_t *prev;
+	struct Object_t *tail;
 	int ref_count;
 	int field_count;
 	_object *fields;
@@ -76,10 +88,35 @@ struct String_t {
 
 typedef struct String_t* String;
 
+Object freeList = NULL;
+
+void _add_obj(Object o) {
+	o->tail = freeList;
+	if (freeList){
+		freeList->prev = o;
+	}
+	freeList = o;
+}
+
+void _del_obj(Object o) {
+	if (o->prev) {
+		o->prev->tail = o->tail;
+	}
+	if (o->tail) {
+		o->tail->prev = o->prev;
+	}
+	if (!(o->tail || o->prev)) {
+		freeList = NULL;
+	}
+}
+
 _object _allocate(int id, int field_count) {
 	Object o;
 	if (id < 5) {
 		switch (id) {
+			case -1: 
+				o = x3malloc(sizeof(struct _IterNode_t));
+				break;
 			case 0:
 				o = x3malloc(sizeof(struct Iterable_t));
 				break;
@@ -102,13 +139,20 @@ _object _allocate(int id, int field_count) {
 		o = x3malloc(sizeof(struct Object_t));	
 	}
 	o->id = id;
-	o->parent = NULL;
+	o->prev = NULL;
+	o->tail = NULL;
+	_add_obj(o);
 	o->ref_count = 0;
 	o->field_count = field_count;
-	_object *fields = x3malloc(sizeof(_object) * field_count);
-	int i;
-	for (i = 0; i < field_count; i++) {
-		fields[i] = NULL;
+	_object *fields;
+	if (field_count) {
+		fields = x3malloc(sizeof(_object) * field_count);
+		int i;
+		for (i = 0; i < field_count; i++) {
+			fields[i] = NULL;
+		}
+	} else {
+		fields = NULL;
 	}
 	o->fields = fields;
 	return o;
@@ -126,17 +170,31 @@ void _decr(_object ptr) {
 	if(o) {
 		o->ref_count -= 1;
 		if (o->ref_count <= 0) {
+			_del_obj(o);
 			int i;
 			for (i = 0; i < o->field_count; i++) {
 				_decr(o->fields[i]);
 			}
 			x3free(o->fields);
-			_decr(o->parent);
 			if(o->id == 4) {
 				x3free(((String) o)->value);
 			}
 			x3free(o);
 		}
+	}
+}
+
+void _free_all_the_things() {
+	Object o = freeList;
+	while(o) {
+		Object next = o->tail;
+		int i;
+		x3free(o->fields);
+		if(o->id == 4) {
+			x3free(((String) o)->value);
+		}
+		x3free(o);
+		o = next;
 	}
 }
 
@@ -150,7 +208,7 @@ _IterNode _iterator(_object o) {
 	} else if (!(i->fields[0])) {
 		return _iterator(i->fields[1]);
 	} else {
-		_IterNode n = x3malloc(sizeof(struct _IterNode_t));
+		_IterNode n = _allocate(-1, 0);
 		n->curr = i->fields[0];
 		n->nextIter = (Iterable) i->fields[1];
 		n->next = i->next;
@@ -163,7 +221,7 @@ _IterNode _common_next(_IterNode node) {
 		return NULL;
 	} else {
 		_IterNode ret = _iterator(node->nextIter);
-		x3free(node);
+		// _decr(node);
 		return ret;
 	}
 }
@@ -171,8 +229,8 @@ _IterNode _common_next(_IterNode node) {
 _object Iterable_construct(_object ptr) {
 	Object o = ptr;
 	Iterable a = _allocate(0, 2);
-	_incr(o);
 	a->fields[0] = o;
+	_incr(a->fields[0]);
 	a->fields[1] = NULL;
 	a->next = _common_next;
 	return a;
@@ -190,12 +248,11 @@ Iterable _copy(Iterable a) {
 Iterable _append(_object o1, _object o2) {
 	Iterable a = o1;
 	Iterable b = o2;
-	_incr(a);
-	_incr(b);
-	if(!a || !(a->fields[0])) {
-		_decr(a);
+	if(!a) {
 		return b;
 	}
+	_incr(a);
+	_incr(b);
 	Iterable c = _copy(a);
 	c->fields[1] = _append(a->fields[1], b);
 	_incr(c->fields[1]);
@@ -431,10 +488,12 @@ _object Integer_through(_object o1, _object o2, _object o3, _object o4) {
 	} else {
 		Iterable i = Iterable_construct(lower);
 		Iterable j = Integer_through(Integer_construct(low + 1), upper, Boolean_construct(1), includeUpper);
-		_ret = _append(i, j);
+		i->fields[1] = j;
+		_incr(j);
+		_ret = i;
 	}
 
-	_decr(lower);
+	if (_ret) _decr(lower);
 	_decr(upper);
 	_decr(includeLower);
 	_decr(includeUpper);
@@ -485,13 +544,13 @@ _object Integer_equals(_object o1, _object o2) {
 	Integer a = o1;
 	Integer b = o2;
 	Boolean _ret;
-	_incr(a);
-	_incr(b);
+	// _incr(a);
+	// _incr(b);
 
 	_ret = Boolean_construct(a->value == b->value);
 
-	_decr(a);
-	_decr(b);
+	// _decr(a);
+	// _decr(b);
 	return _ret;
 }
 
@@ -542,9 +601,12 @@ void strCpy(const char *src, char *dest) {
 }
 
 int strLen(const char *str) {
-	register const char *s;
-	for (s = str; *s; ++s);
-	return(s - str);
+	int l = 0;
+	while (*str) {
+		str++;
+		l++;
+	}
+	return l;
 }
 
 _object strIter(const char *s) {
@@ -561,14 +623,20 @@ _object String_construct(const char* s) {
 		return NULL;
 	} else {
 		String str = _allocate(4, 2);
-		char* buff = x3malloc(sizeof(char) * strLen(s) + 1);
+		char* buff = x3malloc(sizeof(char) * (strLen(s) + 1));
 		strCpy(s, buff);
+		str->value = buff;
 		Iterable i = strIter(s);
 		if(i) {
-			str->fields = i->fields;
+			str->fields[0] = i->fields[0];
+			str->fields[1] = i->fields[1];
+			_incr(str->fields[0]);
+			_incr(str->fields[1]);
 			str->next = i->next;
+			// _decr(i);
+		} else {
+			str->next = _common_next;
 		}
-		str->value = buff;
 		return str;
 	}
 }
@@ -606,7 +674,7 @@ _object string(_object o) {
 	while (iter) {
 		totalLen += 1;
 		iter = iter->next(iter);
-	} x3free(iter);
+	} _decr(iter);
 	char *buff = x3malloc(sizeof(char) * (totalLen + 1));
 	int j;
 	for(j = 0; j < totalLen + 1; j++) {
@@ -619,7 +687,7 @@ _object string(_object o) {
 		buff[index] = c->value;
 		iter = iter->next(iter);
 		index += 1;
-	} x3free(iter);
+	} _decr(iter);
 	String ret = String_construct(buff);
 	x3free(buff);
 	return ret;
@@ -631,11 +699,11 @@ void __init() {
 	while (1) {
 		int next_input_len = next_line_len();
 		if (next_input_len) {
-			char *buff = x3malloc(sizeof(char) * (next_input_len));
+			char *buff = x3malloc(sizeof(char) * (next_input_len + 1));
 			int j;
-			for(j = 0; j <= next_input_len; j++) {
-				buff[j] = 0;
-			}
+		for(j = 0; j <= next_input_len; j++) {
+			buff[j] = 0;
+		}
 			read_line(buff);
 			String line = String_construct(buff);
 			x3free(buff);
