@@ -1,0 +1,40 @@
+_________________________________
+
+TEST FAILED     : trivial_fail
+
+compiler output :  
+=================
+return [ "sup" ] ;
+
+make output     :  
+=================
+make: Entering directory `/home/bryce/Code/Compilers/cbuild'
+gcc -g -o a.out cubex_external_functions.o master.o out.o 
+make: Leaving directory `/home/bryce/Code/Compilers/cbuild'
+
+expected output : return ["sup"]
+actual output   : sup
+_________________________________
+
+
+_________________________________
+
+TEST FAILED     : trivial
+
+compiler output :  
+=================
+return [ "sup" ] ;
+
+make output     :  
+=================
+make: Entering directory `/home/bryce/Code/Compilers/cbuild'
+gcc -g -c -o out.o out.c 
+gcc -g -o a.out cubex_external_functions.o master.o out.o 
+make: Leaving directory `/home/bryce/Code/Compilers/cbuild'
+
+expected output : return ["sup"]
+actual output   : sup
+_________________________________
+
+
+===== TEST PASSED: ./test/generator/trivial_pass
