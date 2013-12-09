@@ -62,4 +62,3 @@ SINGLELINECOMMENT : '#' ~[\r\n]* -> skip;
 MULTILINECOMMENT : '`' (MULTILINECOMMENT|  ~[`\'] )* '\'';
 
 ERRORCHAR : .;
-
