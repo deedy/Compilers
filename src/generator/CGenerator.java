@@ -120,15 +120,15 @@ public class CGenerator implements LVisitor {
 		LStmt sP = f.stmts;
 		ArrayList<LName> initial = new ArrayList<LName>();
 		initial.addAll(f.args);
-		CFG cfg = new CFG(sP, initial);
-		cfg.root.buildSubGraph();
-		cfg.solveLiveness();
-		LStmt sO = cfg.translate();
-		String stmts = indent(sO.accept(this));
-
+		// CFG cfg = new CFG(sP, initial);
+		// cfg.root.buildSubGraph();
+		// cfg.solveLiveness();
+		// LStmt sO = cfg.translate();
+		// String stmts = indent(sO.accept(this));
+		String stmts = indent(sP.accept(this));
 		ArrayList<String> toIncr = new ArrayList<String>();
-		Collection<LName> usedVars = cfg.root.in.plusAll(cfg.root.use);
-		for (LName n : usedVars) {
+		// Collection<LName> usedVars = cfg.root.in.plusAll(cfg.root.use);
+		for (LName n : initial) {
 			toIncr.add(indent(String.format("_incr(%s);\n", n)));
 		}
 
@@ -220,7 +220,8 @@ public class CGenerator implements LVisitor {
 	}
 
 	public String visit(LIter i) {
-		return chain(i.items, 0);
+		String items = join(visitAll(i.items), ",");
+		return String.format("Iterable_construct((_object[]){%s}, %d)", items, i.items.size());
 	}
 
 	String chain(List<LExp> l, int index) {
@@ -258,14 +259,16 @@ public class CGenerator implements LVisitor {
 	public String visit(LFor f) {
 		String iter = f.iter.accept(this);
 		String iterName = "_iter" + iterCount;
+		String ableName = "_iterable" + iterCount;
 		iterCount += 1;
-		String dec = String.format("_IterNode %s = _iterator(%s);\n", iterName, iter);
+		String dec1 = String.format("Iterable %s = (Iterable)%s;\n", ableName, iter);
+		String dec2 = String.format("_Iterator %s = %s->iter(%s);\n", iterName, ableName, ableName);
 		String elem = f.elem.accept(this);
 		String stmt = f.stmt.accept(this);
-		String loop = indent(String.format("_object %s = %s->curr;\n%s\n%s = %s->next(%s);"
-									, elem, iterName, stmt, iterName, iterName, iterName));
-		return String.format("%swhile (%s) {\n%s}\n_decr(%s);\n",
-							dec, iterName, loop, iterName);
+		localVars.add(elem);
+		String cond = String.format("%s = %s->next(%s)", elem, iterName, iterName);
+		return String.format("%s%swhile (%s) {\n%s}\n",
+							dec1, dec2, cond, indent(stmt));
 	}
 
 	public String visit(LWhile w) {
@@ -330,12 +333,11 @@ public class CGenerator implements LVisitor {
                 + "void cubex_main() {\n"
                 	+ "\t__init();\n"
               		+ "\t_object _i = _prog_main();\n"
-                    + "\t_IterNode _i_iter = _iterator(_i);\n"
-                    + "\twhile(_i_iter) {\n"
-                    	+ "\t_print(_i_iter->curr);\n"
-                    	+ "\t_i_iter = _i_iter->next(_i_iter);\n"
+                    + "\t_Iterator _i_iter = ((Iterable)_i)->iter(_i);\n"
+                    + "\t_object _j;"
+                    + "\twhile(_j = _i_iter->next(_i_iter)) {\n"
+                    	+ "\t\t_print(_j);\n"
                     + "\t}\n"
-                    + "\tx3free(_i_iter);\n"
                     + "\t_free_all_the_things();\n"
                 + "}\n";
     	return String.format(baseProg, globDecs, funHeads, funDecs);

@@ -523,7 +523,7 @@ _object _rangeNext(_object o) {
 	if (pos == r->len) {
 		return NULL;
 	} else {
-		_object ret = Integer_construct(pos);
+		_object ret = Integer_construct(pos + r->offset);
 		i->position += 1;
 		return ret;
 	}

@@ -53,7 +53,7 @@ public class CubexGeneratorProg {
         //     }
         // }
         // do common subexpression elimination
-        ((HProg)hRoot).cse(new AvailExprsList());
+        // ((HProg)hRoot).cse(new AvailExprsList());
         HighLow hl = new HighLow();
         LNode lRoot = hRoot.accept(hl);
         
