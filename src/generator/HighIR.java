@@ -795,30 +795,30 @@ class HVar extends HExpression {
 abstract class HComprehensionable {
 }
 
-class HCompExpr extends HComprehensionable {
+class HExprComp extends HComprehensionable {
     HExpression expr;
     HComprehensionable next;
-    public HCompExpr(HExpression e, HComprehensionable c) {
+    public HExprComp(HExpression e, HComprehensionable c) {
         expr = e;
         next = c;
     }
 }
 
-class HCompFor extends HComprehensionable {
+class HForComp extends HComprehensionable {
     HVar name;
     HExpression expr;
     HComprehensionable comp;
-    public HCompFor(HVar n, HExpression e, HComprehensionable c) {
+    public HForComp(HVar n, HExpression e, HComprehensionable c) {
         name = n;
         expr = e;
         comp = c;
     }
 }
 
-class HCompIf extends HComprehensionable {
+class HIfComp extends HComprehensionable {
     HExpression cond;
     HComprehensionable comp;
-    public HCompIf(HExpression e, HComprehensionable c) {
+    public HIfComp(HExpression e, HComprehensionable c) {
         cond = e;
         comp = c;
     }

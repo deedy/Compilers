@@ -49,6 +49,29 @@ public class HVisitor {
         return new HString(n.str);
     }
 
+    HComprehensionable translate(CubexComprehensionable c) {
+        if (c instanceof CubexExprComp) {
+            CubexExprComp d = (CubexExprComp) c;
+            HExpression expr = d.expr.accept(this);
+            HComprehensionable comp = translate(d.comp);
+            return new HExprComp(expr, comp);
+        } else if (c instanceof CubexForComp) {
+            CubexForComp d = (CubexForComp) c;
+            HVar name = new HVar(d.name.name);
+            HExpression expr = d.expr.accept(this);
+            HComprehensionable comp = translate(d.comp);
+            return new HForComp(name, expr, comp);
+        } else if (c instanceof CubexIfComp) {
+            CubexIfComp d = (CubexIfComp) c;
+            HExpression expr = d.cond.accept(this);
+            HComprehensionable comp = translate(d.comp);
+            return new HIfComp(expr, comp);
+        } else {
+            System.out.println("Error translating comprehensionable");
+            return null;
+        }
+    }
+
     HExpression visit(CubexComprehension c) {
         // chain the comprehension list
         return null;
