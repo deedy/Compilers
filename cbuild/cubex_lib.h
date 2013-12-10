@@ -1,92 +1,151 @@
 #define NULL 0
 
+enum typeIDs {
+	ITERABLE_ID = -1,
+	ITERATOR_ID = -2,
+	INTEGER_ID = -3,
+	BOOLEAN_ID = -4,
+	CHARACTER_ID = -5,
+	STRING_ID = -6,
+	INDEXITERATOR_ID = -7,
+	APPENDITERABLE_ID = -8,
+	APPENDITERATOR_ID = -9,
+	RANGEITERABLE_ID = -10
+};
+
+// _object is classier than void*
 typedef void* _object;
 
+// the generic object type
 struct Object_t {
-	int id;
-	struct Object_t *prev;
-	struct Object_t *tail;
-	int ref_count;
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
 	int field_count;
 	_object *fields;
 };
-
 typedef struct Object_t* Object;
 
-struct _IterNode_t {
-	int id;
-	struct Object_t *prev;
-	struct Object_t *tail;
-	int ref_count;
-	int field_count;
-	_object *fields;
-	_object curr;
-	struct _IterNode_t* (*next)(struct _IterNode_t*);
-	_object nextIter;
-};
-
-typedef struct _IterNode_t* _IterNode;
-
+// the iterable prototype
 struct Iterable_t {
-	int id;
-	struct Object_t *prev;
-	struct Object_t *tail;
-	int ref_count;
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
 	int field_count;
 	_object *fields;
-	_IterNode (*next)(_IterNode);
+	_object (*iter)(_object);
 };
-
 typedef struct Iterable_t* Iterable;
 
+// the iterator prototype (holds state machine)
+struct _Iterator_t {
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
+	int field_count;
+	_object *fields;
+	_object (*next)(_object);
+	_object parent;
+};
+typedef struct _Iterator_t* _Iterator;
+
 struct Integer_t {
-	int id;
-	struct Object_t *prev;
-	struct Object_t *tail;
-	int ref_count;
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
 	int field_count;
 	_object *fields;
 	int value;
 };
-
 typedef struct Integer_t* Integer;
 
 struct Boolean_t {
-	int id;
-	struct Object_t *prev;
-	struct Object_t *tail;
-	int ref_count;
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
 	int field_count;
 	_object *fields;
 	int value;
 };
-
 typedef struct Boolean_t* Boolean;
 
 struct Character_t {
-	int id;
-	struct Object_t *prev;
-	struct Object_t *tail;
-	int ref_count;
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
 	int field_count;
 	_object *fields;
 	char value;
 };
-
 typedef struct Character_t* Character;
 
 struct String_t {
-	int id;
-	struct Object_t *prev;
-	struct Object_t *tail;
-	int ref_count;
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
 	int field_count;
 	_object *fields;
-	_IterNode (*next)(_IterNode);
+	_object (*iter)(_object);
 	char* value;
+	int length;
 };
-
 typedef struct String_t* String;
+
+typedef struct _IndexIterator_t {
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
+	int field_count;
+	_object *fields;
+	_object (*next)(_object);
+	_object parent;
+	int position;
+} *_IndexIterator;
+
+typedef struct _AppendIterable_t {
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
+	int field_count;
+	_object *fields;
+	_object (*iter)(_object);
+	_object left;
+	_object right;
+} *_AppendIterable;
+
+typedef struct _AppendIterator_t {
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
+	int field_count;
+	_object *fields;
+	_object (*next)(_object);
+	_object parent;
+	_object leftIter;
+	_object rightIter;
+} *_AppendIterator;
+
+typedef struct _RangeIterable_t {
+	int id; 
+	struct Object_t* prev; 
+	struct Object_t* tail; 
+	int ref_count; 
+	int field_count;
+	_object *fields;
+	_object (*iter)(_object);
+	int len;
+	int offset;
+} *_RangeIterable;
 
 Object freeList = NULL;
 
@@ -112,31 +171,21 @@ void _del_obj(Object o) {
 
 _object _allocate(int id, int field_count) {
 	Object o;
-	if (id < 5) {
-		switch (id) {
-			case -1: 
-				o = x3malloc(sizeof(struct _IterNode_t));
-				break;
-			case 0:
-				o = x3malloc(sizeof(struct Iterable_t));
-				break;
-			case 1:
-				o = x3malloc(sizeof(struct Integer_t));
-				break;
-			case 2:
-				o = x3malloc(sizeof(struct Boolean_t));
-				break;
-			case 3:
-				o = x3malloc(sizeof(struct Character_t));
-				break;
-			case 4:
-				o = x3malloc(sizeof(struct String_t));
-				break;
-			default:
-				return NULL;
-		}
+	if (id < 0) {
+		switch(id) {
+			case ITERABLE_ID: o = x3malloc(sizeof(struct Iterable_t)); break;
+			case ITERATOR_ID: o = x3malloc(sizeof(struct _Iterator_t)); break;
+			case INTEGER_ID: o = x3malloc(sizeof(struct Integer_t)); break;
+			case BOOLEAN_ID: o = x3malloc(sizeof(struct Boolean_t)); break;
+			case CHARACTER_ID: o = x3malloc(sizeof(struct Character_t)); break;
+			case STRING_ID: o = x3malloc(sizeof(struct String_t)); break;
+			case INDEXITERATOR_ID: o = x3malloc(sizeof(struct _IndexIterator_t)); break;
+			case APPENDITERABLE_ID: o = x3malloc(sizeof(struct _AppendIterable_t)); break;
+			case APPENDITERATOR_ID: o = x3malloc(sizeof(struct _AppendIterator_t)); break;
+			case RANGEITERABLE_ID: o = x3malloc(sizeof(struct _RangeIterable_t)); break;
+		}	
 	} else {
-		o = x3malloc(sizeof(struct Object_t));	
+		o = x3malloc(sizeof(struct Object_t));
 	}
 	o->id = id;
 	o->prev = NULL;
@@ -176,7 +225,7 @@ void _decr(_object ptr) {
 				_decr(o->fields[i]);
 			}
 			x3free(o->fields);
-			if(o->id == 4) {
+			if(o->id == -6) {
 				x3free(((String) o)->value);
 			}
 			x3free(o);
@@ -198,71 +247,73 @@ void _free_all_the_things() {
 	}
 }
 
-_IterNode _iterator(_object o) {
-	Iterable i = o;
-	if (!i) {
-		return NULL;
-	}
-	if (!(i->fields[0]) && !(i->fields[1])) {
-		return NULL;
-	} else if (!(i->fields[0])) {
-		return _iterator(i->fields[1]);
-	} else {
-		_IterNode n = _allocate(-1, 0);
-		n->curr = i->fields[0];
-		n->nextIter = (Iterable) i->fields[1];
-		n->next = i->next;
-		return n;
-	}
-}
-
-_IterNode _common_next(_IterNode node) {
-	if (!node) {
-		return NULL;
-	} else {
-		_IterNode ret = _iterator(node->nextIter);
-		// _decr(node);
+_object _indexNext(_object o) {
+	_IndexIterator i = o;
+	int position = i->position;
+	Iterable parent = i->parent;
+	if (position < parent->field_count) {
+		_object ret = parent->fields[position];
+		i->position += 1;
 		return ret;
+	} else {
+		return NULL;
 	}
 }
 
-_object Iterable_construct(_object ptr) {
-	Object o = ptr;
-	Iterable a = _allocate(0, 2);
-	a->fields[0] = o;
-	_incr(a->fields[0]);
-	a->fields[1] = NULL;
-	a->next = _common_next;
+_object _indexIter(_object o) {
+	Iterable i = o;
+	_IndexIterator it = _allocate(INDEXITERATOR_ID, 0);
+	it->parent = i;
+	it->next = _indexNext;
+	it->position = 0;
+	return it;
+}
+
+_object Iterable_construct(_object ptrs[], int size) {
+	Iterable a = _allocate(ITERATOR_ID, size);
+	int i;
+	for (i = 0; i < size; i++) {
+		a->fields[i] = ptrs[i];
+	}
+	a->iter = _indexIter;
 	return a;
 }
 
-Iterable _copy(Iterable a) {
-	if(!a) {
-		return NULL;
+_object _appendNext(_object o) {
+	_AppendIterator i = o;
+	_AppendIterable parent = i->parent;
+	_Iterator leftIter = i->leftIter;
+	_Iterator rightIter = i->rightIter;
+	_object ret;
+	if (ret = leftIter->next(leftIter)) {
+		return ret;
+	} else {
+		return rightIter->next(rightIter);
 	}
-	Iterable b = Iterable_construct(a->fields[0]);
-	b->next = a->next;
-	return b;
+}
+
+_object _appendIter(_object o) {
+	_AppendIterable a = o;
+	_AppendIterator i = _allocate(APPENDITERATOR_ID, 0);
+	Iterable left = a->left;
+	Iterable right = a->right;
+	i->leftIter = left->iter(left);
+	i->rightIter = right->iter(right);
+	i->parent = a;
+	i->next = _appendNext;
+	return i;
 }
 
 Iterable _append(_object o1, _object o2) {
-	Iterable a = o1;
-	Iterable b = o2;
-	if(!a) {
-		return b;
-	}
-	_incr(a);
-	_incr(b);
-	Iterable c = _copy(a);
-	c->fields[1] = _append(a->fields[1], b);
-	_incr(c->fields[1]);
-	_decr(a);
-	_decr(b);
-	return c;
+	_AppendIterable a = _allocate(APPENDITERABLE_ID, 0);
+	a->left = o1;
+	a->right = o2;
+	a->iter = _appendIter;
 }
 
+
 _object Boolean_construct(int b) {
-	Boolean a = _allocate(2, 0);
+	Boolean a = _allocate(BOOLEAN_ID, 0);
 	a->value = b;
 	return a;
 }
@@ -317,11 +368,11 @@ _object Boolean_through(_object o1, _object o2, _object o3, _object o4) {
 
 	Iterable _ret;
 	if (low > high) {
-		_ret = NULL;
+		_ret = Iterable_construct((_object[]){}, 0);
+	} else if (low == high) {
+		_ret = Iterable_construct((_object[]){ Boolean_construct(low) }, 1);
 	} else {
-		Iterable i = Iterable_construct(lower);
-		Iterable j = Boolean_through(Boolean_construct(low + 1), upper, includeLower, includeUpper);
-		_ret = _append(i, j);
+		_ret = Iterable_construct((_object[]){ Boolean_construct(0), Boolean_construct(1) }, 1);
 	}
 
 	_decr(lower);
@@ -379,8 +430,9 @@ _object Boolean_equals(_object o1, _object o2) {
 	return _ret;
 }
 
+
 _object Integer_construct(int n) {
-	Integer a = _allocate(1, 0);
+	Integer a = _allocate(INTEGER_ID, 0);
 	a->value = n;
 	return a;
 }
@@ -413,9 +465,9 @@ _object Integer_divide(_object o1, _object o2) {
 	_incr(a);
 	_incr(b);
 	if (b->value == 0) {
-		_ret = NULL;
+		_ret = Iterable_construct((_object[]){}, 0);
 	} else {
-		Iterable i = Iterable_construct(Integer_construct(a->value / b->value));
+		Iterable i = Iterable_construct((_object[]){ Integer_construct(a->value / b->value) }, 1);
 		_ret = i;
 	}
 	_decr(a);
@@ -430,9 +482,9 @@ _object Integer_modulo(_object o1, _object o2) {
 	_incr(a);
 	_incr(b);
 	if (b->value == 0) {
-		_ret = NULL;
+		_ret = Iterable_construct((_object[]){}, 0);
 	} else {
-		Iterable i = Iterable_construct(Integer_construct(a->value % b->value));
+		Iterable i = Iterable_construct((_object[]){ Integer_construct(a->value % b->value) }, 1);
 		_ret = i;
 	}
 	_decr(a);
@@ -464,6 +516,36 @@ _object Integer_minus(_object o1, _object o2) {
 	return _ret;
 }
 
+_object _rangeNext(_object o) {
+	_IndexIterator i = o;
+	int pos = i->position;
+	_RangeIterable r = i->parent;
+	if (pos == r->len) {
+		return NULL;
+	} else {
+		_object ret = Integer_construct(pos);
+		i->position += 1;
+		return ret;
+	}
+}
+
+_object _rangeIter(_object o) {
+	_RangeIterable i = o;
+	_IndexIterator it = _allocate(INDEXITERATOR_ID, 0);
+	it->parent = i;
+	it->next = _rangeNext;
+	it->position = 0;
+	return it;
+}
+
+_object _range(int a, int b) {
+	_RangeIterable r = _allocate(RANGEITERABLE_ID, 0);
+	r->offset = a;
+	r->len = b - a;
+	r->iter = _rangeIter;
+	return r;
+}
+
 _object Integer_through(_object o1, _object o2, _object o3, _object o4) {
 	Integer lower = o1;
 	Integer upper = o2;
@@ -484,16 +566,12 @@ _object Integer_through(_object o1, _object o2, _object o3, _object o4) {
 
 	Iterable _ret;
 	if (low > high) {
-		_ret = NULL;
+		_ret = _range(0, 0);
 	} else {
-		Iterable i = Iterable_construct(lower);
-		Iterable j = Integer_through(Integer_construct(low + 1), upper, Boolean_construct(1), includeUpper);
-		i->fields[1] = j;
-		_incr(j);
-		_ret = i;
+		_ret = _range(low, high + 1);
 	}
 
-	if (_ret) _decr(lower);
+	_decr(lower);
 	_decr(upper);
 	_decr(includeLower);
 	_decr(includeUpper);
@@ -501,22 +579,12 @@ _object Integer_through(_object o1, _object o2, _object o3, _object o4) {
 	return _ret;
 }
 
-_IterNode Integer_onwards_next(_IterNode i) {
-	int val = ((Integer) i->curr)->value;
-	_decr(i->curr);
-	i->curr = Integer_construct(val + 1);
-	return i;
-}
-
 _object Integer_onwards(_object o1, _object o2) {
 	Integer a = o1;
 	Boolean inclusive = o2;
 	int start = a->value + !(inclusive->value);
-	Iterable i = Iterable_construct(Integer_construct(start));
-	i->next = Integer_onwards_next;
-	return i;
+	return _range(start, start - 2);
 }
-
 
 _object Integer_lessThan(_object o1, _object o2, _object o3) {
 	Integer a = o1;
@@ -544,19 +612,19 @@ _object Integer_equals(_object o1, _object o2) {
 	Integer a = o1;
 	Integer b = o2;
 	Boolean _ret;
-	// _incr(a);
-	// _incr(b);
+	_incr(a);
+	_incr(b);
 
 	_ret = Boolean_construct(a->value == b->value);
 
-	// _decr(a);
-	// _decr(b);
+	_decr(a);
+	_decr(b);
 	return _ret;
 }
 
 
 _object Character_construct(char c) {
-	Character a = _allocate(3, 0);
+	Character a = _allocate(CHARACTER_ID, 0);
 	a->value = c;
 	return a;
 }
@@ -609,37 +677,42 @@ int strLen(const char *str) {
 	return l;
 }
 
-_object strIter(const char *s) {
-	if(!*s) {
-		return NULL;
+_object _StringNext(_object o) {
+	_IndexIterator i = o;
+	int position = i->position;
+	String parent = i->parent;
+	if (position < parent->length) {
+		_object ret = Character_construct(parent->value[position]);
+		i->position += 1;
+		return ret;
 	} else {
-		Iterable i = Iterable_construct(Character_construct(*s));
-		return _append(i, strIter(s + 1));
+		return NULL;
 	}
 }
 
-_object String_construct(const char* s) {
-	if (!s) {
-		return NULL;
-	} else {
-		String str = _allocate(4, 2);
-		char* buff = x3malloc(sizeof(char) * (strLen(s) + 1));
-		strCpy(s, buff);
-		str->value = buff;
-		Iterable i = strIter(s);
-		if(i) {
-			str->fields[0] = i->fields[0];
-			str->fields[1] = i->fields[1];
-			_incr(str->fields[0]);
-			_incr(str->fields[1]);
-			str->next = i->next;
-			// _decr(i);
-		} else {
-			str->next = _common_next;
-		}
-		return str;
-	}
+_object _StringIter(_object o) {
+	Iterable i = o;
+	_IndexIterator it = _allocate(INDEXITERATOR_ID, 0);
+	it->parent = i;
+	it->next = _StringNext;
+	it->position = 0;
+	return it;
 }
+
+_object String_construct(const char* s) {
+	String str = _allocate(STRING_ID, 0);
+	int len = strLen(s);
+	str->length = len;
+	char* buff = x3malloc(sizeof(char) * (len + 1));
+	int i;
+	for (i = 0; i <= len; i++) {
+		buff[i] = 0;
+	}
+	strCpy(s, buff);
+	str->value = buff;
+	str->iter = _StringIter;
+}
+
 
 _object String_equals(_object o1, _object o2) {
 	String a = o1;
@@ -655,7 +728,7 @@ _object String_equals(_object o1, _object o2) {
 
 void _print(_object o) {
 	String s = o;
-	print_line(s->value, strLen(s->value));
+	print_line(s->value, s->length);
 }
 
 _object character(_object o) {
@@ -670,24 +743,22 @@ _object character(_object o) {
 _object string(_object o) {
 	Iterable i = o;
 	int totalLen = 0;
-	_IterNode iter = _iterator(i);
-	while (iter) {
+	_Iterator j = i->iter(i);
+	_object c;
+	while (c = j->next(j)) {
 		totalLen += 1;
-		iter = iter->next(iter);
-	} _decr(iter);
-	char *buff = x3malloc(sizeof(char) * (totalLen + 1));
-	int j;
-	for(j = 0; j < totalLen + 1; j++) {
-		buff[j] = 0;
 	}
-	int index = 0;
-	iter = _iterator(i);
-	while (iter) {
-		Character c = iter->curr;
-		buff[index] = c->value;
-		iter = iter->next(iter);
+	char *buff = x3malloc(sizeof(char) * (totalLen + 1));
+	int index;
+	for(index = 0; index <= totalLen; index++) {
+		buff[index] = 0;
+	}
+	index = 0;
+	j = i->iter(i);
+	while (c = j->next(j)) {
+		buff[index] = ((Character) c)->value;
 		index += 1;
-	} _decr(iter);
+	}
 	String ret = String_construct(buff);
 	x3free(buff);
 	return ret;
@@ -696,6 +767,7 @@ _object string(_object o) {
 _object input = NULL;
 
 void __init() {
+	input = Iterable_construct((_object[]){}, 0);
 	while (1) {
 		int next_input_len = next_line_len();
 		if (next_input_len) {
@@ -704,11 +776,11 @@ void __init() {
 		for(j = 0; j <= next_input_len; j++) {
 			buff[j] = 0;
 		}
-			read_line(buff);
-			String line = String_construct(buff);
-			x3free(buff);
-			Iterable i = Iterable_construct(line);
-			input = _append(input, i);
+		read_line(buff);
+		String line = String_construct(buff);
+		x3free(buff);
+		Iterable i = Iterable_construct((_object[]){line}, 1);
+		input = _append(input, i);
 		} else {
 			break;
 		}
