@@ -1,3 +1,7 @@
+# compile.py
+# takes in a list of x3 files or directories of x3 files
+# compiles file.x3 to file.out in the same directory
+
 import os
 import sys
 from subprocess import check_output, STDOUT, CalledProcessError
