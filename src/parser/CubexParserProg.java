@@ -34,12 +34,12 @@ public class CubexParserProg {
             // }
             return prog.toString();
         } catch(Exception e){
-            // e.printStackTrace();
+            e.printStackTrace();
             // a divide by zero error was thrown by the error char
             // any other exception we did not make
             // reset the parser and view tree
-            // parser.reset();
-            // viewTree(parser);
+            parser.reset();
+            viewTree(parser);
             return "parser error";
         }
     }
