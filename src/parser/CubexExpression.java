@@ -5,19 +5,23 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.*;
 
 
-public abstract class CubexExpression extends CubexNode {
+public abstract class CubexExpression extends CubexNode implements CubexComprehensionable {
 
     CubexType type;
 
     /**
         Returns the type of this class expression or throws an error
     */
-    public abstract CubexType getType(CubexClassContext cc, 
+    public abstract CubexType getType(CubexClassContext cc,
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st);
 
     public abstract HExpression accept(HVisitor v);
 
     public abstract HExpression createHIR();
+
+    public ComprehensionableType getComprehenshionableType() {
+        return ComprehensionableType.EXPR;
+    }
 }
 
 // every function of a type context
@@ -27,13 +31,13 @@ class CubexFunctionCall extends CubexExpression {
     List<CubexType> typeList;
     List<CubexExpression> exprList;
 
-    public CubexType getType(CubexClassContext cc, 
+    public CubexType getType(CubexClassContext cc,
         CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         // check if name in function context
         CubexFunHeader f = fc.get(name);
         if(f == null) {
             throw new CubexTC.TypeCheckException(
-                String.format("%s IS NOT IN FUNCTION CONTEXT", 
+                String.format("%s IS NOT IN FUNCTION CONTEXT",
                     name)
                 );
         }
@@ -43,9 +47,9 @@ class CubexFunctionCall extends CubexExpression {
         List<CubexType> expected = swapped.tCont.types;
         if (expected.size() != exprList.size()) {
             throw new CubexTC.TypeCheckException(
-                String.format("%s ARGUMENTS EXPECTED TO FUNCTION %s BUT %s SUPPLIED", 
+                String.format("%s ARGUMENTS EXPECTED TO FUNCTION %s BUT %s SUPPLIED",
                     expected.size(), name, exprList.size()));
-                
+
         }
         for(int i = 0; i < exprList.size(); i++) {
             // get the expression
@@ -59,7 +63,7 @@ class CubexFunctionCall extends CubexExpression {
                 // not a subtype, error
                 // System.out.println(swapped);
                 throw new CubexTC.TypeCheckException(
-                    String.format("%s IS NOT A SUBTYPE OF %s IN FUNCTION CALL %s", 
+                    String.format("%s IS NOT A SUBTYPE OF %s IN FUNCTION CALL %s",
                         eType.toString(), exp.toString(), toString())
                     );
             }
@@ -70,7 +74,7 @@ class CubexFunctionCall extends CubexExpression {
             return this.type;
         }
         throw new CubexTC.TypeCheckException(
-            String.format("%s IS NOT A VALID TYPE IN FUNCTION CALL %s", 
+            String.format("%s IS NOT A VALID TYPE IN FUNCTION CALL %s",
                 swapped.type, toString())
             );
 
@@ -117,7 +121,7 @@ class CubexVar extends CubexExpression {
         return name.toString();
     }
 
-    public CubexType getType(CubexClassContext cc, 
+    public CubexType getType(CubexClassContext cc,
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         // simply return the type from the symbol table
         if(st.contains(name)) {
@@ -144,7 +148,7 @@ class CubexMethodCall extends CubexExpression {
     List<CubexType> typeList;
     List<CubexExpression> exprList;
 
-    public CubexType getType(CubexClassContext cc, 
+    public CubexType getType(CubexClassContext cc,
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         // get the type of the base
         // System.out.println(st.map);
@@ -153,7 +157,7 @@ class CubexMethodCall extends CubexExpression {
         CubexTypeScheme s = CubexTC.method(cc, kc, base, name);
         if(s == null) {
             throw new CubexTC.TypeCheckException(
-                String.format("%s METHOD CALL %s IS NOT VALID", 
+                String.format("%s METHOD CALL %s IS NOT VALID",
                     base, this.toString())
                 );
         }
@@ -163,9 +167,9 @@ class CubexMethodCall extends CubexExpression {
         List<CubexType> expected = swapped.tCont.types;
         if (expected.size() != exprList.size()) {
             throw new CubexTC.TypeCheckException(
-                String.format("%s ARGUMENTS EXPECTED TO FUNCTION %s BUT %s SUPPLIED", 
+                String.format("%s ARGUMENTS EXPECTED TO FUNCTION %s BUT %s SUPPLIED",
                     expected.size(), name, exprList.size()));
-                
+
         }
         for(int i = 0; i < exprList.size(); i++) {
             // get the expression
@@ -177,7 +181,7 @@ class CubexMethodCall extends CubexExpression {
             // show that it is a subtype
             if(!CubexTC.subType(cc, kc, eType, exp)){
                 throw new CubexTC.TypeCheckException(
-                    String.format("%s IS NOT A SUBTYPE OF %s IN METHOD CALL %s", 
+                    String.format("%s IS NOT A SUBTYPE OF %s IN METHOD CALL %s",
                         eType.toString(), exp.toString(), toString())
                     );
             }
@@ -185,10 +189,10 @@ class CubexMethodCall extends CubexExpression {
         //check the validity of the return type
         if(CubexTC.isValid(cc, kc, swapped.type)) {
             this.type = swapped.type;
-            return this.type; 
+            return this.type;
         }
         throw new CubexTC.TypeCheckException(
-            String.format("%s IS NOT A VALID TYPE IN METHOD CALL %s", 
+            String.format("%s IS NOT A VALID TYPE IN METHOD CALL %s",
                 swapped.type, toString())
             );
     }
@@ -212,7 +216,7 @@ class CubexMethodCall extends CubexExpression {
         } else if (s.equals("<..")) {
             b = "false";
             isRange = true;
-        } 
+        }
         typeList = new ArrayList<CubexType>();
         exprList = new ArrayList<CubexExpression>();
         if(isRange) {
@@ -295,7 +299,7 @@ class CubexMethodCall extends CubexExpression {
             exprList.add(new CubexBoolean(b1));
             exprList.add(new CubexBoolean(b2));
         } else if (isEq) {
-            // NEGATE and EQ 
+            // NEGATE and EQ
             if (isNeg) {
                 // create a new method call to the equals
                 expr = new CubexMethodCall(e, "==", f);
@@ -322,7 +326,7 @@ class CubexMethodCall extends CubexExpression {
             exprList.add(new CubexBoolean(strictness));
         } else {
             name = new CubexVName(s);
-            exprList.add(f);   
+            exprList.add(f);
         }
     }
 
@@ -335,7 +339,7 @@ class CubexMethodCall extends CubexExpression {
         String n = name.toString();
         String tl = ListPrinter.listToString(typeList, " , ");
         String el = ListPrinter.listToString(exprList, " , ");
-        return String.format("%s . %s < %s> ( %s)", 
+        return String.format("%s . %s < %s> ( %s)",
                             e, n,
                             ListPrinter.nullify(tl),
                             ListPrinter.nullify(el));
@@ -359,7 +363,7 @@ class CubexAppend extends CubexExpression {
     CubexExpression left;
     CubexExpression right;
 
-    public CubexType getType(CubexClassContext cc, 
+    public CubexType getType(CubexClassContext cc,
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         // get the types of left and right
         CubexType lt = left.getType(cc, kc, fc, st);
@@ -410,7 +414,7 @@ class CubexAppend extends CubexExpression {
 class CubexIterable extends CubexExpression {
     List<? extends CubexExpression> mElements;
 
-    public CubexType getType(CubexClassContext cc, 
+    public CubexType getType(CubexClassContext cc,
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st) {
         CubexType commonType = new Nothing();
         for (CubexExpression elem : mElements) {
@@ -459,7 +463,7 @@ class CubexIterable extends CubexExpression {
 class CubexBoolean extends CubexExpression {
     String bool;
 
-    public CubexType getType(CubexClassContext cc, 
+    public CubexType getType(CubexClassContext cc,
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         this.type = new CubexCType("Boolean");
         return this.type;
@@ -486,7 +490,7 @@ class CubexBoolean extends CubexExpression {
 class CubexInt extends CubexExpression {
     int num;
 
-    public CubexType getType(CubexClassContext cc, 
+    public CubexType getType(CubexClassContext cc,
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         this.type = new CubexCType("Integer");
         return this.type;
@@ -513,7 +517,7 @@ class CubexInt extends CubexExpression {
 class CubexString extends CubexExpression {
     String str;
 
-    public CubexType getType(CubexClassContext cc, 
+    public CubexType getType(CubexClassContext cc,
     CubexKindContext kc, CubexFunctionContext fc, SymbolTable st){
         this.type = new CubexCType("String");
         return this.type;

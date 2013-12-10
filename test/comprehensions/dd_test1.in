@@ -1,0 +1,7 @@
+fun testTimes(a : Integer, b : Integer) : Integer
+{
+    c := [ if (true) for (x in [1, 2, 4, 5]) x ];
+    return a*b;
+}
+
+return 0;
