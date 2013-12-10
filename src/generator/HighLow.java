@@ -21,6 +21,7 @@ interface HLVisitor {
 	public LNode visit(HStatementProg s);
 	public LNode visit(HClassProg c);
 	public LNode visit(HFunProg f);
+	public LNode visit(HComprehension c);
 }
 
 public class HighLow implements HLVisitor {
@@ -295,5 +296,9 @@ public class HighLow implements HLVisitor {
 		} else {
 			return f.prog.accept(this);
 		}
+	}
+
+	public LNode visit(HComprehension c) {
+		return null;
 	}
 }

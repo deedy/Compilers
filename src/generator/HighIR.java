@@ -792,6 +792,69 @@ class HVar extends HExpression {
     }
 }
 
+abstract class HComprehensionable {
+}
+
+class HCompExpr extends HComprehensionable {
+    HExpression expr;
+    HComprehensionable next;
+    public HCompExpr(HExpression e, HComprehensionable c) {
+        expr = e;
+        next = c;
+    }
+}
+
+class HCompFor extends HComprehensionable {
+    HVar name;
+    HExpression expr;
+    HComprehensionable comp;
+    public HCompFor(HVar n, HExpression e, HComprehensionable c) {
+        name = n;
+        expr = e;
+        comp = c;
+    }
+}
+
+class HCompIf extends HComprehensionable {
+    HExpression cond;
+    HComprehensionable comp;
+    public HCompIf(HExpression e, HComprehensionable c) {
+        cond = e;
+        comp = c;
+    }
+}
+
+class HComprehension extends HExpression {
+    HComprehensionable comp;
+    public HComprehension(HComprehensionable comp) {
+        this.comp = comp;
+    }
+
+    public LNode accept(HLVisitor v) {
+        return v.visit(this);
+    }
+
+    public void cse(AvailExprsList avail, HStatement stmt) {
+        return;
+    }
+
+    public boolean dependsOn(String name) {
+        return false;
+    }
+
+    public HExpression copy() {
+        return null;
+    }
+
+    public boolean equals(Object va) {
+        return false;
+    }
+
+    public String toString() {
+        return "";
+    }
+}
+
 abstract class HProg extends HNode {
     HProg prog;
     public abstract void cse(AvailExprsList avail);

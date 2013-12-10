@@ -48,6 +48,11 @@ public class HVisitor {
     HExpression visit(CubexString n) {
         return new HString(n.str);
     }
+
+    HExpression visit(CubexComprehension c) {
+        // chain the comprehension list
+        return null;
+    }
     
     // HNode visit(CubexPType n) {
     //     return null;
@@ -190,6 +195,8 @@ public class HVisitor {
         }
         return exprs;
     }
+
+
 }
 
 

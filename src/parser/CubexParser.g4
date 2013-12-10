@@ -1,8 +1,6 @@
 parser grammar CubexParser;
 options { tokenVocab = CubexLexer; }
 
-// TODO : finish and translate to accept full language
-
 vname returns [CubexVName cu]
 	: NAME { $cu =  new CubexVName($NAME.text); };
 
@@ -65,20 +63,13 @@ typescheme returns [CubexTypeScheme cu]
 	};
 
 comprehension returns [CubexComprehensionable cu]
-  : IF LPAREN e2=expr RPAREN c2=comprehension {
-      $cu = new CubexIfComprehensionable($e2.cu, $c2.cu); }
+  : /* epsilon */
+  | e=expr COMMA c=comprehension {$cu = new CubexExprComp($e.cu, $c.cu);}
+  | IF LPAREN e2=expr RPAREN c2=comprehension {
+      $cu = new CubexIfComp($e2.cu, $c2.cu); }
   | FOR LPAREN n=vname IN e3=expr RPAREN c3=comprehension {
-      $cu = new CubexForComprehensionable($n.cu, $e3.cu, $c3.cu); }
-  | e=expr { $cu = $e.cu; };
+      $cu = new CubexForComp($n.cu, $e3.cu, $c3.cu); };
 
-
-fullcomprehension returns [List<CubexComprehensionable> cu]
-  : {
-    $cu = new ArrayList<CubexComprehensionable>();
-  }
-  (c=comprehension { $cu.add($c.cu); }
-    (COMMA c1=comprehension { $cu.add($c1.cu);})*
-  )?;
 
 expr returns [CubexExpression cu]
     : n=vname { $cu = new CubexVar($n.cu); }
@@ -86,8 +77,8 @@ expr returns [CubexExpression cu]
     	{ $cu = new CubexFunctionCall($c.cu, $t.cu, $es.cu); }
     | e=expr DOT n=vname LANGLE t=types RANGLE LPAREN es=exprs RPAREN
     	{ $cu = new CubexMethodCall($e.cu, $n.cu, $t.cu, $es.cu); }
-    | LSQUARE list=fullcomprehension RSQUARE {
-        $cu = new CubexComprehension($list.cu);
+    | LSQUARE comp=comprehension RSQUARE {
+        $cu = new CubexComprehension($comp.cu);
       }
     | BOOL { $cu = new CubexBoolean($BOOL.text); }
     | INT { $cu = new CubexInt($INT.int); }
