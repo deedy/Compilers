@@ -1,0 +1,1 @@
+fun testTimes < > ( a : Integer < > , b : Integer < > ) : Integer < > { d := [ 8 ] ; return a . times < > ( b ) ; } return [ "" ] ;

@@ -565,3 +565,55 @@ class LDecr extends LStmt {
 		return null;
 	}
 }
+
+
+abstract class LComprehensionable {
+}
+
+class LExprComp extends LComprehensionable {
+    LExp expr;
+    LComprehensionable next;
+    public LExprComp(LExp e, LComprehensionable c) {
+        expr = e;
+        next = c;
+    }
+}
+
+class LForComp extends LComprehensionable {
+    LName name;
+    LExp expr;
+    LComprehensionable comp;
+    public LForComp(LName n, LExp e, LComprehensionable c) {
+        name = n;
+        expr = e;
+        comp = c;
+    }
+}
+
+class LIfComp extends LComprehensionable {
+    LExp cond;
+    LComprehensionable comp;
+    public LIfComp(LExp e, LComprehensionable c) {
+        cond = e;
+        comp = c;
+    }
+}
+
+class LComprehension extends LExp {
+    LComprehensionable comp;
+
+    public LComprehension(LComprehensionable c) {
+    	comp = c;
+    }
+	public String accept(LVisitor v) {
+		return v.visit(this);
+	}
+
+	public LExp convertFields(Map<String, Integer> map) {
+		return null;
+	}
+
+	public MapPSet<LName> getNames() {
+		return null;
+	}
+}

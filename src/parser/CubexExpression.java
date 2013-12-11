@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.*;
 
 
-public abstract class CubexExpression extends CubexNode implements CubexComprehensionable {
+public abstract class CubexExpression extends CubexNode {
 
     CubexType type;
 
@@ -19,9 +19,6 @@ public abstract class CubexExpression extends CubexNode implements CubexComprehe
 
     public abstract HExpression createHIR();
 
-    public ComprehensionableType getComprehenshionableType() {
-        return ComprehensionableType.EXPR;
-    }
 }
 
 // every function of a type context

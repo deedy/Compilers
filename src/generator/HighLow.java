@@ -21,6 +21,7 @@ interface HLVisitor {
 	public LNode visit(HStatementProg s);
 	public LNode visit(HClassProg c);
 	public LNode visit(HFunProg f);
+	public LNode visit(HComprehension c);
 }
 
 public class HighLow implements HLVisitor {
@@ -296,4 +297,35 @@ public class HighLow implements HLVisitor {
 			return f.prog.accept(this);
 		}
 	}
+
+	LComprehensionable translate(HComprehensionable c) {
+        // I don't even care, you mad Mike George?
+        if (c == null) {
+        	return null;
+        }
+        if (c instanceof HExprComp) {
+            HExprComp d = (HExprComp) c;
+            LExp expr = (LExp) d.expr.accept(this);
+            LComprehensionable comp = translate(d.next);
+            return new LExprComp(expr, comp);
+        } else if (c instanceof HForComp) {
+            HForComp d = (HForComp) c;
+            LName name = new LName(d.name.toString());
+            LExp expr = (LExp) d.expr.accept(this);
+            LComprehensionable comp = translate(d.comp);
+            return new LForComp(name, expr, comp);
+        } else if (c instanceof HIfComp) {
+            HIfComp d = (HIfComp) c;
+            LExp expr = (LExp) d.cond.accept(this);
+            LComprehensionable comp = translate(d.comp);
+            return new LIfComp(expr, comp);
+        } else {
+            System.out.println("Error translating comprehensionable to LIR");
+            return null;
+        }
+    }
+
+    public LNode visit(HComprehension c) {
+        return new LComprehension(translate(c.comp));
+    }
 }

@@ -48,6 +48,37 @@ public class HVisitor {
     HExpression visit(CubexString n) {
         return new HString(n.str);
     }
+
+    HComprehensionable translate(CubexComprehensionable c) {
+        // I don't even care, you mad Mike George?
+        if (c == null) {
+            return null;
+        }
+        if (c instanceof CubexExprComp) {
+            CubexExprComp d = (CubexExprComp) c;
+            HExpression expr = d.expr.accept(this);
+            HComprehensionable comp = translate(d.comp);
+            return new HExprComp(expr, comp);
+        } else if (c instanceof CubexForComp) {
+            CubexForComp d = (CubexForComp) c;
+            HVar name = new HVar(d.name.name);
+            HExpression expr = d.expr.accept(this);
+            HComprehensionable comp = translate(d.comp);
+            return new HForComp(name, expr, comp);
+        } else if (c instanceof CubexIfComp) {
+            CubexIfComp d = (CubexIfComp) c;
+            HExpression expr = d.cond.accept(this);
+            HComprehensionable comp = translate(d.comp);
+            return new HIfComp(expr, comp);
+        } else {
+            System.out.println("Error translating comprehensionable to HIR");
+            return null;
+        }
+    }
+
+    HExpression visit(CubexComprehension c) {
+        return new HComprehension(translate(c.comp));
+    }
     
     // HNode visit(CubexPType n) {
     //     return null;
@@ -190,6 +221,8 @@ public class HVisitor {
         }
         return exprs;
     }
+
+
 }
 
 

@@ -1,6 +1,27 @@
 import java.lang.StringBuilder;
 import java.util.*;
 
+class NameGen {
+	final String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890";
+
+	final Random rand = new java.util.Random();
+
+	final Set<String> identifiers = new HashSet<String>();
+
+	public String randomIdentifier() {
+	    StringBuilder builder = new StringBuilder();
+	    while(builder.toString().length() == 0) {
+	        int length = rand.nextInt(5)+5;
+	        for(int i = 0; i < length; i++)
+	            builder.append(lexicon.charAt(rand.nextInt(lexicon.length())));
+	        if(identifiers.contains(builder.toString())) 
+	            builder = new StringBuilder();
+	    }
+	    identifiers.add(builder.toString());
+	    return "__generated_name_swag" + builder.toString();
+	}
+}
+
 interface LVisitor {
 
 	public String visit(LExps lst);
@@ -46,6 +67,8 @@ interface LVisitor {
 	public String visit(LIncr i);
 
 	public String visit(LDecr i);
+
+	public String visit(LComprehension c);
 }
 
 public class CGenerator implements LVisitor {
@@ -53,6 +76,11 @@ public class CGenerator implements LVisitor {
 	int tabCount = 0;
 	HashSet<String> localVars = new HashSet<String>();
 	List<String> funHeaders = new ArrayList<String>();
+	NameGen nameGenerator = new NameGen();
+
+	String getRandomName(){
+		return nameGenerator.randomIdentifier();
+	}
 
 	String indent(String s) {
 		StringBuilder out = new StringBuilder();
@@ -308,6 +336,27 @@ public class CGenerator implements LVisitor {
 	public String visit(LDecr d) {
 		String ret = d.arg.accept(this);
 		return String.format("_decr(%s);\n", ret);
+	}
+
+	public String thunk(LComprehensionable c) {
+		// empty iterable
+		if (c == null) return "Iterable_construct((_object[]){}, 0)";
+		if (c instanceof LExprComp) {
+			return null;
+
+		} else if (c instanceof LIfComp) {
+			return null;
+		} else if (c instanceof LForComp) {
+			return null;
+		} else {
+			System.out.println("Error converting LComp to C");
+			return null;
+		}
+	}
+
+	public String visit(LComprehension c) {
+
+		return null;
 	}
 
 	public String visit(LProg p) {

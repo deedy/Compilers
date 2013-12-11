@@ -1,7 +1,9 @@
 fun testTimes(a : Integer, b : Integer) : Integer
 {
-    c := [4,5,6,7, if (true) for (x in [1, 2, 4, 5]) if (true) x];
+    d := [8, if (true) ];
     return a*b;
 }
 
 return [""];
+
+
