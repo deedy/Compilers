@@ -31,10 +31,16 @@ public abstract class CubexType extends CubexNode {
   		return CubexTC.subType(cc, kc, this, new CubexCType(new CubexCName("Iterable"), p));
   	}
 
+    public boolean isComprehension(CubexClassContext cc, CubexKindContext kc) {
+        List<CubexType> p = new ArrayList<CubexType>();
+        p.add(new Thing());
+        return CubexTC.subType(cc, kc, this, new CubexCType(new CubexCName("Comprehension"), p));
+    }
+
   	public HNode accept(HVisitor v) {
         return null;
     };
-    
+
     public abstract String createHIR();
 
     public abstract List<String> getNames();
@@ -76,7 +82,7 @@ class Thing extends CubexType {
 	}
 
 	public String toString() {
-		return "Thing";	
+		return "Thing";
 	}
 
 	public List<CubexCName> getClasses() {
@@ -109,7 +115,7 @@ class CubexPType extends CubexType{
 	}
 
 	public String toString() {
-		return name.toString();	
+		return name.toString();
 	}
 
 	public List<CubexCName> getClasses() {
@@ -151,7 +157,7 @@ class CubexCType extends CubexType{
 
 	public String toString() {
 		String l = ListPrinter.listToString(params, " , ");
-		return String.format("%s < %s>", name.toString(), ListPrinter.nullify(l));	
+		return String.format("%s < %s>", name.toString(), ListPrinter.nullify(l));
 	}
 
 	public List<CubexCName> getClasses() {
@@ -174,7 +180,7 @@ class CubexCType extends CubexType{
         for (CubexType ct : al.get(1)) {
           List<CubexType> newParams = new ArrayList<CubexType>(params);
           newParams.set(i, ct);
-         
+
           superTypes.add(new CubexCType(this.name, newParams));
         }
       }
@@ -185,7 +191,7 @@ class CubexCType extends CubexType{
     } else {
       return new ArrayList<CubexType>(Arrays.asList(obj.type));
     }
-		
+
 	}
 
 	public boolean isIterable(CubexClassContext cc, CubexKindContext kc) {
