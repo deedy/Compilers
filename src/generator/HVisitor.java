@@ -50,6 +50,7 @@ public class HVisitor {
     }
 
     HComprehensionable translate(CubexComprehensionable c) {
+        // I don't even care, you mad Mike George?
         if (c instanceof CubexExprComp) {
             CubexExprComp d = (CubexExprComp) c;
             HExpression expr = d.expr.accept(this);
@@ -67,14 +68,13 @@ public class HVisitor {
             HComprehensionable comp = translate(d.comp);
             return new HIfComp(expr, comp);
         } else {
-            System.out.println("Error translating comprehensionable");
+            System.out.println("Error translating comprehensionable to HIR");
             return null;
         }
     }
 
     HExpression visit(CubexComprehension c) {
-        // chain the comprehension list
-        return null;
+        return new HComprehension(translate(c.comp));
     }
     
     // HNode visit(CubexPType n) {

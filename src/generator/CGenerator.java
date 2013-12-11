@@ -1,6 +1,28 @@
 import java.lang.StringBuilder;
 import java.util.*;
 
+class NameGen {
+	final String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890";
+
+	final Random rand = new java.util.Random();
+
+	final Set<String> identifiers = new HashSet<String>();
+
+	public String randomIdentifier() {
+	    StringBuilder builder = new StringBuilder();
+	    builder.append("__generated_name_");
+	    while(builder.toString().length() == 0) {
+	        int length = rand.nextInt(5)+5;
+	        for(int i = 0; i < length; i++)
+	            builder.append(lexicon.charAt(rand.nextInt(lexicon.length())));
+	        if(identifiers.contains(builder.toString())) 
+	            builder = new StringBuilder();
+	    }
+	    identifiers.add(builder.toString());
+	    return builder.toString();
+	}
+}
+
 interface LVisitor {
 
 	public String visit(LExps lst);
@@ -46,6 +68,8 @@ interface LVisitor {
 	public String visit(LIncr i);
 
 	public String visit(LDecr i);
+
+	public String visit(LComprehension c);
 }
 
 public class CGenerator implements LVisitor {
@@ -310,6 +334,10 @@ public class CGenerator implements LVisitor {
 		return String.format("_decr(%s);\n", ret);
 	}
 
+	public String visit(LComprehension c) {
+		return null;
+	}
+	
 	public String visit(LProg p) {
 		List<String> globals = visitAll(p.globals);
 		localVars = new HashSet<String>(globals);
