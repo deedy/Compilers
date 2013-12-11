@@ -6,9 +6,6 @@ public class CubexComprehension extends CubexExpression {
     public CubexComprehension(CubexComprehensionable c) {
         comp = c;
     }
-    public String toString() {
-        return "";
-    }
 
     public HExpression createHIR() {
         return null;
@@ -24,6 +21,9 @@ public class CubexComprehension extends CubexExpression {
         return this.type;
     }
 
+    public String toString() {
+        return String.format("[ %s ]", comp.toString());
+    }
 }
 
 abstract class CubexComprehensionable {
@@ -37,6 +37,15 @@ class CubexExprComp extends CubexComprehensionable {
         expr = e;
         comp = c;
     }
+
+    public String toString() {
+        if (comp != null) {
+            return String.format("%s, %s", expr.toString(), comp.toString());
+        } else {
+            return String.format("%s", expr.toString());
+        }
+
+    }
 }
 
 class CubexForComp extends CubexComprehensionable {
@@ -48,6 +57,10 @@ class CubexForComp extends CubexComprehensionable {
         expr = e;
         comp = c;
     }
+
+    public String toString() {
+        return String.format("for (%s in %s) %s", name.toString(), expr.toString(), comp.toString());
+    }
 }
 
 class CubexIfComp extends CubexComprehensionable {
@@ -56,5 +69,9 @@ class CubexIfComp extends CubexComprehensionable {
     public CubexIfComp(CubexExpression e, CubexComprehensionable c) {
         cond = e;
         comp = c;
+    }
+
+    public String toString() {
+        return String.format("if (%s) %s", cond.toString(), comp.toString());
     }
 }

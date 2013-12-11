@@ -300,6 +300,9 @@ public class HighLow implements HLVisitor {
 
 	LComprehensionable translate(HComprehensionable c) {
         // I don't even care, you mad Mike George?
+        if (c == null) {
+        	return null;
+        }
         if (c instanceof HExprComp) {
             HExprComp d = (HExprComp) c;
             LExp expr = (LExp) d.expr.accept(this);

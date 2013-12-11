@@ -10,7 +10,6 @@ class NameGen {
 
 	public String randomIdentifier() {
 	    StringBuilder builder = new StringBuilder();
-	    builder.append("__generated_name_");
 	    while(builder.toString().length() == 0) {
 	        int length = rand.nextInt(5)+5;
 	        for(int i = 0; i < length; i++)
@@ -19,7 +18,7 @@ class NameGen {
 	            builder = new StringBuilder();
 	    }
 	    identifiers.add(builder.toString());
-	    return builder.toString();
+	    return "__generated_name_swag" + builder.toString();
 	}
 }
 
@@ -77,6 +76,11 @@ public class CGenerator implements LVisitor {
 	int tabCount = 0;
 	HashSet<String> localVars = new HashSet<String>();
 	List<String> funHeaders = new ArrayList<String>();
+	NameGen nameGenerator = new NameGen();
+
+	String getRandomName(){
+		return nameGenerator.randomIdentifier();
+	}
 
 	String indent(String s) {
 		StringBuilder out = new StringBuilder();
@@ -334,10 +338,27 @@ public class CGenerator implements LVisitor {
 		return String.format("_decr(%s);\n", ret);
 	}
 
+	public String thunk(LComprehensionable c) {
+		// empty iterable
+		if (c == null) return "Iterable_construct((_object[]){}, 0)";
+		if (c instanceof LExprComp) {
+			return null;
+
+		} else if (c instanceof LIfComp) {
+			return null;
+		} else if (c instanceof LForComp) {
+			return null;
+		} else {
+			System.out.println("Error converting LComp to C");
+			return null;
+		}
+	}
+
 	public String visit(LComprehension c) {
+
 		return null;
 	}
-	
+
 	public String visit(LProg p) {
 		List<String> globals = visitAll(p.globals);
 		localVars = new HashSet<String>(globals);

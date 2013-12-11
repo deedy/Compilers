@@ -63,12 +63,13 @@ typescheme returns [CubexTypeScheme cu]
 	};
 
 comprehension returns [CubexComprehensionable cu]
-  : /* epsilon */
-  | e=expr COMMA c=comprehension {$cu = new CubexExprComp($e.cu, $c.cu);}
+  : e=expr {$cu = new CubexExprComp($e.cu, null); }
+  (COMMA c=comprehension {$cu = new CubexExprComp($e.cu, $c.cu);})?
   | IF LPAREN e2=expr RPAREN c2=comprehension {
       $cu = new CubexIfComp($e2.cu, $c2.cu); }
   | FOR LPAREN n=vname IN e3=expr RPAREN c3=comprehension {
-      $cu = new CubexForComp($n.cu, $e3.cu, $c3.cu); };
+      $cu = new CubexForComp($n.cu, $e3.cu, $c3.cu); }
+  | /* epsilon */ {$cu = null;};
 
 
 expr returns [CubexExpression cu]

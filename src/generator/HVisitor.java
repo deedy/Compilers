@@ -51,6 +51,9 @@ public class HVisitor {
 
     HComprehensionable translate(CubexComprehensionable c) {
         // I don't even care, you mad Mike George?
+        if (c == null) {
+            return null;
+        }
         if (c instanceof CubexExprComp) {
             CubexExprComp d = (CubexExprComp) c;
             HExpression expr = d.expr.accept(this);
