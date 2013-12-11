@@ -215,22 +215,22 @@ void _incr(_object ptr) {
 }
 
 void _decr(_object ptr) {
-	Object o = ptr;
-	if(o) {
-		o->ref_count -= 1;
-		if (o->ref_count <= 0) {
-			_del_obj(o);
-			int i;
-			for (i = 0; i < o->field_count; i++) {
-				_decr(o->fields[i]);
-			}
-			x3free(o->fields);
-			if(o->id == -6) {
-				x3free(((String) o)->value);
-			}
-			x3free(o);
-		}
-	}
+	// Object o = ptr;
+	// if(o) {
+	// 	o->ref_count -= 1;
+	// 	if (o->ref_count <= 0) {
+	// 		_del_obj(o);
+	// 		int i;
+	// 		for (i = 0; i < o->field_count; i++) {
+	// 			_decr(o->fields[i]);
+	// 		}
+	// 		x3free(o->fields);
+	// 		if(o->id == -6) {
+	// 			x3free(((String) o)->value);
+	// 		}
+	// 		x3free(o);
+	// 	}
+	// }
 }
 
 void _free_all_the_things() {

@@ -77,6 +77,7 @@ public class CGenerator implements LVisitor {
 	HashSet<String> localVars = new HashSet<String>();
 	List<String> funHeaders = new ArrayList<String>();
 	NameGen nameGenerator = new NameGen();
+	List<LFunc> derivedFuncs = new ArrayList<LFunc>();
 
 	String getRandomName(){
 		return nameGenerator.randomIdentifier();
@@ -106,7 +107,8 @@ public class CGenerator implements LVisitor {
 
 	List<String> visitAll(List<? extends LNode> lst) {
 		List<String> ret = new ArrayList<String>();
-		for(LNode n : lst) {
+		for(int i = 0; i < lst.size(); i++) {
+			LNode n = lst.get(i);
 			ret.add(n.accept(this));
 		}
 		return ret;
@@ -338,25 +340,65 @@ public class CGenerator implements LVisitor {
 		return String.format("_decr(%s);\n", ret);
 	}
 
-	public String thunk(LComprehensionable c) {
-		// empty iterable
-		if (c == null) return "Iterable_construct((_object[]){}, 0)";
+	LStmt translate(LComprehensionable c) {
+		if (c == null) return new LStmts(new ArrayList<LStmt>());
 		if (c instanceof LExprComp) {
-			return null;
+			LExprComp d = (LExprComp) c;
+			List<LStmt> s = new ArrayList<LStmt>();
+			LName it = new LName("_it");
+			s.add(new LAssign(it, new LAppend(it, new LIter(d.expr))));
+			if (d.next != null) {
+				s.add(translate(d.next));
+			}
+			return new LStmts(s);
+		} else if (c instanceof LForComp) {
+			LForComp d = (LForComp) c;
+			LName name = d.name;
+			LExp ex = d.expr;
+			LComprehensionable comp = d.comp;
+			return new LFor(ex, name, translate(comp));
 
 		} else if (c instanceof LIfComp) {
-			return null;
-		} else if (c instanceof LForComp) {
-			return null;
+			LIfComp d = (LIfComp) c;
+			LExp cond = d.cond;
+			LComprehensionable comp = d.comp;
+			return new LCond(cond, translate(comp), new LStmts(new ArrayList<LStmt>()));
+
 		} else {
-			System.out.println("Error converting LComp to C");
+			System.out.println("error converting comprehension to c");
 			return null;
 		}
 	}
 
 	public String visit(LComprehension c) {
+		Collection<LName> names = c.getNames();
+		List<LName> origNames = new ArrayList<LName>();
+		List<LName> newNames = new ArrayList<LName>();
+		for (LName n : names) {
+			origNames.add(n);
+			newNames.add(new LName(getRandomName()));
+		}
 
-		return null;
+		Map<LName, LName> nameMap = new HashMap<LName, LName>();
+		for(int i = 0; i < origNames.size(); i++) {
+			nameMap.put(origNames.get(i), newNames.get(i));
+		}
+
+		LComprehension mapped = (LComprehension) c.convertNames(nameMap);
+		
+		LStmt translated = translate(mapped.comp);
+		List<LStmt> s = new ArrayList<LStmt>();
+		s.add(new LAssign(new LName("_it"), new LIter()));
+		s.add(translated);
+		s.add(new LReturn(new LName("_it")));
+
+		LName fName = new LName(getRandomName());
+		LFunc f = new LFunc(fName, newNames, new LStmts(s));
+		derivedFuncs.add(f);
+
+		LExps funArgs = new LExps(origNames);
+		LFunCall fc = new LFunCall(fName, funArgs);
+		return fc.accept(this);
 	}
 
 	public String visit(LProg p) {
@@ -366,7 +408,8 @@ public class CGenerator implements LVisitor {
 									new ArrayList<LName>(), 
 									p.stmts);
 		p.funcs.add(prog_main);
-		List<String> funcs = visitAll(p.funcs);
+		derivedFuncs.addAll(p.funcs);
+		List<String> funcs = visitAll(derivedFuncs);
 		StringBuilder globDecs = new StringBuilder();
 		for(String s : globals){
 			globDecs.append("_object " + s + ";\n");

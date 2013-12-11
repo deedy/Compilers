@@ -13,6 +13,7 @@ abstract class LNode {
 abstract class LExp extends LNode {
 	public abstract LExp convertFields(Map<String, Integer> map);
 	public abstract MapPSet<LName> getNames();
+	public abstract LExp convertNames(Map<LName, LName> map);
 }
 
 abstract class LStmt extends LNode {
@@ -47,6 +48,14 @@ class LExps extends LExp {
 		}
 		return fold;
 	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		List<LExp> out = new ArrayList<LExp>();
+		for (LExp e : exps) {
+			out.add(e.convertNames(map));
+		}
+		return new LExps(out);
+	}
 }
 
 /* null value */
@@ -66,6 +75,10 @@ class LNull extends LExp {
 
 	public MapPSet<LName> getNames() {
 		return HashTreePSet.empty();
+	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		return this;
 	}
 
 }
@@ -116,6 +129,14 @@ class LName extends LExp {
 	public String toString() {
 		return name;
 	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		if (map.containsKey(this)) {
+			return map.get(this);
+		} else {
+			return this;
+		}
+	}
 }
 
 class LFieldAccess extends LName {
@@ -161,6 +182,10 @@ class LNum extends LExp {
 	public MapPSet<LName> getNames() {
 		return HashTreePSet.empty();
 	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		return this;
+	}
 }
 
 /* Boolean literal */
@@ -182,6 +207,10 @@ class LBool extends LExp {
 	public MapPSet<LName> getNames() {
 		return HashTreePSet.empty();
 	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		return this;
+	}
 }
 
 /* String literal */
@@ -202,6 +231,10 @@ class LString extends LExp {
 
 	public MapPSet<LName> getNames() {
 		return HashTreePSet.empty();
+	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		return this;
 	}
 }
 
@@ -225,6 +258,10 @@ class LId extends LExp {
 	public MapPSet<LName> getNames() {
 		return HashTreePSet.empty();
 	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		return this;	
+	}
 }
 
 class LFunCall extends LExp {
@@ -246,6 +283,10 @@ class LFunCall extends LExp {
 
 	public MapPSet<LName> getNames() {
 		return args.getNames();
+	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		return new LFunCall(name, args.convertNames(map));
 	}
 }
 
@@ -288,6 +329,14 @@ class LIter extends LExp {
 		}
 		return fold;
 	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		List<LExp> out = new ArrayList<LExp>();
+		for (LExp e : items) {
+			out.add(e.convertNames(map));
+		}
+		return new LIter(out);
+	}
 }
 
 class LAppend extends LExp {
@@ -309,6 +358,10 @@ class LAppend extends LExp {
 
 	public MapPSet<LName> getNames() {
 		return iter1.getNames().plusAll(iter2.getNames());
+	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		return new LAppend(iter1.convertNames(map), iter2.convertNames(map));
 	}
 }
 
@@ -568,6 +621,9 @@ class LDecr extends LStmt {
 
 
 abstract class LComprehensionable {
+	public abstract Collection<LName> getNames();
+	public abstract LComprehensionable convertNames(Map<LName, LName> map);
+	public abstract LComprehensionable convertFields(Map<String, Integer> map);
 }
 
 class LExprComp extends LComprehensionable {
@@ -577,6 +633,27 @@ class LExprComp extends LComprehensionable {
         expr = e;
         next = c;
     }
+
+    public Collection<LName> getNames() {
+    	Collection<LName> ret = new HashSet<LName>();
+    	if (next != null) ret.addAll(next.getNames());
+ 		ret.addAll(expr.getNames());
+    	return ret;
+	}
+
+	public LComprehensionable convertNames(Map<LName, LName> map) {
+		LExp e = expr.convertNames(map);
+		LComprehensionable c = null;
+		if (next != null) c = next.convertNames(map);
+		return new LExprComp(e, c);
+	}
+
+	public LComprehensionable convertFields(Map<String, Integer> map) {
+		LExp e = expr.convertFields(map);
+		LComprehensionable c = null;
+		if (next != null) c = next.convertFields(map);
+		return new LExprComp(e, c);
+	}
 }
 
 class LForComp extends LComprehensionable {
@@ -588,6 +665,27 @@ class LForComp extends LComprehensionable {
         expr = e;
         comp = c;
     }
+
+    public Collection<LName> getNames() {
+    	Collection<LName> ret = new HashSet<LName>();
+    	ret.addAll(comp.getNames());
+    	ret.addAll(expr.getNames());
+    	// given name is not needed
+    	ret.remove(name);
+    	return ret;
+	}
+
+	public LComprehensionable convertNames(Map<LName, LName> map) {
+		LComprehensionable c = null;
+		if (comp != null) c = comp.convertNames(map);
+		return new LForComp((LName) name.convertNames(map), expr.convertNames(map), c);
+	}
+
+	public LComprehensionable convertFields(Map<String, Integer> map) {
+		LComprehensionable c = null;
+		if (comp != null) c = comp.convertFields(map);
+		return new LForComp((LName) name.convertFields(map), expr.convertFields(map), c);
+	}
 }
 
 class LIfComp extends LComprehensionable {
@@ -597,6 +695,25 @@ class LIfComp extends LComprehensionable {
         cond = e;
         comp = c;
     }
+
+	public Collection<LName> getNames() {
+    	Collection<LName> ret = new HashSet<LName>();
+    	if (comp != null) ret.addAll(comp.getNames());
+    	ret.addAll(cond.getNames());
+    	return ret;
+	}
+
+	public LComprehensionable convertNames(Map<LName, LName> map) {
+		LComprehensionable c = null;
+		if (comp != null) c = comp.convertNames(map);
+		return new LIfComp(cond.convertNames(map), c);
+	}
+
+	public LComprehensionable convertFields(Map<String, Integer> map) {
+		LComprehensionable c = null;
+		if (comp != null) c = comp.convertFields(map);
+		return new LIfComp(cond.convertFields(map), comp.convertFields(map));
+	}
 }
 
 class LComprehension extends LExp {
@@ -610,10 +727,19 @@ class LComprehension extends LExp {
 	}
 
 	public LExp convertFields(Map<String, Integer> map) {
-		return null;
+		if (comp == null) return this;
+		return new LComprehension(comp.convertFields(map));
+	}
+
+	public LExp convertNames(Map<LName, LName> map) {
+		if (comp == null) return this;
+		return new LComprehension(comp.convertNames(map));
 	}
 
 	public MapPSet<LName> getNames() {
-		return null;
+		MapPSet<LName> ret = HashTreePSet.empty();
+		if (comp == null) return ret;
+		ret = ret.plusAll(comp.getNames());
+		return ret;
 	}
 }
