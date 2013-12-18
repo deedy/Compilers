@@ -35,7 +35,7 @@ for root, dirs, filenames in os.walk(indir):
             outs.add(name)
 
 # find intersection to test on
-for x3 in x3s:
+for x3 in x3s:a
     if x3 in ins and x3 in outs:
         test_set.add(x3)
 

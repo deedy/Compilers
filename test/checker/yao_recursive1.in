@@ -1,7 +1,7 @@
 fun foo<>(i : Integer) : Integer
 {
 	if (i > 0)
-		foo(i-1);
+		return foo(i-1);
 	else
 		return 0;
 }

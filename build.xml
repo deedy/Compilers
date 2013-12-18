@@ -138,4 +138,10 @@
             <arg value="tester.py"/>
         </exec>
     </target>
+
+    <target name="test_generator">
+        <exec executable="python" dir="test/generator">
+            <arg value="tester.py"/>
+        </exec>
+    </target>
 </project> 

@@ -27,7 +27,7 @@ def valid_pairs(directory):
 			ins.add(name)
 		elif ext == "out":
 			outs.add(name)
-	return ins & outs
+	return sorted(list(ins & outs))
 
 def valid_triples(directory):
 	ins = set()
@@ -40,4 +40,4 @@ def valid_triples(directory):
 			outs.add(name)
 		elif ext == "x3":
 			x3s.add(name)
-	return ins & outs & x3s
+	return sorted(list(ins & outs & x3s))

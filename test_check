@@ -1,9 +1,0 @@
-#! /bin/bash
-for f in `ls test/checker/assignment_tests/`
- do 
-  echo -n "$f "
-  java -jar build/jar/Cubex.jar test/checker/assignment_tests/${f%.*}.in
-  echo -n " "
-  cat test/checker/assignment_tests/${f%.*}.out
-  echo ""
-done

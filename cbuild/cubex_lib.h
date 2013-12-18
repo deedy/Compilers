@@ -215,7 +215,7 @@ void _incr(_object ptr) {
 }
 
 void _decr(_object ptr) {
-	Object o = ptr;
+	/*Object o = ptr;
 	if(o) {
 		o->ref_count -= 1;
 		if (o->ref_count <= 0) {
@@ -230,7 +230,7 @@ void _decr(_object ptr) {
 			}
 			x3free(o);
 		}
-	}
+	}*/
 }
 
 void _free_all_the_things() {
@@ -239,7 +239,7 @@ void _free_all_the_things() {
 		Object next = o->tail;
 		int i;
 		x3free(o->fields);
-		if(o->id == 4) {
+		if(o->id == STRING_ID) {
 			x3free(((String) o)->value);
 		}
 		x3free(o);
