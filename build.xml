@@ -56,7 +56,7 @@
 
     <target name="jar_lexer">
         <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/Cubex.jar">
+        <jar destfile="build/jar/Lexer.jar">
             <manifest>
                 <attribute name="Main-Class" value="CubexLexerProg"/>
             </manifest>
@@ -68,7 +68,7 @@
 
     <target name="jar_parser">
         <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/Cubex.jar">
+        <jar destfile="build/jar/Parser.jar">
             <manifest>
                 <attribute name="Main-Class" value="CubexParserProg"/>
             </manifest>
@@ -80,7 +80,7 @@
 
     <target name="jar_checker">
         <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/Cubex.jar">
+        <jar destfile="build/jar/Checker.jar">
             <manifest>
                 <attribute name="Main-Class" value="CubexCheckerProg"/>
                 <attribute name="Class-Path" value="${mf.classpath}"/>
@@ -121,20 +121,21 @@
     </pathconvert>
 
     <target name="test_lexer">
-        <java classname="LexerAssignmentTest" fork="true" dir="build/classes">
-            <arg line="../../test/lexer/assignment_tests/"/>
-        </java>
+        <exec executable="python" dir="test/lexer">
+            <arg value="tester.py"/>
+        </exec>
     </target>
 
+
     <target name="test_parser">
-        <java classname="ParserAssignmentTest" fork="true" dir="build/classes">
-            <arg line="../../test/parser/assignment_tests/"/>
-        </java>
+        <exec executable="python" dir="test/parser">
+            <arg value="tester.py"/>
+        </exec>
     </target>
 
     <target name="test_checker">
-        <java classname="CheckerAssignmentTest" fork="true" dir="build/classes">
-            <arg line="../../test/checker/assignment_tests/"/>
-        </java>
+        <exec executable="python" dir="test/checker">
+            <arg value="tester.py"/>
+        </exec>
     </target>
 </project> 

@@ -29,21 +29,21 @@ public class CubexCheckerProg {
         parser.setBuildParseTree(true);
         try {
             CubexProg prog = parser.prog().cu;
-            System.out.println(prog);
+            // System.out.println(prog);
             Triple<CubexClassContext, CubexFunctionContext, SymbolTable> trip = buildBase();
-            System.out.println(prog);
+            // System.out.println(prog);
             if(prog.typeCheck(trip.getLeft(), trip.getMiddle(), trip.getRight())) {
                 return "accept";
             }
             else return "reject";
 
         } catch (CubexTC.TypeCheckException tc) {
-            System.out.println(tc.getMessage());
-             tc.printStackTrace();
+            // System.out.println(tc.getMessage());
+             // tc.printStackTrace();
             return "reject";
         } catch(Exception e){
-            System.out.println(e);
-            e.printStackTrace();
+            // System.out.println(e);
+            // e.printStackTrace();
             //e.printStackTrace();
             // parser.reset();
             // viewTree(parser);

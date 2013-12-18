@@ -1,14 +1,2 @@
-
-a := 1;
-a := 1;
-a := 3;
-b := 4;
-b := 2;
-if(b == 2) {
-  a := 3;
-} else {
-  a := 4;
-}
-
-c := a + b;
-return ["fail"];
+fun append<T> (a : Iterable<T>, b: Iterable<T>) : Iterable<T> = a ++ b;
+return [string(append<Character>([for (i in "hello") i] , [for (i in " world") i]) ) ];

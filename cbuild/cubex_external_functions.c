@@ -49,7 +49,7 @@ void* x3malloc(int size) {
 }
 
 void x3free(void* ptr) {
-  return free(ptr);
+  free(ptr);
 }
 
 char unichar(int uni) {

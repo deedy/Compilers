@@ -21,6 +21,9 @@ build/*
 cbuild/a.out
 *.so
 
+# python stuff
+*.pyc
+
 
 # Test outputs
 TEST_DIAG.txt

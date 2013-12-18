@@ -62,15 +62,14 @@ typescheme returns [CubexTypeScheme cu]
 		$cu = new CubexTypeScheme(kc, $tc.cu, $t.cu);
 	};
 
-comprehension returns [CubexComprehensionable cu]
-  : e=expr {$cu = new CubexExprComp($e.cu, null); }
-  (COMMA c=comprehension {$cu = new CubexExprComp($e.cu, $c.cu);})?
-  | IF LPAREN e2=expr RPAREN c2=comprehension {
-      $cu = new CubexIfComp($e2.cu, $c2.cu); }
-  | FOR LPAREN n=vname IN e3=expr RPAREN c3=comprehension {
-      $cu = new CubexForComp($n.cu, $e3.cu, $c3.cu); }
-  | /* epsilon */ {$cu = null;};
-
+// comprehension returns [CubexComprehensionable cu]
+//  : e=expr {$cu = new CubexExprComp($e.cu, null); }
+//  (COMMA c=comprehension {$cu = new CubexExprComp($e.cu, $c.cu);})?
+//  | IF LPAREN e2=expr RPAREN c2=comprehension {
+//      $cu = new CubexIfComp($e2.cu, $c2.cu); }
+//  | FOR LPAREN n=vname IN e3=expr RPAREN c3=comprehension {
+//      $cu = new CubexForComp($n.cu, $e3.cu, $c3.cu); }
+//  | /* epsilon */ {$cu = null;};
 
 expr returns [CubexExpression cu]
     : n=vname { $cu = new CubexVar($n.cu); }
@@ -78,8 +77,8 @@ expr returns [CubexExpression cu]
     	{ $cu = new CubexFunctionCall($c.cu, $t.cu, $es.cu); }
     | e=expr DOT n=vname LANGLE t=types RANGLE LPAREN es=exprs RPAREN
     	{ $cu = new CubexMethodCall($e.cu, $n.cu, $t.cu, $es.cu); }
-    | LSQUARE comp=comprehension RSQUARE {
-        $cu = new CubexComprehension($comp.cu);
+    | LSQUARE elems=exprs RSQUARE {
+        $cu = new CubexIterable($elems.cu);
       }
     | BOOL { $cu = new CubexBoolean($BOOL.text); }
     | INT { $cu = new CubexInt($INT.int); }

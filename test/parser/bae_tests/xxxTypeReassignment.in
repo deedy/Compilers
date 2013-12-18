@@ -1,5 +1,0 @@
-fun all() : Nothing
-{
-	x = 5;
-	x = "asdf";
-}

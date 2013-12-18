@@ -4,11 +4,35 @@ Debarghya Das
 Simon Li
 Bryce Evans
 
-Discussion partners:
-Minor discussion with Matthew Lorring and Andrew Demaio
-
 Division of labor:
-Dominick did (stole from rest of team) bulk of the work. Simon paired with Dominick, was initial implementor for statements and expressions, and was master bug catcher. Deedy ran special operations such as the join algorithm, fixed errors with the parser, and was the theory guru (tasked with deep understanding of the spec). Bryce wrote test cases.
+Dominick worked with the CFG and garbage collector
+Simon implemented all of CSE
+Bryce worked on the testing framework
+Deedy worked on fixing PA4
 
 Notes:
 We include the pcollections library in much the same way we include ANTLR
+
+Our CSE should be well functioning and has the most dramatic results.
+For LVA we use a CFG to do dead code removal and unreachable code removal
+
+for example:
+
+a := 1; <- optimized out
+a := 2;
+return [""]
+f := do_stuff(); <- unreachable, removed
+
+We do not use the CFG to do garbage collection as we had too much trouble with it.
+Instead we implement the best "safe" collector we can, and then remove everything else 
+at the end of the program. 
+
+that is
+
+a := b;
+...
+a := c; (c gains a reference and b loses a reference)
+...
+free_all_the_things();
+
+We got to the point where implementing unboxing would introduce more bugs than it is worth.

@@ -13,10 +13,10 @@ enum typeIDs {
 	RANGEITERABLE_ID = -10
 };
 
-// _object is classier than void*
+/*  _object is classier than void* */
 typedef void* _object;
 
-// the generic object type
+/*  the generic object type */
 struct Object_t {
 	int id; 
 	struct Object_t* prev; 
@@ -27,7 +27,7 @@ struct Object_t {
 };
 typedef struct Object_t* Object;
 
-// the iterable prototype
+/*  the iterable prototype */
 struct Iterable_t {
 	int id; 
 	struct Object_t* prev; 
@@ -39,7 +39,7 @@ struct Iterable_t {
 };
 typedef struct Iterable_t* Iterable;
 
-// the iterator prototype (holds state machine)
+/*  the iterator prototype (holds state machine) */
 struct _Iterator_t {
 	int id; 
 	struct Object_t* prev; 
@@ -215,22 +215,22 @@ void _incr(_object ptr) {
 }
 
 void _decr(_object ptr) {
-	// Object o = ptr;
-	// if(o) {
-	// 	o->ref_count -= 1;
-	// 	if (o->ref_count <= 0) {
-	// 		_del_obj(o);
-	// 		int i;
-	// 		for (i = 0; i < o->field_count; i++) {
-	// 			_decr(o->fields[i]);
-	// 		}
-	// 		x3free(o->fields);
-	// 		if(o->id == -6) {
-	// 			x3free(((String) o)->value);
-	// 		}
-	// 		x3free(o);
-	// 	}
-	// }
+	Object o = ptr;
+	if(o) {
+		o->ref_count -= 1;
+		if (o->ref_count <= 0) {
+			_del_obj(o);
+			int i;
+			for (i = 0; i < o->field_count; i++) {
+				_decr(o->fields[i]);
+			}
+			x3free(o->fields);
+			if(o->id == -6) {
+				x3free(((String) o)->value);
+			}
+			x3free(o);
+		}
+	}
 }
 
 void _free_all_the_things() {
@@ -309,6 +309,7 @@ Iterable _append(_object o1, _object o2) {
 	a->left = o1;
 	a->right = o2;
 	a->iter = _appendIter;
+	return a;
 }
 
 
@@ -711,6 +712,7 @@ _object String_construct(const char* s) {
 	strCpy(s, buff);
 	str->value = buff;
 	str->iter = _StringIter;
+	return str;
 }
 
 
