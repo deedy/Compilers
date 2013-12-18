@@ -81,7 +81,7 @@ struct Character_t {
 	int ref_count; 
 	int field_count;
 	_object *fields;
-	char value;
+	char chr;
 };
 typedef struct Character_t* Character;
 
@@ -93,7 +93,7 @@ struct String_t {
 	int field_count;
 	_object *fields;
 	_object (*iter)(_object);
-	char* value;
+	char* str;
 	int length;
 };
 typedef struct String_t* String;
@@ -240,7 +240,7 @@ void _free_all_the_things() {
 		int i;
 		x3free(o->fields);
 		if(o->id == STRING_ID) {
-			x3free(((String) o)->value);
+			x3free(((String) o)->str);
 		}
 		x3free(o);
 		o = next;
@@ -433,9 +433,9 @@ _object Boolean_equals(_object o1, _object o2) {
 
 
 _object Integer_construct(int n) {
-	Integer a = _allocate(INTEGER_ID, 0);
-	a->value = n;
-	return a;
+	/*Integer a = _allocate(INTEGER_ID, 0);
+	a->value = n;*/
+	return n;
 }
 
 _object Integer_negative(_object o) {
@@ -626,7 +626,7 @@ _object Integer_equals(_object o1, _object o2) {
 
 _object Character_construct(char c) {
 	Character a = _allocate(CHARACTER_ID, 0);
-	a->value = c;
+	a->chr = c;
 	return a;
 }
 
@@ -634,19 +634,19 @@ _object Character_unicode(_object o) {
 	Character c = o;
 	Integer _ret;
 	_incr(c);
-	_ret = Integer_construct(charuni(c->value));
+	_ret = Integer_construct(charuni(c->chr));
 	_decr(c);
 	return _ret;
 }
 
 _object Character_equals(_object o1, _object o2) {
-	Boolean a = o1;
-	Boolean b = o2;
+	Character a = o1;
+	Character b = o2;
 	Boolean _ret;
 	_incr(a);
 	_incr(b);
 
-	_ret = Boolean_construct(a->value == b->value);
+	_ret = Boolean_construct(a->chr == b->chr);
 
 	_decr(a);
 	_decr(b);
@@ -683,7 +683,7 @@ _object _StringNext(_object o) {
 	int position = i->position;
 	String parent = i->parent;
 	if (position < parent->length) {
-		_object ret = Character_construct(parent->value[position]);
+		_object ret = Character_construct(parent->str[position]);
 		i->position += 1;
 		return ret;
 	} else {
@@ -710,7 +710,7 @@ _object String_construct(const char* s) {
 		buff[i] = 0;
 	}
 	strCpy(s, buff);
-	str->value = buff;
+	str->str = buff;
 	str->iter = _StringIter;
 	return str;
 }
@@ -722,7 +722,7 @@ _object String_equals(_object o1, _object o2) {
 	Boolean _ret;
 	_incr(a);
 	_incr(b);
-	_ret = Boolean_construct(strCmp(a->value, b->value));
+	_ret = Boolean_construct(strCmp(a->str, b->str));
 	_decr(a);
 	_decr(b);
 	return _ret;
@@ -730,7 +730,7 @@ _object String_equals(_object o1, _object o2) {
 
 void _print(_object o) {
 	String s = o;
-	print_line(s->value, s->length);
+	print_line(s->str, s->length);
 }
 
 _object character(_object o) {
@@ -758,7 +758,7 @@ _object string(_object o) {
 	index = 0;
 	j = i->iter(i);
 	while (c = j->next(j)) {
-		buff[index] = ((Character) c)->value;
+		buff[index] = ((Character) c)->chr;
 		index += 1;
 	}
 	String ret = String_construct(buff);

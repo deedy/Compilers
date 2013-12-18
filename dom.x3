@@ -1,2 +1,4 @@
-fun append<T> (a : Iterable<T>, b: Iterable<T>) : Iterable<T> = a ++ b;
-return [string(append<Character>([for (i in "hello") i] , [for (i in " world") i]) ) ];
+`fun append<T> (a : Iterable<T>, b: Iterable<T>) : Iterable<T> = a ++ b;
+return [string(append<Character>([for (i in "hello") i] , [for (i in " world") i]) ) ];'
+
+return input;
