@@ -133,6 +133,7 @@ public class HighLow implements HLVisitor {
 			for (HStatement s : w.newDeclarations) {
 				stmts.add((LStmt)s.accept(this));
 			}
+			stmts.add(wh);
 			return new LStmts(stmts);
 		}
 		return wh;

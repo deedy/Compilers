@@ -23,7 +23,11 @@ class ExprUse extends Triple<HStatement, HExpression, HVar> {
     }
 
     public ExprUse copy() {
-        return new ExprUse(left, middle, right);
+        HVar v = null;
+        if (right != null) {
+            v = new HVar(right.var);
+        }
+        return new ExprUse(left.copy(), middle.copy(), v);
     }
 }
 
@@ -116,6 +120,7 @@ abstract class HExpression extends HNode {
 abstract class HStatement extends HNode {
     List<HStatement> newDeclarations = new ArrayList<HStatement>();
     public abstract void cse(AvailExprsList avail);
+    public abstract HStatement copy();
 }
 
 class HInterface extends HNode {
@@ -264,6 +269,10 @@ class HConditional extends HStatement {
         stmt2.convertFuns(map);
     }
 
+    public HStatement copy() {
+        return new HConditional(expr.copy(), stmt1.copy(), stmt2.copy());
+    }
+
     // public Map<HAssign, String> cse(Map<HAssign, String> avail) {
     //     Map<HAssign, String> s1 = stmt1.cse(avail);
     //     Map<HAssign, String> s2 = stmt2.cse(avail);
@@ -281,7 +290,7 @@ class HConditional extends HStatement {
         // combine the lists
         for (ExprUse t1 : avail1.list) {
             ExprUse t2 = avail2.getElem(t1);
-            if (t2 != null) {
+            if (t2 != null && avail.getElem(t1) == null) {
                 HVar uniqVar = HExpression.getUniqVar();
                 // factor out the common expr from each branch
                 // if expr has alread been factored out 
@@ -327,6 +336,10 @@ class HForLoop extends HStatement {
         AvailExprsList avail1 = avail.copy();
         stmt.cse(avail1);
     }
+
+    public HStatement copy() {
+        return new HForLoop(name, expr.copy(), stmt.copy());
+    }
 }
 
 class HWhileLoop extends HStatement {
@@ -352,6 +365,10 @@ class HWhileLoop extends HStatement {
         expr.cse(avail, this);
         AvailExprsList avail1 = avail.copy();
         stmt.cse(avail1);
+    }
+
+    public HStatement copy() {
+        return new HWhileLoop(expr.copy(), stmt.copy());
     }    
 }
 
@@ -373,6 +390,10 @@ class HReturn extends HStatement {
 
     public void cse(AvailExprsList avail) {
         expr.cse(avail, this);
+    }
+
+    public HStatement copy() {
+        return new HReturn(expr.copy());
     }
 }
 
@@ -399,6 +420,14 @@ class HBlock extends HStatement {
             s.cse(avail);
         }
     }
+
+    public HStatement copy() {
+        List<HStatement> list = new ArrayList<HStatement>();
+        for (HStatement s : stmts) {
+            list.add(s.copy());
+        }
+        return new HBlock(list);
+    }
 }
 
 class HAssign extends HStatement {
@@ -422,6 +451,10 @@ class HAssign extends HStatement {
     public void cse(AvailExprsList avail) {
         expr.cse(avail, this);
         avail.invalidateVar(name);
+    }
+
+    public HStatement copy() {
+        return new HAssign(name, expr.copy());
     }
 }
 
@@ -497,6 +530,14 @@ class HFunctionCall extends HExpression {
         return v.visit(this);
     }
 
+    public HExpression copy() {
+        List<HExpression> list = new ArrayList<HExpression>();
+        for (HExpression e : args) {
+            list.add(e.copy());
+        }
+        return new HFunctionCall(name, args);
+    }
+
     public void convertFuns(Map<String, HFunction> map) {
         for (HExpression e : args) {
             e.convertFuns(map);
@@ -527,10 +568,6 @@ class HFunctionCall extends HExpression {
                 
         }
         return true;
-    }
-
-    public HExpression copy() {
-        return new HFunctionCall(name, args);
     }
 
     public void cse(AvailExprsList avail, HStatement stmt) {
@@ -590,7 +627,7 @@ class HAppend extends HExpression {
     }
 
     public HExpression copy() {
-        return new HAppend(left, right);
+        return new HAppend(left.copy(), right.copy());
     }
 
     public boolean dependsOn(String name) {
@@ -640,8 +677,14 @@ class HIterable extends HExpression {
     }
 
     public HExpression copy() {
-        return new HIterable(elems);
+        List<HExpression> list = new ArrayList<HExpression>();
+        for (HExpression e : elems) {
+            list.add(e.copy());
+        }
+        return new HIterable(list);
     }
+
+
 
     public boolean dependsOn(String name) {
         for (HExpression e : elems) {
@@ -876,6 +919,8 @@ class HStatementProg extends HProg {
         for (HStatement s : stmts) {
             s.cse(avail);
         }
+        if (prog != null)
+            prog.cse(avail);
     }
 }
 
@@ -894,6 +939,8 @@ class HClassProg extends HProg {
 
     public void cse(AvailExprsList avail) {
         cls.cse(avail);
+        if (prog != null)
+            prog.cse(avail);
     }
 }
 
@@ -914,5 +961,7 @@ class HFunProg extends HProg {
         for (HFunction f : funs) {
             f.cse(avail);
         }
+        if (prog != null)
+            prog.cse(avail);
     }
 }
