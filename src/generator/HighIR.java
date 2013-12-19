@@ -27,7 +27,7 @@ class ExprUse extends Triple<HStatement, HExpression, HVar> {
         if (right != null) {
             v = new HVar(right.var);
         }
-        return new ExprUse(left.copy(), middle.copy(), v);
+        return new ExprUse(left, middle.copy(), v);
     }
 }
 
