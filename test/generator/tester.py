@@ -24,7 +24,7 @@ def compiler(x):
 	call("java -jar %s %s.x3" % (jar, x))
 	call("cp -f out.c ../../cbuild")
 	# print(call("make -C ../../cbuild clean"))
-	print(call("make -C ../../cbuild"))
+	call("make -C ../../cbuild")
 
 def runner(args):
     try:
@@ -42,6 +42,7 @@ for name in names_to_run:
 	argf.close()
 	# print("../../cbuild/a.out %s" % (" ".join(args)))
 	output = runner(["../../cbuild/a.out"] + args)
+	# print(runner(["valgrind","--leak-check=full","../../cbuild/a.out"] + args))
 	ex = open(name + ".out")
 	expected = ex.read()
 	if output != expected:

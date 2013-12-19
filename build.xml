@@ -15,6 +15,8 @@
             <arg path="src/lexer"/>
             <arg value="-o"/>
             <arg path="src/parser"/>
+            <arg value="-no-listener"/>
+            <arg value="-no-visitor"/>
             <arg path="src/parser/CubexParser.g4"/>
         </java>
     </target>

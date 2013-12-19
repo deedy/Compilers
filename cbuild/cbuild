@@ -1,50 +1,6 @@
 #include "cubex_main.h"
 #include "cubex_external_functions.h"
 #include "cubex_lib.h"
-_object unicode;
-
-_object thefun();
-_object _prog_main();
-_object thefun() {
-	Object _iterable1 = NULL;
-	Object u = NULL;
-	Object retval = NULL;
-	Object _iterable0 = NULL;
-	Object m = NULL;
-	Object _iter1 = NULL;
-	Object x = NULL;
-	Object _iter0 = NULL;
-	retval = (Object) Iterable_construct((_object[]){}, 0);
-	u = (Object) unicode;
-	_iterable0 = Iterable_construct((_object[]){Integer_construct(2),Integer_construct(7),Integer_construct(4),Integer_construct(9),Integer_construct(456),Integer_construct(877),Integer_construct(123),Integer_construct(56),Integer_construct(678),Integer_construct(10),Integer_construct(89),Integer_construct(345),Integer_construct(491)}, 13);
-	_iter0 = ((Iterable)_iterable0)->iter((Iterable)_iterable0);
-	while ((x = ((_Iterator)_iter0)->next(_iter0))) {
-		_iterable1 = Integer_modulo(x, Integer_construct(2));
-		_iter1 = ((Iterable)_iterable1)->iter((Iterable)_iterable1);
-		while ((m = ((_Iterator)_iter1)->next(_iter1))) {
-			if (((Boolean) Boolean_negate(Integer_equals(Integer_construct(0), m)))->value) {
-				retval = (Object) _append(retval, Iterable_construct((_object[]){string(Iterable_construct((_object[]){character(u)}, 1))}, 1));
-			} else {
-			}
-		}
-		u = (Object) Integer_plus(u, Integer_construct(1));
-	}
-	return retval;
-}
-
-_object _prog_main() {
-	unicode = (Object) Integer_construct(97);
-	return thefun();
-}
-
 void cubex_main() {
-	_object _i,_j
-;	_Iterator _i_iter
-;	__init();
-	_i = _prog_main();
-	_i_iter = ((Iterable)_i)->iter(_i);
-	while((_j = _i_iter->next(_i_iter))) {
-		_print(_j);
-	}
-	_free_all_the_things();
+_print(String_construct("reject"));
 }

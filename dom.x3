@@ -1,4 +1,23 @@
-`fun append<T> (a : Iterable<T>, b: Iterable<T>) : Iterable<T> = a ++ b;
-return [string(append<Character>([for (i in "hello") i] , [for (i in " world") i]) ) ];'
+fun expensive(n : Integer) : Integer {
+	if (n <= 0)
+		return 0;
+	else
+		return expensive(n-1)+expensive(n-2);
+}
 
-return input;
+fun prog() : Iterable<String>{
+n := 40;
+fib := expensive(n);
+fibb := expensive(39);
+i := 0;
+sum := 0;
+while (i < 1000) {
+	i := i + 1;
+	sum := expensive(40) - expensive(39) + sum;
+}
+if (sum == (fib - fibb) * 1000)
+	return ["Yes"];
+return ["No"];	
+}
+
+return prog();

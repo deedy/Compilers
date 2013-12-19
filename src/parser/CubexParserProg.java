@@ -20,7 +20,7 @@ public class CubexParserProg {
             return "lexer error";
         }
         StringBuilder output = new StringBuilder();
-        parser.setBuildParseTree(true);
+        // parser.setBuildParseTree(true);
         try {
             CubexProg prog = parser.prog().cu;
 

@@ -1,134 +1,54 @@
 #include "cubex_main.h"
 #include "cubex_external_functions.h"
 #include "cubex_lib.h"
-_object _iterable1;
-_object _iterable0;
-_object _iterable2;
-_object c;
-_object p;
-_object m;
-_object _iter1;
-_object _iter2;
-_object ps;
-_object _iter0;
-_object i;
-_object out;
 
-_object Printer_line(_object _o0);
-_object Printer_print(_object _o0);
-_object SinglePrinter_line(_object _o0);
-_object SinglePrinter_print(_object _o0);
-_object Multiplier_print(_object _o0);
+_object expensive(_object _o0);
+_object prog();
 _object _prog_main();
-_object Printer_line(_object _o0) {
-	Object _obj = _o0;
-	_incr(_obj);
-	return NULL;
-}
-
-_object Printer_print(_object _o0) {
-	Object _obj = _o0;
-	_incr(_obj);
-	return NULL;
-}
-
-_object SinglePrinter(_object _o0) {
-	Object s = _o0;
-	Object _tmp = NULL;
-	Object _ret = NULL;
-	Object _obj = _allocate(6, 1);
-	_obj->fields[0] = (Object) s;
-	_incr(_obj->fields[0]);
-	return _obj;
-}
-
-_object SinglePrinter_line(_object _o0) {
-	Object _obj = _o0;
-	_incr(_obj);
-	return _obj->fields[0];
-}
-
-_object SinglePrinter_print(_object _o0) {
-	Object _obj = _o0;
-	_incr(_obj);
-	return Iterable_construct((_object[]){_obj->fields[0]}, 1);
-}
-
-_object ConstantPrinter() {
-	Object _tmp = NULL;
-	Object _ret = NULL;
-	Object _obj = _allocate(7, 0);
-	return _obj;
-}
-
-_object Multiplier(_object _o0, _object _o1) {
-	Object s = _o0;
-	Object n = _o1;
-	Object _tmp = NULL;
-	Object _ret = NULL;
-	Object _obj = _allocate(8, 4);
-	_obj->fields[1] = (Object) s;
-	_obj->fields[0] = (Object) n;
-	_obj->fields[2] = (Object) String_construct("");
-	_obj->fields[3] = (Object) _obj->fields[0];
-	while (((Boolean) Integer_lessThan(Integer_construct(0), _obj->fields[3], Boolean_construct(1)))->value) {
-		_obj->fields[2] = (Object) string(_append(_obj->fields[2], _obj->fields[1]));
-		_obj->fields[3] = (Object) Integer_minus(_obj->fields[3], Integer_construct(1));
+_object expensive(_object _o0) {
+	Object n = _o0;
+	_incr(n);
+	if (((Boolean) Integer_lessThan(n, Integer_construct(0), Boolean_construct(0)))->value) {
+		return Integer_construct(0);
+	} else {
+		return Integer_plus(expensive(Integer_minus(n, Integer_construct(1))), expensive(Integer_minus(n, Integer_construct(2))));
 	}
-	_incr(_obj->fields[0]);
-	_incr(_obj->fields[1]);
-	_incr(_obj->fields[2]);
-	_incr(_obj->fields[3]);
-	return _obj;
 }
 
-_object Multiplier_print(_object _o0) {
-	Object _obj = _o0;
-	Object ret = NULL;
-	Object nnn = NULL;
-	_incr(_obj);
-	ret = (Object) Iterable_construct((_object[]){}, 0);
-	nnn = (Object) _obj->fields[0];
-	while (((Boolean) Integer_lessThan(Integer_construct(0), nnn, Boolean_construct(1)))->value) {
-		ret = (Object) _append(ret, Iterable_construct((_object[]){_obj->fields[1]}, 1));
-		nnn = (Object) Integer_minus(nnn, Integer_construct(1));
+_object prog() {
+	Object _3 = NULL;
+	Object fibb = NULL;
+	Object n = NULL;
+	Object sum = NULL;
+	Object _0 = NULL;
+	Object fib = NULL;
+	Object _1 = NULL;
+	Object i = NULL;
+	Object _2 = NULL;
+	n = (Object) Integer_construct(40);
+	_1 = (Object) expensive(n);
+	_1 = (Object) expensive(n);
+	fib = (Object) _1;
+	_0 = (Object) expensive(Integer_construct(39));
+	_2 = (Object) expensive(Integer_construct(39));
+	_2 = (Object) expensive(Integer_construct(39));
+	fibb = (Object) _2;
+	i = (Object) Integer_construct(0);
+	sum = (Object) Integer_construct(0);
+	_3 = (Object) Integer_lessThan(i, Integer_construct(1000), Boolean_construct(1));
+	_3 = (Object) Integer_lessThan(i, Integer_construct(1000), Boolean_construct(1));
+	_1 = (Object) Integer_construct(0);
+	_2 = (Object) Integer_construct(0);
+	_3 = (Object) Integer_construct(0);
+	if (((Boolean) Integer_equals(sum, Integer_times(Integer_minus(fib, fibb), Integer_construct(1000))))->value) {
+		return Iterable_construct((_object[]){String_construct("Yes")}, 1);
+	} else {
 	}
-	return ret;
+	return Iterable_construct((_object[]){String_construct("No")}, 1);
 }
 
 _object _prog_main() {
-	ps = (Object) Iterable_construct((_object[]){}, 0);
-	c = (Object) Integer_construct(0);
-	m = (Object) Integer_construct(0);
-	_iterable0 = input;
-	_iter0 = ((Iterable)_iterable0)->iter((Iterable)_iterable0);
-	while ((i = ((_Iterator)_iter0)->next(_iter0))) {
-		m = (Object) Integer_plus(m, Integer_construct(1));
-		if (((Boolean) Integer_equals(c, Integer_construct(0)))->value) {
-			ps = (Object) _append(ps, Iterable_construct((_object[]){ConstantPrinter()}, 1));
-			c = (Object) Integer_construct(1);
-		} else {
-			if (((Boolean) Integer_equals(c, Integer_construct(1)))->value) {
-				ps = (Object) _append(ps, Iterable_construct((_object[]){SinglePrinter(i)}, 1));
-				c = (Object) Integer_construct(2);
-			} else {
-				ps = (Object) _append(ps, Iterable_construct((_object[]){Multiplier(i, m)}, 1));
-				c = (Object) Integer_construct(0);
-			}
-		}
-	}
-	out = (Object) Iterable_construct((_object[]){}, 0);
-	_iterable1 = ps;
-	_iter1 = ((Iterable)_iterable1)->iter((Iterable)_iterable1);
-	while ((p = ((_Iterator)_iter1)->next(_iter1))) {
-		out = (Object) _append(out, Iterable_construct((_object[]){SinglePrinter_line(p)}, 1));
-	}
-	_iterable2 = ps;
-	_iter2 = ((Iterable)_iterable2)->iter((Iterable)_iterable2);
-	while ((p = ((_Iterator)_iter2)->next(_iter2))) {
-		out = (Object) _append(out, SinglePrinter_print(p));
-	}
-	return out;
+	return prog();
 }
 
 void cubex_main() {

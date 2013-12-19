@@ -224,8 +224,8 @@ public class CGenerator implements LVisitor {
 
 		String incrs = indent(join(visitAll(fieldIncrs),""));
 
-		varDefs.add(indent("Object _tmp = NULL;"));
-		varDefs.add(indent("Object _ret = NULL;"));
+		// varDefs.add(indent("Object _tmp = NULL;"));
+		// varDefs.add(indent("Object _ret = NULL;"));
 		varDefs.add(indent(String.format("Object _obj = _allocate(%d, %d);", f.id, f.fields)));
 
 		String locals = join(varDefs, "");

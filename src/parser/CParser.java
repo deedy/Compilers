@@ -8,14 +8,14 @@ public class CParser {
 	        CommonTokenStream tokens = new CommonTokenStream(lex);
 	        par = new CubexParser(tokens);
 	        par.removeErrorListeners();
-	        par.setBuildParseTree(true);
+	        // par.setBuildParseTree(true);
 	        CubexProg prog = par.prog().cu;
 	        return prog;
 	    } catch (Exception e) {
-	    	par.reset();
-			ParserRuleContext tree = par.prog();
-	        tree.inspect(par);
-	        par.reset();	    	
+	    	// par.reset();
+			// ParserRuleContext tree = par.prog();
+	        // tree.inspect(par);
+	        // par.reset();	    	
 	        System.out.println("Parser error");
 	    	return null;
 	    }
