@@ -78,7 +78,8 @@ public class CGenerator implements LVisitor {
 	List<String> funHeaders = new ArrayList<String>();
 	NameGen nameGenerator = new NameGen();
 	List<LFunc> derivedFuncs = new ArrayList<LFunc>();
-
+	boolean define = true;
+	Collection<String> globalVars = new HashSet<String>();
 	String getRandomName(){
 		return nameGenerator.randomIdentifier();
 	}
@@ -174,13 +175,17 @@ public class CGenerator implements LVisitor {
 			varDefs.add(indent(String.format("Object %s = _o%d;\n",arg, count)));
 			count += 1;
 		}
-		// declare all other variables null
+		// declare all other variables nulls
 		for(String varName : localVars) {
-			if (vArgs.contains(varName)) {
-				continue;
-			}
-			varDefs.add(indent(String.format("Object %s = NULL;\n", varName)));
-		}
+			if(f.isTopLevel) {
+				globalVars.add(varName);
+			} else {
+				if (vArgs.contains(varName)) {
+					continue;
+				}
+				varDefs.add(indent(String.format("Object %s = NULL;\n", varName)));
+			}	
+		}	
 
 		tabCount -= 1;
 
@@ -291,13 +296,15 @@ public class CGenerator implements LVisitor {
 		String iterName = "_iter" + iterCount;
 		String ableName = "_iterable" + iterCount;
 		iterCount += 1;
-		String dec1 = String.format("Iterable %s = (Iterable)%s;\n", ableName, iter);
-		String dec2 = String.format("_Iterator %s = %s->iter(%s);\n", iterName, ableName, ableName);
+		String dec1 = String.format("%s = %s;\n", ableName, iter);
+		String dec2 = String.format("%s = ((Iterable)%s)->iter((Iterable)%s);\n", iterName, ableName, ableName);
+		localVars.add(ableName);
+		localVars.add(iterName);
 		String elem = f.elem.accept(this);
 		String stmt = f.stmt.accept(this);
 		localVars.add(elem);
-		String cond = String.format("%s = %s->next(%s)", elem, iterName, iterName);
-		return String.format("%s%swhile (%s) {\n%s}\n",
+		String cond = String.format("%s = ((_Iterator)%s)->next(%s)", elem, iterName, iterName);
+		return String.format("%s%swhile ((%s)) {\n%s}\n",
 							dec1, dec2, cond, indent(stmt));
 	}
 
@@ -407,10 +414,12 @@ public class CGenerator implements LVisitor {
 		LFunc prog_main = new LFunc(new LName("_prog_main"),
 									new ArrayList<LName>(), 
 									p.stmts);
+		prog_main.isTopLevel = true;
 		p.funcs.add(prog_main);
 		derivedFuncs.addAll(p.funcs);
 		List<String> funcs = visitAll(derivedFuncs);
 		StringBuilder globDecs = new StringBuilder();
+		globals.addAll(globalVars);
 		for(String s : globals){
 			globDecs.append("_object " + s + ";\n");
 		}
@@ -423,15 +432,16 @@ public class CGenerator implements LVisitor {
                 + "%s\n"
                 + "%s\n"
                 + "void cubex_main() {\n"
+                	+ "\t_object _i,_j\n;"
+                	+ "\t_Iterator _i_iter\n;"
                 	+ "\t__init();\n"
-              		+ "\t_object _i = _prog_main();\n"
-                    + "\t_Iterator _i_iter = ((Iterable)_i)->iter(_i);\n"
-                    + "\t_object _j;"
-                    + "\twhile(_j = _i_iter->next(_i_iter)) {\n"
+              		+ "\t_i = _prog_main();\n"
+                    + "\t_i_iter = ((Iterable)_i)->iter(_i);\n"
+                    + "\twhile((_j = _i_iter->next(_i_iter))) {\n"
                     	+ "\t\t_print(_j);\n"
                     + "\t}\n"
                     + "\t_free_all_the_things();\n"
                 + "}\n";
-    	return String.format(baseProg, globDecs, funHeads, funDecs);
+    	return String.format(baseProg, globDecs.toString(), funHeads, funDecs);
 	}
 }

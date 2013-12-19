@@ -1,6 +1,18 @@
 #include "cubex_main.h"
 #include "cubex_external_functions.h"
 #include "cubex_lib.h"
+_object _iterable1;
+_object _iterable0;
+_object _iterable2;
+_object c;
+_object p;
+_object m;
+_object _iter1;
+_object _iter2;
+_object ps;
+_object _iter0;
+_object i;
+_object out;
 
 _object Printer_line(_object _o0);
 _object Printer_print(_object _o0);
@@ -85,18 +97,12 @@ _object Multiplier_print(_object _o0) {
 }
 
 _object _prog_main() {
-	Object c = NULL;
-	Object p = NULL;
-	Object m = NULL;
-	Object out = NULL;
-	Object i = NULL;
-	Object ps = NULL;
 	ps = (Object) Iterable_construct((_object[]){}, 0);
 	c = (Object) Integer_construct(0);
 	m = (Object) Integer_construct(0);
-	Iterable _iterable0 = (Iterable)input;
-	_Iterator _iter0 = _iterable0->iter(_iterable0);
-	while (i = _iter0->next(_iter0)) {
+	_iterable0 = input;
+	_iter0 = ((Iterable)_iterable0)->iter((Iterable)_iterable0);
+	while ((i = ((_Iterator)_iter0)->next(_iter0))) {
 		m = (Object) Integer_plus(m, Integer_construct(1));
 		if (((Boolean) Integer_equals(c, Integer_construct(0)))->value) {
 			ps = (Object) _append(ps, Iterable_construct((_object[]){ConstantPrinter()}, 1));
@@ -112,24 +118,26 @@ _object _prog_main() {
 		}
 	}
 	out = (Object) Iterable_construct((_object[]){}, 0);
-	Iterable _iterable1 = (Iterable)ps;
-	_Iterator _iter1 = _iterable1->iter(_iterable1);
-	while (p = _iter1->next(_iter1)) {
+	_iterable1 = ps;
+	_iter1 = ((Iterable)_iterable1)->iter((Iterable)_iterable1);
+	while ((p = ((_Iterator)_iter1)->next(_iter1))) {
 		out = (Object) _append(out, Iterable_construct((_object[]){SinglePrinter_line(p)}, 1));
 	}
-	Iterable _iterable2 = (Iterable)ps;
-	_Iterator _iter2 = _iterable2->iter(_iterable2);
-	while (p = _iter2->next(_iter2)) {
+	_iterable2 = ps;
+	_iter2 = ((Iterable)_iterable2)->iter((Iterable)_iterable2);
+	while ((p = ((_Iterator)_iter2)->next(_iter2))) {
 		out = (Object) _append(out, SinglePrinter_print(p));
 	}
 	return out;
 }
 
 void cubex_main() {
-	__init();
-	_object _i = _prog_main();
-	_Iterator _i_iter = ((Iterable)_i)->iter(_i);
-	_object _j;	while(_j = _i_iter->next(_i_iter)) {
+	_object _i,_j
+;	_Iterator _i_iter
+;	__init();
+	_i = _prog_main();
+	_i_iter = ((Iterable)_i)->iter(_i);
+	while((_j = _i_iter->next(_i_iter))) {
 		_print(_j);
 	}
 	_free_all_the_things();

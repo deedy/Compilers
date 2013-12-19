@@ -170,7 +170,8 @@ void _del_obj(Object o) {
 }
 
 _object _allocate(int id, int field_count) {
-	Object o;
+	Object o = NULL;
+	_object *fields;
 	if (id < 0) {
 		switch(id) {
 			case ITERABLE_ID: o = x3malloc(sizeof(struct Iterable_t)); break;
@@ -193,10 +194,9 @@ _object _allocate(int id, int field_count) {
 	_add_obj(o);
 	o->ref_count = 0;
 	o->field_count = field_count;
-	_object *fields;
 	if (field_count) {
-		fields = x3malloc(sizeof(_object) * field_count);
 		int i;
+		fields = x3malloc(sizeof(_object) * field_count);
 		for (i = 0; i < field_count; i++) {
 			fields[i] = NULL;
 		}
@@ -237,7 +237,6 @@ void _free_all_the_things() {
 	Object o = freeList;
 	while(o) {
 		Object next = o->tail;
-		int i;
 		x3free(o->fields);
 		if(o->id == STRING_ID) {
 			x3free(((String) o)->str);
@@ -281,11 +280,10 @@ _object Iterable_construct(_object ptrs[], int size) {
 
 _object _appendNext(_object o) {
 	_AppendIterator i = o;
-	_AppendIterable parent = i->parent;
 	_Iterator leftIter = i->leftIter;
 	_Iterator rightIter = i->rightIter;
 	_object ret;
-	if (ret = leftIter->next(leftIter)) {
+	if ((ret = leftIter->next(leftIter))) {
 		return ret;
 	} else {
 		return rightIter->next(rightIter);
@@ -294,9 +292,9 @@ _object _appendNext(_object o) {
 
 _object _appendIter(_object o) {
 	_AppendIterable a = o;
-	_AppendIterator i = _allocate(APPENDITERATOR_ID, 0);
 	Iterable left = a->left;
 	Iterable right = a->right;
+	_AppendIterator i = _allocate(APPENDITERATOR_ID, 0);
 	i->leftIter = left->iter(left);
 	i->rightIter = right->iter(right);
 	i->parent = a;
@@ -309,7 +307,7 @@ Iterable _append(_object o1, _object o2) {
 	a->left = o1;
 	a->right = o2;
 	a->iter = _appendIter;
-	return a;
+	return (Iterable) a;
 }
 
 
@@ -320,9 +318,9 @@ _object Boolean_construct(int b) {
 }
 
 _object Boolean_negate(_object o) {
-	Boolean b = o;
+	Boolean b = o, _ret;
 	_incr(b);
-	Boolean _ret = Boolean_construct(!b->value);
+	_ret = Boolean_construct(!b->value);
 	_decr(b);
 	return _ret;
 }
@@ -330,9 +328,10 @@ _object Boolean_negate(_object o) {
 _object Boolean_and(_object o1, _object o2) {
 	Boolean a = o1;
 	Boolean b = o2;
+	Boolean _ret;
 	_incr(a);
 	_incr(b);
-	Boolean _ret = Boolean_construct(a->value && b->value);
+	_ret = Boolean_construct(a->value && b->value);
 	_decr(a);
 	_decr(b);
 	return _ret;
@@ -341,9 +340,10 @@ _object Boolean_and(_object o1, _object o2) {
 _object Boolean_or(_object o1, _object o2) {
 	Boolean a = o1;
 	Boolean b = o2;
+	Boolean _ret;
 	_incr(a);
 	_incr(b);
-	Boolean _ret = Boolean_construct(a->value || b->value);
+	_ret = Boolean_construct(a->value || b->value);
 	_decr(a);
 	_decr(b);
 	return _ret;
@@ -354,10 +354,6 @@ _object Boolean_through(_object o1, _object o2, _object o3, _object o4) {
 	Boolean upper = o2;
 	Boolean includeLower = o3;
 	Boolean includeUpper = o4;
-	_incr(lower);
-	_incr(upper);
-	_incr(includeLower);
-	_incr(includeUpper);
 
 	int _lower = lower->value;
 	int _upper = upper->value;
@@ -368,6 +364,11 @@ _object Boolean_through(_object o1, _object o2, _object o3, _object o4) {
 	int high =_upper && (!_iU);
 
 	Iterable _ret;
+
+	_incr(lower);
+	_incr(upper);
+	_incr(includeLower);
+	_incr(includeUpper);
 	if (low > high) {
 		_ret = Iterable_construct((_object[]){}, 0);
 	} else if (low == high) {
@@ -387,9 +388,10 @@ _object Boolean_through(_object o1, _object o2, _object o3, _object o4) {
 _object Boolean_onward(_object o1, _object o2) {
 	Boolean a = o1;
 	Boolean inclusive = o2;
+	Iterable _ret;
 	_incr(a);
 	_incr(inclusive);
-	Iterable _ret = Boolean_through(a, inclusive, Boolean_construct(1), Boolean_construct(1));
+	_ret = Boolean_through(a, inclusive, Boolean_construct(1), Boolean_construct(1));
 	_decr(a);
 	_decr(inclusive);
 	return _ret;
@@ -433,9 +435,9 @@ _object Boolean_equals(_object o1, _object o2) {
 
 
 _object Integer_construct(int n) {
-	/*Integer a = _allocate(INTEGER_ID, 0);
-	a->value = n;*/
-	return n;
+	Integer a = _allocate(INTEGER_ID, 0);
+	a->value = n;
+	return a;
 }
 
 _object Integer_negative(_object o) {
@@ -552,10 +554,6 @@ _object Integer_through(_object o1, _object o2, _object o3, _object o4) {
 	Integer upper = o2;
 	Boolean includeLower = o3;
 	Boolean includeUpper = o4;
-	_incr(lower);
-	_incr(upper);
-	_incr(includeLower);
-	_incr(includeUpper);
 
 	int _lower = lower->value;
 	int _upper = upper->value;
@@ -566,6 +564,11 @@ _object Integer_through(_object o1, _object o2, _object o3, _object o4) {
 	int high =_upper - (!_iU);
 
 	Iterable _ret;
+
+	_incr(lower);
+	_incr(upper);
+	_incr(includeLower);
+	_incr(includeUpper);
 	if (low > high) {
 		_ret = _range(0, 0);
 	} else {
@@ -703,9 +706,9 @@ _object _StringIter(_object o) {
 _object String_construct(const char* s) {
 	String str = _allocate(STRING_ID, 0);
 	int len = strLen(s);
-	str->length = len;
 	char* buff = x3malloc(sizeof(char) * (len + 1));
 	int i;
+	str->length = len;
 	for (i = 0; i <= len; i++) {
 		buff[i] = 0;
 	}
@@ -720,9 +723,9 @@ _object String_equals(_object o1, _object o2) {
 	String a = o1;
 	String b = o2;
 	Boolean _ret;
+	_ret = Boolean_construct(strCmp(a->str, b->str));
 	_incr(a);
 	_incr(b);
-	_ret = Boolean_construct(strCmp(a->str, b->str));
 	_decr(a);
 	_decr(b);
 	return _ret;
@@ -747,21 +750,23 @@ _object string(_object o) {
 	int totalLen = 0;
 	_Iterator j = i->iter(i);
 	_object c;
-	while (c = j->next(j)) {
+	char* buff;
+	int index;
+	String ret;
+	while ((c = j->next(j))) {
 		totalLen += 1;
 	}
-	char *buff = x3malloc(sizeof(char) * (totalLen + 1));
-	int index;
+	buff = x3malloc(sizeof(char) * (totalLen + 1));
 	for(index = 0; index <= totalLen; index++) {
 		buff[index] = 0;
 	}
 	index = 0;
 	j = i->iter(i);
-	while (c = j->next(j)) {
+	while ((c = j->next(j))) {
 		buff[index] = ((Character) c)->chr;
 		index += 1;
 	}
-	String ret = String_construct(buff);
+	ret = String_construct(buff);
 	x3free(buff);
 	return ret;
 }
@@ -775,17 +780,19 @@ void __init() {
 		if (next_input_len) {
 			char *buff = x3malloc(sizeof(char) * (next_input_len + 1));
 			int j;
-		for(j = 0; j <= next_input_len; j++) {
-			buff[j] = 0;
-		}
-		read_line(buff);
-		String line = String_construct(buff);
-		x3free(buff);
-		Iterable i = Iterable_construct((_object[]){line}, 1);
-		input = _append(input, i);
-		} else {
-			break;
-		}
+			String line;
+			Iterable i;
+			for(j = 0; j <= next_input_len; j++) {
+				buff[j] = 0;
+			}
+			read_line(buff);
+			line = String_construct(buff);
+			x3free(buff);
+			i = Iterable_construct((_object[]){line}, 1);
+			input = _append(input, i);
+			} else {
+				break;
+			}
 	}
 	_incr(input);
 }

@@ -514,7 +514,7 @@ class LFunc extends LNode {
 	LName name;
 	List<LName> args;
 	LStmt stmts;
-
+	boolean isTopLevel = false;
 	public LFunc(LName n, List<LName> a, LStmt s) {
 		name = n;
 		args = a;
