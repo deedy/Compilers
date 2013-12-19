@@ -34,8 +34,6 @@ _object Printer_print(_object _o0) {
 
 _object SinglePrinter(_object _o0) {
 	Object s = _o0;
-	Object _tmp = NULL;
-	Object _ret = NULL;
 	Object _obj = _allocate(6, 1);
 	_obj->fields[0] = (Object) s;
 	_incr(_obj->fields[0]);
@@ -55,8 +53,6 @@ _object SinglePrinter_print(_object _o0) {
 }
 
 _object ConstantPrinter() {
-	Object _tmp = NULL;
-	Object _ret = NULL;
 	Object _obj = _allocate(7, 0);
 	return _obj;
 }
@@ -64,8 +60,6 @@ _object ConstantPrinter() {
 _object Multiplier(_object _o0, _object _o1) {
 	Object s = _o0;
 	Object n = _o1;
-	Object _tmp = NULL;
-	Object _ret = NULL;
 	Object _obj = _allocate(8, 4);
 	_obj->fields[1] = (Object) s;
 	_obj->fields[0] = (Object) n;

@@ -24,7 +24,7 @@ def compiler(x):
 	call("java -jar %s %s.x3" % (jar, x))
 	call("cp -f out.c ../../cbuild")
 	# print(call("make -C ../../cbuild clean"))
-	call("make -C ../../cbuild")
+	print(call("make -C ../../cbuild"))
 
 def runner(args):
     try:
